@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, MessageCircle, Search, ChevronLeft, ChevronRight, Phone, Sparkles } from 'lucide-react';
+import { ShoppingCart, MessageCircle, Search, ChevronLeft, ChevronRight, Phone } from 'lucide-react';
 import { BRAND_INFO } from '../data/products';
-
-const ANNOUNCEMENTS = [
-  'Flat Rs. 100 on Delivery Across Andhra, Telangana & All India',
-  '100% Homemade • Pure Cold Pressed Oils & Desi Ghee • No Preservatives',
-  'Order on WhatsApp: 7702808886 | Call: 9705449968',
-  'Fresh Batches Handcrafted Daily • Available in 250g, 1/2 kg & 1 kg packs'
-];
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar({
   cartCount,
@@ -16,7 +11,16 @@ export default function Navbar({
   onOpenSearch,
   onSelectCategory
 }) {
+  const { t } = useLanguage();
   const [currentIdx, setCurrentIdx] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const ANNOUNCEMENTS = [
+    t('ann1'),
+    t('ann2'),
+    t('ann3'),
+    t('ann4'),
+  ];
 
   // Auto-rotate announcement carousel every 4 seconds
   useEffect(() => {
@@ -24,7 +28,7 @@ export default function Navbar({
       setCurrentIdx(prev => (prev + 1) % ANNOUNCEMENTS.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, []);
+  }, [ANNOUNCEMENTS.length]);
 
   const handlePrev = () => {
     setCurrentIdx(prev => (prev - 1 + ANNOUNCEMENTS.length) % ANNOUNCEMENTS.length);
@@ -88,15 +92,18 @@ export default function Navbar({
 
           {/* Center Navigation Links */}
           <nav className="nav-desktop-links" aria-label="Main Navigation">
-            <a href="#hero" className="store-nav-link">Home</a>
-            <a href="#collections" className="store-nav-link">Collections</a>
-            <a href="#menu" className="store-nav-link" onClick={() => onSelectCategory && onSelectCategory('all')}>Catalog</a>
-            <a href="#story" className="store-nav-link">Our Story</a>
-            <a href="#contact" className="store-nav-link">Contact</a>
+            <a href="#hero" className="store-nav-link">{t('home')}</a>
+            <a href="#collections" className="store-nav-link">{t('collections')}</a>
+            <a href="#menu" className="store-nav-link" onClick={() => onSelectCategory && onSelectCategory('all')}>{t('catalog')}</a>
+            <a href="#story" className="store-nav-link">{t('ourStory')}</a>
+            <a href="#contact" className="store-nav-link">{t('contact')}</a>
           </nav>
 
           {/* Right Action Icons & Cart */}
           <div className="nav-actions-right">
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+
             {/* Quick Search */}
             <button
               type="button"
@@ -116,7 +123,7 @@ export default function Navbar({
               aria-label="Order on WhatsApp"
             >
               <MessageCircle size={16} />
-              <span className="pill-text">WhatsApp</span>
+              <span className="pill-text">{t('whatsapp')}</span>
             </button>
 
             {/* Cart Trigger with Counter Badge */}
@@ -133,6 +140,14 @@ export default function Navbar({
               )}
             </button>
           </div>
+        </div>
+
+        {/* Mobile Nav Bottom Links */}
+        <div className="mobile-nav-bottom-links">
+          <a href="#hero" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{t('home')}</a>
+          <a href="#collections" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{t('collections')}</a>
+          <a href="#menu" className="mobile-nav-link" onClick={() => { onSelectCategory && onSelectCategory('all'); setMobileMenuOpen(false); }}>{t('catalog')}</a>
+          <a href="#story" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{t('ourStory')}</a>
         </div>
       </header>
     </>

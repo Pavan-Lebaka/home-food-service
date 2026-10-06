@@ -1,10 +1,13 @@
 import React from 'react';
 import { MessageCircle, Phone, Sparkles, CheckCircle2 } from 'lucide-react';
 import { BRAND_INFO } from '../data/products';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function FinalCTA({ onWhatsAppClick, cartCount }) {
+  const { t } = useLanguage();
+
   return (
-    <section id="contact" className="section-final-cta">
+    <section id="contact" className="section-final-cta reveal-on-scroll">
       <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 2 }}>
         {/* Decorative Badge */}
         <div style={{
@@ -22,27 +25,28 @@ export default function FinalCTA({ onWhatsAppClick, cartCount }) {
           letterSpacing: '0.04em'
         }}>
           <Sparkles size={16} />
-          <span>Fresh Batches Handcrafted Daily</span>
+          <span>{t('dailyFreshBatches')}</span>
         </div>
 
         <h2 style={{
-          fontSize: 'clamp(2.2rem, 5vw, 3.4rem)',
+          fontSize: 'clamp(1.8rem, 4.5vw, 3.2rem)',
           fontWeight: 700,
           color: '#ffffff',
           marginBottom: '1rem',
-          fontFamily: 'var(--font-serif)'
+          fontFamily: 'var(--font-serif)',
+          lineHeight: 1.25
         }}>
-          Taste Tradition. Order From Home.
+          {t('readyToOrder')}
         </h2>
 
         <p style={{
-          fontSize: '1.25rem',
+          fontSize: 'clamp(1rem, 2vw, 1.2rem)',
           color: '#e4f0e6',
           maxWidth: '650px',
           margin: '0 auto 2.5rem',
           lineHeight: 1.6
         }}>
-          Fresh homemade Telugu flavours delivered to your table. Simple WhatsApp ordering with zero hassle.
+          {t('ctaSubtitle')}
         </p>
 
         {/* Action Buttons */}
@@ -64,8 +68,8 @@ export default function FinalCTA({ onWhatsAppClick, cartCount }) {
             <MessageCircle size={22} />
             <span>
               {cartCount > 0
-                ? `Review Order & Send on WhatsApp (${cartCount} items)`
-                : 'Order on WhatsApp'}
+                ? `${t('reviewOrderSendWhatsApp')} (${cartCount})`
+                : t('orderOnWhatsApp')}
             </span>
           </button>
 
@@ -86,7 +90,7 @@ export default function FinalCTA({ onWhatsAppClick, cartCount }) {
             }}
           >
             <Phone size={18} />
-            <span>Call: {BRAND_INFO.phoneDisplay}</span>
+            <span>{t('callUs')}: {BRAND_INFO.phoneDisplay}</span>
           </a>
         </div>
 
@@ -112,7 +116,7 @@ export default function FinalCTA({ onWhatsAppClick, cartCount }) {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: 'var(--color-turmeric-light)', fontWeight: '700' }}>Direct Phone:</span>
+            <span style={{ color: 'var(--color-turmeric-light)', fontWeight: '700' }}>Phone:</span>
             <a href={`tel:${BRAND_INFO.phoneNumber}`} style={{ color: '#fff' }}>
               {BRAND_INFO.phoneDisplay}
             </a>
@@ -120,8 +124,12 @@ export default function FinalCTA({ onWhatsAppClick, cartCount }) {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <CheckCircle2 size={16} color="#4ade80" />
-            <span style={{ color: '#e4f0e6' }}>Doorstep Delivery Available</span>
+            <span style={{ color: '#e4f0e6' }}>{t('allIndiaDesc')}</span>
           </div>
+        </div>
+
+        <div style={{ marginTop: '1.5rem', color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>
+          {t('availableHours')}
         </div>
       </div>
     </section>

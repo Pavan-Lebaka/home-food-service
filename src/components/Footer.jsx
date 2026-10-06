@@ -2,10 +2,13 @@ import React from 'react';
 import { MessageCircle, Phone, MapPin, Sparkles, Heart } from 'lucide-react';
 import { BRAND_INFO } from '../data/products';
 import { getDirectWhatsAppChatUrl } from '../lib/whatsapp';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" id="footer">
       <div className="container">
         <div className="footer-grid">
           {/* Brand Column */}
@@ -25,27 +28,27 @@ export default function Footer() {
           {/* Quick Categories Column */}
           <div>
             <h4 style={{ color: 'var(--color-turmeric-light)', fontSize: '1.05rem', marginBottom: '1rem', fontWeight: '700' }}>
-              Our Categories
+              {t('ourCategories')}
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.9rem', color: '#d1bfa8' }}>
               <li>
                 <a href="#pindi-vantalu-section" style={{ transition: 'color 0.2s ease' }}>
-                  • Pindi Vantalu (Sweets & Savouries)
+                  • {t('pindiVantaluFull')}
                 </a>
               </li>
               <li>
                 <a href="#veg-pickles-section" style={{ transition: 'color 0.2s ease' }}>
-                  • Veg Pickles (Andhra Pachallu)
+                  • {t('vegPicklesFull')}
                 </a>
               </li>
               <li>
                 <a href="#non-veg-pickles-section" style={{ transition: 'color 0.2s ease' }}>
-                  • Non-Veg Pickles (Chicken & Prawn)
+                  • {t('nonVegPicklesFull')}
                 </a>
               </li>
               <li>
                 <a href="#story" style={{ transition: 'color 0.2s ease' }}>
-                  • Our Heritage & Story
+                  • {t('ourHeritageStory')}
                 </a>
               </li>
             </ul>
@@ -54,7 +57,7 @@ export default function Footer() {
           {/* Contact & Orders Column */}
           <div>
             <h4 style={{ color: 'var(--color-turmeric-light)', fontSize: '1.05rem', marginBottom: '1rem', fontWeight: '700' }}>
-              Order & Inquiries
+              {t('orderAndInquiries')}
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.95rem' }}>
               <a
@@ -98,10 +101,10 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="footer-bottom-bar">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flexWrap: 'wrap' }}>
-            <span>© 2026 Bramarambika Home Foods. All rights reserved.</span>
+            <span>{t('copyright')}</span>
             <span>•</span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              Made with <Heart size={14} color="var(--color-terracotta)" fill="var(--color-terracotta)" /> for Telugu authentic taste lovers.
+              {t('madeWith')} <Heart size={14} color="var(--color-terracotta)" fill="var(--color-terracotta)" /> {t('forTelugu')}
             </span>
           </div>
         </div>

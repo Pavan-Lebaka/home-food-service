@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, ShoppingCart, Check, MessageCircle, Star, Sparkles, ShieldCheck } from 'lucide-react';
 import { WEIGHT_VARIANTS, getProductVariantPrice } from '../data/products';
 import { formatCurrency, getWhatsAppOrderUrl } from '../lib/whatsapp';
@@ -7,6 +7,19 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
   const [selectedVariantId, setSelectedVariantId] = useState('500g');
   const [packQuantity, setPackQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
+
+  // Strict scroll lock when product modal is active
+  useEffect(() => {
+    if (!product) return;
+    const origBody = document.body.style.overflow;
+    const origHtml = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = origBody;
+      document.documentElement.style.overflow = origHtml;
+    };
+  }, [product]);
 
   if (!product) return null;
 

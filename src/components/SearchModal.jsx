@@ -17,6 +17,19 @@ export default function SearchModal({ isOpen, onClose, onSelectProduct }) {
     }
   }, [isOpen]);
 
+  // Strict scroll lock when search modal is active
+  useEffect(() => {
+    if (!isOpen) return;
+    const origBody = document.body.style.overflow;
+    const origHtml = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = origBody;
+      document.documentElement.style.overflow = origHtml;
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const results = query.trim()

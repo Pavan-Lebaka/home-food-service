@@ -1,55 +1,62 @@
 import React from 'react';
 import { BookOpen, Home, Clock, Heart, Sparkles, ShieldCheck } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function WhyUs() {
+  const { t } = useLanguage();
+
   const pillars = [
     {
       icon: <BookOpen size={24} strokeWidth={2} />,
-      title: 'Traditional Recipes',
-      desc: 'Authentic Telugu preparation handed down across three generations without modern alterations.',
+      title: t('coldPressedTitle'),
+      desc: t('coldPressedDesc'),
       color: 'var(--color-terracotta)'
     },
     {
       icon: <Home size={24} strokeWidth={2} />,
-      title: '100% Homemade',
-      desc: 'Prepared with motherly care in our village home kitchen, never in mass commercial factories.',
+      title: t('stoneGround'),
+      desc: t('stoneGroundDesc'),
       color: 'var(--color-leaf-green)'
     },
     {
       icon: <Clock size={24} strokeWidth={2} />,
-      title: 'Freshly Prepared',
-      desc: 'Made in small, carefully monitored batches for ultimate crunch, fragrance, and freshness.',
+      title: t('noPreservativesTitle'),
+      desc: t('noPreservativesDesc'),
       color: 'var(--color-turmeric)'
     },
     {
       icon: <Heart size={24} strokeWidth={2} />,
-      title: 'Made With Love',
-      desc: 'Crafted using pure wood-pressed gingelly oil, pure cow ghee, and stone-ground spices.',
+      title: t('cowGhee'),
+      desc: t('cowGheeDesc'),
       color: 'var(--color-terracotta)'
     }
   ];
 
   return (
-    <section id="why-us" className="section-why">
+    <section id="why-us" className="section-why reveal-on-scroll">
       <div className="container">
-        <div className="why-us-header">
+        <div className="why-us-header reveal-on-scroll">
           <div className="section-pre-pill">
             <ShieldCheck size={14} />
-            <span>The Bramarambika Promise</span>
+            <span>{t('bramarambikaPromise')}</span>
           </div>
 
           <h2 className="why-us-title">
-            Why Bramarambika?
+            {t('whyChooseUs')}
           </h2>
 
           <p className="why-us-subtitle">
-            Every jar of pickle and every box of Pindi Vantalu carries our family promise of honesty, taste, and tradition.
+            {t('whySubtitle')}
           </p>
         </div>
 
         <div className="features-grid">
           {pillars.map((pillar, idx) => (
-            <div key={idx} className="feature-card">
+            <div
+              key={idx}
+              className="feature-card reveal-on-scroll"
+              style={{ animationDelay: `${idx * 0.1}s` }}
+            >
               <div className="feature-icon-circle" style={{ color: pillar.color }}>
                 {pillar.icon}
               </div>

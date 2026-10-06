@@ -1,88 +1,223 @@
-import React from 'react';
-import { ArrowDown, MessageCircle, Sparkles, ShieldCheck, Heart, Leaf, PackageCheck } from 'lucide-react';
-import { BRAND_INFO } from '../data/products';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, Sparkles, Leaf, ShieldCheck, Heart, PackageCheck, Flame } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
-export default function Hero({ onWhatsAppClick }) {
+const SLIDES = [
+  {
+    id: 1,
+    tagKey: 'heroSlide1Tag',
+    titleKey: 'heroSlide1Title',
+    subKey: 'heroSlide1Sub',
+    ctaKey: 'heroSlide1Cta',
+    categoryTarget: 'all',
+    image: '/images/hero.jpg', // Authentic Andhra Feast: Arisalu, Karapusa, Kajjikayalu, Boondhi, Avakaya jar
+    accentColor: '#D99A17',
+    icon: Sparkles
+  },
+  {
+    id: 2,
+    tagKey: 'heroSlide2Tag',
+    titleKey: 'heroSlide2Title',
+    subKey: 'heroSlide2Sub',
+    ctaKey: 'heroSlide2Cta',
+    categoryTarget: 'veg-pickles',
+    image: '/images/veg-pickles.jpg', // Authentic Ceramic Jaadi Jars with Avakaya, Gongura, Tomato, Allam
+    accentColor: '#A83A24',
+    icon: Flame
+  },
+  {
+    id: 3,
+    tagKey: 'heroSlide4Tag',
+    titleKey: 'heroSlide4Title',
+    subKey: 'heroSlide4Sub',
+    ctaKey: 'heroSlide4Cta',
+    categoryTarget: 'pindi-vantalu',
+    image: '/images/savouries.jpg', // Authentic Crispy Pindi Vantalu: Chekkalu, Murukku, Spices
+    accentColor: '#2F5D3A',
+    icon: Leaf
+  },
+  {
+    id: 4,
+    tagKey: 'heroSlide3Tag',
+    titleKey: 'heroSlide3Title',
+    subKey: 'heroSlide3Sub',
+    ctaKey: 'heroSlide3Cta',
+    categoryTarget: 'pindi-vantalu',
+    image: '/images/sweets.jpg', // Pure Ghee Sweets: Sunnundalu, Kajjikayalu, Ravva Laddu on Banana Leaf
+    accentColor: '#D99A17',
+    icon: Sparkles
+  }
+];
+
+export default function Hero({ onWhatsAppClick, onSelectCategory }) {
+  const { t } = useLanguage();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const touchStartX = useRef(null);
+  const touchEndX = useRef(null);
+
+  const totalSlides = SLIDES.length;
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  }, [totalSlides]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  }, [totalSlides]);
+
+  // Continuous Autoplay timer: resets on slide change, advances automatically every 4.2s
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % totalSlides);
+    }, 4200);
+
+    return () => clearInterval(timer);
+  }, [currentSlide, totalSlides]);
+
+  // Handle touch swipes for mobile
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 50) {
+      nextSlide();
+    } else if (diff < -50) {
+      prevSlide();
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
+  const activeSlideData = SLIDES[currentSlide];
+  const IconComponent = activeSlideData.icon;
+
   return (
-    <section id="hero" className="annapurna-hero-section">
-      <div className="container">
-        <div className="hero-split-grid">
-          {/* Left Column: Brand Narrative & CTA */}
-          <div className="hero-content-col">
-            <div className="hero-origin-pill">
-              <Sparkles size={13} />
-              <span>Village Kitchen Soul • Andhra Heritage</span>
+    <section
+      id="hero"
+      className="hero-carousel-section"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      aria-label="Hero Highlights Carousel"
+    >
+      {/* Background Slides Track */}
+      <div className="hero-slides-viewport">
+        {SLIDES.map((slide, index) => {
+          const isActive = index === currentSlide;
+          return (
+            <div
+              key={slide.id}
+              className={`hero-carousel-slide ${isActive ? 'active' : ''}`}
+              aria-hidden={!isActive}
+            >
+              <div
+                className="hero-slide-bg"
+                style={{
+                  backgroundImage: `url(${slide.image})`
+                }}
+              />
+              <div className="hero-slide-overlay" />
             </div>
+          );
+        })}
+      </div>
 
-            <h1 className="hero-store-title">
-              Traditional Telugu Taste, <br />
-              <span className="hero-highlight-phrase">Homemade With Love.</span>
-            </h1>
-
-            <p className="hero-store-subtitle">
-              Authentic Pindi Vantalu, pure desi ghee sweets, and sun-ripened Andhra pickles prepared using cold-pressed oils, stone-ground masalas, and generational family recipes.
-            </p>
-
-            <div className="hero-weight-prompt">
-              <PackageCheck size={16} color="var(--color-leaf-green)" />
-              <span>Custom pack sizes available: <strong>250 g</strong>, <strong>1/2 kg</strong>, and <strong>1 kg</strong> packs</span>
-            </div>
-
-            {/* CTAs */}
-            <div className="hero-cta-buttons">
-              <a href="#collections" className="btn-hero-primary" id="hero-view-menu-btn">
-                <span>Explore Collections</span>
-                <ArrowDown size={17} />
-              </a>
-
-              <button
-                onClick={onWhatsAppClick}
-                className="btn-hero-whatsapp"
-                id="hero-whatsapp-btn"
-                type="button"
-              >
-                <MessageCircle size={18} />
-                <span>Order on WhatsApp</span>
-              </button>
-            </div>
-
-            {/* Trust Highlights Strip */}
-            <div className="hero-trust-highlights">
-              <div className="trust-pill-item">
-                <Leaf size={16} className="trust-icon" />
-                <span>100% Homemade</span>
-              </div>
-              <div className="trust-pill-item">
-                <ShieldCheck size={16} className="trust-icon" />
-                <span>No Preservatives</span>
-              </div>
-              <div className="trust-pill-item">
-                <Heart size={16} className="trust-icon" />
-                <span>Cold-Pressed Oils</span>
-              </div>
-            </div>
+      {/* Hero Content Area */}
+      <div className="container hero-content-container">
+        <div className="hero-slide-caption-wrap">
+          {/* Pill Badge */}
+          <div className="hero-slide-tag-pill reveal-on-scroll is-revealed">
+            <IconComponent size={14} color={activeSlideData.accentColor} />
+            <span>{t(activeSlideData.tagKey)}</span>
           </div>
 
-          {/* Right Column: High Quality Imagery */}
-          <div className="hero-media-col">
-            <div className="hero-banner-card">
-              <img
-                src="/images/hero.jpg"
-                alt="Traditional Andhra feast with Arisalu, Sunnundalu, Karapusa, and Avakaya pickles"
-                className="hero-banner-img"
-                loading="eager"
-              />
+          {/* Title */}
+          <h1 className="hero-carousel-title key-fade">
+            {t(activeSlideData.titleKey)}
+          </h1>
 
-              {/* Floating Quality Stamp */}
-              <div className="hero-floating-badge">
-                <div className="badge-stamp-icon">
-                  <Sparkles size={18} />
-                </div>
-                <div>
-                  <div className="badge-stamp-title">Daily Fresh Batches</div>
-                  <div className="badge-stamp-sub">Traditional Stone Ground</div>
-                </div>
-              </div>
+          {/* Subtitle */}
+          <p className="hero-carousel-subtitle key-fade">
+            {t(activeSlideData.subKey)}
+          </p>
+
+          {/* Weight Prompt */}
+          <div className="hero-weight-prompt-pill">
+            <PackageCheck size={16} color="var(--color-leaf-green)" />
+            <span>{t('heroPackSizes')}</span>
+          </div>
+        </div>
+
+        {/* Carousel Integrated Controls Pill: Prev Arrow + Dots + Next Arrow + Counter */}
+        <div className="hero-carousel-controls">
+          <button
+            type="button"
+            onClick={prevSlide}
+            className="hero-ctrl-arrow-btn"
+            aria-label={t('scrollLeft') || 'Previous slide'}
+            title="Previous slide"
+          >
+            <ChevronLeft size={16} />
+          </button>
+
+          <div className="hero-dots-indicator" role="tablist">
+            {SLIDES.map((slide, idx) => (
+              <button
+                key={slide.id}
+                type="button"
+                role="tab"
+                aria-label={`Slide ${idx + 1}`}
+                aria-selected={idx === currentSlide}
+                onClick={() => setCurrentSlide(idx)}
+                className={`hero-dot-pill ${idx === currentSlide ? 'active' : ''}`}
+              />
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={nextSlide}
+            className="hero-ctrl-arrow-btn"
+            aria-label={t('scrollRight') || 'Next slide'}
+            title="Next slide"
+          >
+            <ChevronRight size={16} />
+          </button>
+
+          <div className="hero-slide-counter">
+            <span className="counter-current">0{currentSlide + 1}</span>
+            <span className="counter-sep">/</span>
+            <span className="counter-total">0{totalSlides}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Trust Highlights Bottom Strip */}
+      <div className="hero-trust-bar">
+        <div className="container">
+          <div className="hero-trust-grid">
+            <div className="trust-bar-item">
+              <Leaf size={18} className="trust-icon" />
+              <span>{t('hundredHomemade')}</span>
+            </div>
+            <div className="trust-bar-item">
+              <ShieldCheck size={18} className="trust-icon" />
+              <span>{t('noPreservatives')}</span>
+            </div>
+            <div className="trust-bar-item">
+              <Heart size={18} className="trust-icon" />
+              <span>{t('coldPressedOils')}</span>
+            </div>
+            <div className="trust-bar-item">
+              <Sparkles size={18} className="trust-icon" />
+              <span>{t('dailyFreshBatches')}</span>
             </div>
           </div>
         </div>

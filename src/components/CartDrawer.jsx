@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, Trash2, MessageCircle, Sparkles, ShoppingCart, ArrowRight, ShieldCheck, Phone } from 'lucide-react';
 import { formatCurrency, getWhatsAppOrderUrl } from '../lib/whatsapp.js';
 import { BRAND_INFO, PRODUCTS } from '../data/products.js';
+import { useLanguage } from '../context/LanguageContext';
 import confetti from 'canvas-confetti';
 
 export default function CartDrawer({
@@ -12,11 +13,25 @@ export default function CartDrawer({
   onRemoveItem,
   onAddToCart
 }) {
+  const { t } = useLanguage();
   const [customerDetails, setCustomerDetails] = useState({
     name: '',
     address: '',
     notes: ''
   });
+
+  // Strict scroll lock when cart drawer is active
+  useEffect(() => {
+    if (!isOpen) return;
+    const origBody = document.body.style.overflow;
+    const origHtml = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = origBody;
+      document.documentElement.style.overflow = origHtml;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -73,7 +88,7 @@ export default function CartDrawer({
               <ShoppingCart size={20} />
             </div>
             <div>
-              <h2 className="drawer-title">Your Order Cart</h2>
+              <h2 className="drawer-title">{t('yourOrderCart')}</h2>
               <div className="drawer-subtitle">
                 {BRAND_INFO.name}
               </div>
@@ -91,9 +106,9 @@ export default function CartDrawer({
               <div className="empty-cart-notice">
                 <MessageCircle size={22} className="notice-icon" />
                 <div>
-                  <div className="notice-heading">Add items to place your order</div>
+                  <div className="notice-heading">{t('addItemsToOrder')}</div>
                   <div className="notice-sub">
-                    Select your favorite homemade pickles, sweets, or savouries along with weight preferences (250g, 1/2 kg, 1 kg).
+                    {t('addItemsDesc')}
                   </div>
                 </div>
               </div>
@@ -101,7 +116,7 @@ export default function CartDrawer({
               {/* Quick Add Recommendations */}
               <div className="quick-picks-section">
                 <div className="quick-picks-title">
-                  Popular Telugu Favorites:
+                  {t('popularTeluguFavorites')}
                 </div>
                 <div className="quick-picks-list">
                   {quickPickItems.map(item => (
@@ -111,7 +126,7 @@ export default function CartDrawer({
                         <div>
                           <div className="quick-pick-name">{item.name}</div>
                           <div className="quick-pick-price">
-                            From ₹{item.variantPrices?.['500g'] || 150} (1/2 kg)
+                            {t('fromPrice')} ₹{item.variantPrices?.['500g'] || 150} {t('halfKgPack')}
                           </div>
                         </div>
                       </div>
@@ -127,7 +142,7 @@ export default function CartDrawer({
                         className="quick-pick-add-btn"
                       >
                         <Plus size={13} />
-                        <span>Add 1/2 kg</span>
+                        <span>{t('addHalfKg')}</span>
                       </button>
                     </div>
                   ))}
@@ -139,7 +154,7 @@ export default function CartDrawer({
                 onClick={handleBrowseMenu}
                 className="btn-browse-catalog"
               >
-                <span>Browse Full Specials Menu</span>
+                <span>{t('browseFullMenu')}</span>
                 <ArrowRight size={16} />
               </button>
             </div>
@@ -148,7 +163,7 @@ export default function CartDrawer({
               {/* Delivery Promotion Banner */}
               <div className="cart-delivery-pill">
                 <Sparkles size={14} color="#D99A17" />
-                <span>Flat ₹100 Delivery Across All Orders!</span>
+                <span>{t('flatDelivery')}</span>
               </div>
 
               {/* Item List */}
@@ -164,10 +179,10 @@ export default function CartDrawer({
                       <div className="cart-item-info">
                         <div className="cart-item-title">{item.name}</div>
                         <div className="cart-item-weight-badge">
-                          Pack size: <strong>{item.variantLabel || '1/2 kg'}</strong>
+                          {t('packSize')} <strong>{item.variantLabel || '1/2 kg'}</strong>
                         </div>
                         <div className="cart-item-price-unit">
-                          ₹{itemPrice} each
+                          ₹{itemPrice} {t('each')}
                         </div>
                       </div>
 
@@ -216,13 +231,13 @@ export default function CartDrawer({
               <div className="cart-delivery-form">
                 <div className="form-header">
                   <Sparkles size={14} color="#D99A17" />
-                  <span>Delivery Information (for WhatsApp Order)</span>
+                  <span>{t('deliveryInfo')}</span>
                 </div>
 
                 <div className="form-inputs-group">
                   <input
                     type="text"
-                    placeholder="Your Full Name (e.g. Ramesh Reddy)"
+                    placeholder={t('yourFullName')}
                     value={customerDetails.name}
                     onChange={e => setCustomerDetails({ ...customerDetails, name: e.target.value })}
                     className="cart-input-field"
@@ -230,7 +245,7 @@ export default function CartDrawer({
 
                   <input
                     type="text"
-                    placeholder="Delivery City / Address (e.g. Hyderabad / Vijayawada)"
+                    placeholder={t('deliveryCity')}
                     value={customerDetails.address}
                     onChange={e => setCustomerDetails({ ...customerDetails, address: e.target.value })}
                     className="cart-input-field"
@@ -238,7 +253,7 @@ export default function CartDrawer({
 
                   <input
                     type="text"
-                    placeholder="Special request (e.g. Mild spicy / Festive pack)"
+                    placeholder={t('specialRequest')}
                     value={customerDetails.notes}
                     onChange={e => setCustomerDetails({ ...customerDetails, notes: e.target.value })}
                     className="cart-input-field"
@@ -254,15 +269,15 @@ export default function CartDrawer({
           <div className="drawer-footer">
             <div className="cart-bill-summary">
               <div className="bill-row">
-                <span>Items Subtotal:</span>
+                <span>{t('itemsSubtotal')}</span>
                 <span>₹{itemsSubtotal.toLocaleString('en-IN')}</span>
               </div>
               <div className="bill-row">
-                <span>Delivery Charge:</span>
-                <span className="delivery-badge-cost">Flat ₹100</span>
+                <span>{t('deliveryCharge')}</span>
+                <span className="delivery-badge-cost">{t('flatDeliveryCharge')}</span>
               </div>
               <div className="bill-row grand-total">
-                <span>Total Amount:</span>
+                <span>{t('totalAmount')}</span>
                 <span className="total-num">₹{grandTotal.toLocaleString('en-IN')}</span>
               </div>
             </div>
@@ -274,19 +289,19 @@ export default function CartDrawer({
               id="cart-checkout-whatsapp-btn"
             >
               <MessageCircle size={19} />
-              <span>Send Order on WhatsApp</span>
+              <span>{t('sendOrderWhatsApp')}</span>
             </button>
 
             <div className="cart-phone-assist">
               <a href={`tel:${BRAND_INFO.phoneNumber}`} className="call-assist-link">
                 <Phone size={13} />
-                <span>Prefer direct phone call? Dial {BRAND_INFO.phoneDisplay}</span>
+                <span>{t('preferDirectCall')} {BRAND_INFO.phoneDisplay}</span>
               </a>
             </div>
 
             <div className="drawer-guarantee">
               <ShieldCheck size={14} color="var(--color-leaf-green)" />
-              <span>Freshly packed in leakproof food-grade containers</span>
+              <span>{t('freshlyPacked')}</span>
             </div>
           </div>
         )}

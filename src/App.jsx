@@ -12,8 +12,11 @@ import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import FloatingCart from './components/FloatingCart';
+import { useScrollReveal } from './hooks/useScrollReveal';
 
 export default function App() {
+  useScrollReveal();
+
   const [cartItems, setCartItems] = useState(() => {
     try {
       const saved = localStorage.getItem('bramarambika_cart_v2');
@@ -35,6 +38,22 @@ export default function App() {
       // ignore
     }
   }, [cartItems]);
+
+  // Lock background page scroll whenever Cart Drawer, Search Modal, or Product Details is open
+  useEffect(() => {
+    const isLocked = isCartOpen || isSearchOpen || Boolean(modalProduct);
+    if (isLocked) {
+      document.body.classList.add('modal-open-scroll-locked');
+      document.documentElement.classList.add('modal-open-scroll-locked');
+    } else {
+      document.body.classList.remove('modal-open-scroll-locked');
+      document.documentElement.classList.remove('modal-open-scroll-locked');
+    }
+    return () => {
+      document.body.classList.remove('modal-open-scroll-locked');
+      document.documentElement.classList.remove('modal-open-scroll-locked');
+    };
+  }, [isCartOpen, isSearchOpen, modalProduct]);
 
   const handleAddToCart = ({ product, variantId = '500g', variantLabel = '1/2 kg', unitPrice, quantity = 1 }) => {
     const cartItemId = `${product.id}-${variantId}`;
@@ -111,6 +130,7 @@ export default function App() {
         {/* 2. Hero Section */}
         <Hero
           onWhatsAppClick={() => setIsCartOpen(true)}
+          onSelectCategory={setActiveCategory}
         />
 
         {/* 3. Featured Collections Showcase ("Our Collections") */}

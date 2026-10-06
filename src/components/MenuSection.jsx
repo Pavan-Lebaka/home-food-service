@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import ProductCard from './ProductCard';
+import ProductShelf from './ProductShelf';
 import { CATEGORIES, PRODUCTS } from '../data/products';
-import { Sparkles, Utensils, Flame, Leaf, Search } from 'lucide-react';
+import { Sparkles, Utensils, Flame, Leaf, Search, LayoutGrid, MoveHorizontal } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function MenuSection({ onAddToCart, onOpenDetails, activeCategory, setActiveCategory }) {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState('shelf'); // 'shelf' or 'grid'
 
   const filteredProducts = PRODUCTS.filter(p => {
     const matchesCategory = activeCategory === 'all' || p.category === activeCategory;
@@ -19,22 +23,24 @@ export default function MenuSection({ onAddToCart, onOpenDetails, activeCategory
   const vegPickles = filteredProducts.filter(p => p.category === 'veg-pickles');
   const pindiVantalu = filteredProducts.filter(p => p.category === 'pindi-vantalu');
 
+  const currentCatInfo = CATEGORIES.find(c => c.id === activeCategory);
+
   return (
     <section id="menu" className="annapurna-catalog-section">
       <div className="container">
         {/* Catalog Navigation Header */}
-        <div className="catalog-header-block">
+        <div className="catalog-header-block reveal-on-scroll">
           <div className="section-pre-pill">
             <Utensils size={14} />
-            <span>Farm & Home Fresh</span>
+            <span>{t('farmHomeFresh')}</span>
           </div>
 
           <h2 className="catalog-title">
-            Our Homemade Specials
+            {t('ourHomemadeSpecials')}
           </h2>
 
           <p className="catalog-subtitle">
-            Authentic Andhra taste crafted using stone-ground spices, cold-pressed oils, and pure desi cow ghee. Select weights in <strong>250g, 1/2 kg, or 1 kg</strong> packs.
+            {t('menuSubtitle')}
           </p>
 
           {/* Search & Filter Toolbar */}
@@ -44,7 +50,7 @@ export default function MenuSection({ onAddToCart, onOpenDetails, activeCategory
               <Search size={18} className="search-icon" />
               <input
                 type="text"
-                placeholder="Search Avakaya, Arisalu, Chicken pickle..."
+                placeholder={t('searchPlaceholderMenu')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="catalog-search-input"
@@ -83,135 +89,128 @@ export default function MenuSection({ onAddToCart, onOpenDetails, activeCategory
           </div>
         </div>
 
-        {/* If searching or specific tab */}
+        {/* If searching with zero results */}
         {filteredProducts.length === 0 ? (
-          <div className="empty-search-state">
-            <p>No homemade specials matched your search for "{searchQuery}".</p>
+          <div className="empty-search-state reveal-on-scroll">
+            <p>{t('noResultsFor')} "{searchQuery}".</p>
             <button
               type="button"
               onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
               className="btn-browse-all"
             >
-              View All Specials
+              {t('viewAllSpecials')}
             </button>
           </div>
         ) : activeCategory !== 'all' ? (
-          /* Single Category View */
-          <div className="products-grid-container">
-            <div className="annapurna-products-grid">
-              {filteredProducts.map(product => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onAddToCart={onAddToCart}
-                  onOpenDetails={onOpenDetails}
-                />
-              ))}
+          /* Single Category Selected View */
+          <div className="single-category-view reveal-on-scroll">
+            {/* Category View Mode Switcher */}
+            <div className="category-view-toolbar">
+              <div className="category-meta-info">
+                <span className="category-label-active">{currentCatInfo ? currentCatInfo.label : activeCategory}</span>
+                <span className="category-count-sub">({filteredProducts.length} items)</span>
+              </div>
+
+              <div className="view-mode-toggle">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('shelf')}
+                  className={`view-mode-btn ${viewMode === 'shelf' ? 'active' : ''}`}
+                  title="Side scroll shelf"
+                  aria-label="Side scroll view"
+                >
+                  <MoveHorizontal size={15} />
+                  <span>Side Scroll</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('grid')}
+                  className={`view-mode-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                  title="Grid view"
+                  aria-label="Grid view"
+                >
+                  <LayoutGrid size={15} />
+                  <span>Grid</span>
+                </button>
+              </div>
             </div>
+
+            {viewMode === 'shelf' ? (
+              <ProductShelf
+                title=""
+                products={filteredProducts}
+                onAddToCart={onAddToCart}
+                onOpenDetails={onOpenDetails}
+              />
+            ) : (
+              <div className="products-grid-container">
+                <div className="annapurna-products-grid">
+                  {filteredProducts.map((product, idx) => (
+                    <div
+                      key={product.id}
+                      className="reveal-on-scroll"
+                      style={{ animationDelay: `${(idx % 4) * 0.08}s` }}
+                    >
+                      <ProductCard
+                        product={product}
+                        onAddToCart={onAddToCart}
+                        onOpenDetails={onOpenDetails}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
-          /* Grouped by Authentic Collections (Non-Veg Pickles, Veg Pickles, Pindi Vantalu) */
-          <div className="catalog-grouped-sections">
-            {/* 1. NON-VEG PICKLES */}
+          /* Grouped by Side-Scrolling Shelves (Non-Veg Pickles, Veg Pickles, Pindi Vantalu) */
+          <div className="catalog-shelves-container">
+            {/* 1. NON-VEG PICKLES SHELF */}
             {nonVegPickles.length > 0 && (
-              <div className="collection-group-block" id="non-veg-pickles-block">
-                <div className="collection-group-header">
-                  <div className="group-title-col">
-                    <div className="group-badge-line">
-                      <Flame size={15} color="#A83A24" />
-                      <span>Fiery Andhra Specials</span>
-                    </div>
-                    <h3 className="group-title">Non Veg Pickles</h3>
-                    <p className="group-subtitle">Slow-cooked tender chunks steeped in aromatic stone-ground masala and cold-pressed oil.</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveCategory('non-veg-pickles')}
-                    className="group-view-all-btn"
-                  >
-                    View Category ({nonVegPickles.length})
-                  </button>
-                </div>
-
-                <div className="annapurna-products-grid">
-                  {nonVegPickles.map(product => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      onAddToCart={onAddToCart}
-                      onOpenDetails={onOpenDetails}
-                    />
-                  ))}
-                </div>
-              </div>
+              <ProductShelf
+                title={t('nonVegPickles')}
+                subtitle={t('nonVegSubtitle')}
+                badgeIcon={Flame}
+                badgeText={t('fierAndhrSpecials')}
+                badgeColor="#A83A24"
+                products={nonVegPickles}
+                onAddToCart={onAddToCart}
+                onOpenDetails={onOpenDetails}
+                onViewCategory={() => setActiveCategory('non-veg-pickles')}
+                viewCategoryText={t('viewCategory')}
+              />
             )}
 
-            {/* 2. VEG PICKLES */}
+            {/* 2. VEG PICKLES SHELF */}
             {vegPickles.length > 0 && (
-              <div className="collection-group-block" id="veg-pickles-block">
-                <div className="collection-group-header">
-                  <div className="group-title-col">
-                    <div className="group-badge-line">
-                      <Leaf size={15} color="#2F5D3A" />
-                      <span>Traditional Nilva Pachallu</span>
-                    </div>
-                    <h3 className="group-title">Veg Pickles</h3>
-                    <p className="group-subtitle">Aged in traditional ceramic jaadi jars with yellow mustard, Guntur chillies, and cold-pressed gingelly oil.</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveCategory('veg-pickles')}
-                    className="group-view-all-btn"
-                  >
-                    View Category ({vegPickles.length})
-                  </button>
-                </div>
-
-                <div className="annapurna-products-grid">
-                  {vegPickles.map(product => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      onAddToCart={onAddToCart}
-                      onOpenDetails={onOpenDetails}
-                    />
-                  ))}
-                </div>
-              </div>
+              <ProductShelf
+                title={t('vegPickles')}
+                subtitle={t('vegSubtitle')}
+                badgeIcon={Leaf}
+                badgeText={t('traditionalNilva')}
+                badgeColor="#2F5D3A"
+                products={vegPickles}
+                onAddToCart={onAddToCart}
+                onOpenDetails={onOpenDetails}
+                onViewCategory={() => setActiveCategory('veg-pickles')}
+                viewCategoryText={t('viewCategory')}
+              />
             )}
 
-            {/* 3. PINDI VANTALU (SWEETS & CRISPY SAVOURIES) */}
+            {/* 3. PINDI VANTALU (SWEETS & SAVOURIES) SHELF */}
             {pindiVantalu.length > 0 && (
-              <div className="collection-group-block" id="pindi-vantalu-block">
-                <div className="collection-group-header">
-                  <div className="group-title-col">
-                    <div className="group-badge-line">
-                      <Sparkles size={15} color="#D99A17" />
-                      <span>Pure Ghee & Hand-Pressed Treats</span>
-                    </div>
-                    <h3 className="group-title">Pindi Vantalu (Sweets & Savouries)</h3>
-                    <p className="group-subtitle">Handcrafted with pure aged jaggery, pure cow ghee, and crisp rice flour using ancestral festive recipes.</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveCategory('pindi-vantalu')}
-                    className="group-view-all-btn"
-                  >
-                    View Category ({pindiVantalu.length})
-                  </button>
-                </div>
-
-                <div className="annapurna-products-grid">
-                  {pindiVantalu.map(product => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      onAddToCart={onAddToCart}
-                      onOpenDetails={onOpenDetails}
-                    />
-                  ))}
-                </div>
-              </div>
+              <ProductShelf
+                title={t('pindiVantalu')}
+                subtitle={t('pindiSubtitle')}
+                badgeIcon={Sparkles}
+                badgeText={t('pureGheeTreats')}
+                badgeColor="#D99A17"
+                products={pindiVantalu}
+                onAddToCart={onAddToCart}
+                onOpenDetails={onOpenDetails}
+                onViewCategory={() => setActiveCategory('pindi-vantalu')}
+                viewCategoryText={t('viewCategory')}
+              />
             )}
           </div>
         )}
