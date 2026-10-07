@@ -14,7 +14,6 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
   }
 
   let itemsSubtotal = 0;
-  const deliveryFee = 100; // Flat Rs. 100 Delivery
 
   const itemsList = cartItems.map((item, index) => {
     const itemPrice = item.price || item.unitPrice || item.pricePerKg || 0;
@@ -25,18 +24,26 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
     return `${index + 1}. ${item.name}${variantStr}${packsStr} - ₹${itemTotal.toLocaleString('en-IN')}`;
   }).join('\n');
 
+  // Delivery charge rule: Free above Rs. 1000, Rs. 100 below Rs. 1000
+  const isFreeDelivery = itemsSubtotal >= 1000;
+  const deliveryFee = isFreeDelivery ? 0 : 100;
   const grandTotal = itemsSubtotal + deliveryFee;
+  const deliveryText = isFreeDelivery
+    ? 'FREE Delivery (Order above ₹1,000 🎉)'
+    : '₹100 (Below ₹1,000 order)';
 
-  let message = `Hello ${BRAND_INFO.name},\n\nI would like to place an order from your website:\n\n${itemsList}\n\n─────────────────────\nItems Subtotal: ₹${itemsSubtotal.toLocaleString('en-IN')}\nDelivery: ₹${deliveryFee} (Flat Delivery)\nTotal Payable: ₹${grandTotal.toLocaleString('en-IN')}`;
+  let message = `Hello ${BRAND_INFO.name},\n\nI would like to place an order from your website:\n\n${itemsList}\n\n─────────────────────\nItems Subtotal: ₹${itemsSubtotal.toLocaleString('en-IN')}\nDelivery Fee: ${deliveryText}\nTotal Payable: ₹${grandTotal.toLocaleString('en-IN')}`;
 
-  const { name, address, notes } = customerDetails;
+  const { name, phone, address, pincode, notes } = customerDetails;
   const details = [];
-  if (name && name.trim()) details.push(`Name: ${name.trim()}`);
-  if (address && address.trim()) details.push(`Delivery Address: ${address.trim()}`);
-  if (notes && notes.trim()) details.push(`Notes: ${notes.trim()}`);
+  if (name && name.trim()) details.push(`• Customer Name: ${name.trim()}`);
+  if (phone && phone.trim()) details.push(`• Phone Number: ${phone.trim()}`);
+  if (address && address.trim()) details.push(`• Delivery Address: ${address.trim()}`);
+  if (pincode && pincode.trim()) details.push(`• Pincode: ${pincode.trim()}`);
+  if (notes && notes.trim()) details.push(`• Special Request / Note: ${notes.trim()}`);
 
   if (details.length > 0) {
-    message += `\n─────────────────────\n${details.join('\n')}`;
+    message += `\n\n─────────────────────\nCUSTOMER & DELIVERY DETAILS:\n${details.join('\n')}`;
   }
 
   message += `\n\nPlease confirm my order and share payment details (UPI/GPay/PhonePe).\n\nThank you!`;

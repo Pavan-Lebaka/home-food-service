@@ -2278,24 +2278,134 @@ h1, h2, h3, h4 {
 }
 
 /* Filled State */
-.cart-delivery-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #EDFFA7;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 0.825rem;
-  font-weight: 700;
-  color: #1A3416;
+/* 1. Delivery Threshold & Gamification Progress Bar */
+.delivery-gamify-card {
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
   margin-bottom: 1.25rem;
+  border: 1px solid rgba(46, 42, 57, 0.08);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.delivery-gamify-card.pending {
+  background: #FFFDF5;
+  border-color: rgba(217, 154, 23, 0.35);
+  box-shadow: 0 2px 10px rgba(217, 154, 23, 0.08);
+}
+
+.delivery-gamify-card.unlocked {
+  background: #F0FDF4;
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.1);
+}
+
+.delivery-gamify-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.gamify-icon-pill {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.gamify-text-wrap {
+  flex: 1;
+}
+
+.gamify-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--color-dark-brown);
+  line-height: 1.3;
+}
+
+.gamify-title.unlocked-text {
+  color: #065F46;
+}
+
+.gamify-subtext {
+  font-size: 0.74rem;
+  color: var(--color-dark-brown-soft);
+  margin-top: 1px;
+}
+
+.gamify-progress-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(46, 42, 57, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.gamify-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #D99A17 0%, #E87A38 100%);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gamify-progress-fill.fill-complete {
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+}
+
+.cart-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-dark-brown-muted);
+  margin-bottom: 0.75rem;
+}
+
+.items-count-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-terracotta);
+  background: rgba(168, 58, 36, 0.08);
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+}
+
+.drawer-items-count-badge {
+  font-size: 0.72rem;
+  background: rgba(168, 58, 36, 0.1);
+  color: var(--color-terracotta);
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.drawer-header-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #F5EBE1;
+  color: var(--color-terracotta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* 2. Items List */
 .cart-items-list {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .cart-item-card {
@@ -2389,97 +2499,353 @@ h1, h2, h3, h4 {
   opacity: 1;
 }
 
-/* Delivery Form */
-.cart-delivery-form {
-  background: #FFFFFF;
-  border: 1px solid rgba(46, 42, 57, 0.1);
+/* 3. Customer & Delivery Booking Details Card */
+.cart-delivery-card {
+  background: #FCFAF6;
+  border: 1.5px solid rgba(168, 58, 36, 0.22);
   border-radius: var(--radius-md);
   padding: 1.15rem;
-  margin-top: 1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 14px rgba(46, 42, 57, 0.03);
+  transition: all 0.25s ease;
 }
 
-.form-header {
+.cart-delivery-card.has-errors {
+  border-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.delivery-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid rgba(46, 42, 57, 0.08);
+}
+
+.delivery-card-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--color-dark-brown);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.delivery-card-sub {
+  font-size: 0.74rem;
+  color: var(--color-dark-brown-soft);
+  margin: 2px 0 0;
+}
+
+.required-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #DC2626;
+  background: #FEE2E2;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.form-error-alert {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.825rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--color-dark-brown);
+  gap: 8px;
+  background: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  color: #991B1B;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
   margin-bottom: 0.85rem;
 }
 
-.form-inputs-group {
+.delivery-form-fields {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.85rem;
+}
+
+.form-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.field-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-dark-brown);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.star-required {
+  color: #DC2626;
+  font-weight: 800;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-icon {
+  position: absolute;
+  left: 11px;
+  color: var(--color-dark-brown-muted);
+  pointer-events: none;
+}
+
+.field-icon.textarea-icon {
+  top: 11px;
 }
 
 .cart-input-field {
   width: 100%;
-  padding: 9px 12px;
-  border-radius: 6px;
-  border: 1px solid rgba(46, 42, 57, 0.15);
-  font-size: 0.85rem;
+  padding: 9px 12px 9px 34px;
+  border-radius: 7px;
+  border: 1.5px solid rgba(46, 42, 57, 0.16);
+  font-size: 0.86rem;
   font-family: inherit;
+  color: var(--color-dark-brown);
+  background: #FFFFFF;
   outline: none;
+  transition: all 0.2s ease;
 }
 
 .cart-input-field:focus {
-  border-color: var(--color-dark-brown);
+  border-color: var(--color-terracotta);
+  box-shadow: 0 0 0 3px rgba(168, 58, 36, 0.12);
 }
 
-/* Drawer Footer */
-.drawer-footer {
-  border-top: 1px solid rgba(46, 42, 57, 0.1);
-  padding: 1.25rem 1.5rem;
+.phone-input-wrap .phone-prefix {
+  position: absolute;
+  left: 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--color-dark-brown);
+  background: #EFECE6;
+  padding: 3px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.phone-input-wrap .cart-input-field {
+  padding-left: 50px;
+}
+
+.cart-textarea-field {
+  resize: vertical;
+  min-height: 52px;
+  line-height: 1.4;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.field-error .cart-input-field {
+  border-color: #EF4444 !important;
+  background: #FFF5F5;
+}
+
+.field-error-msg {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #DC2626;
+  margin-top: 2px;
+}
+
+/* 4. Bill Details Card */
+.cart-bill-summary-card {
   background: #FFFFFF;
+  border: 1px solid rgba(46, 42, 57, 0.1);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.15rem;
+  margin-bottom: 1rem;
 }
 
-.cart-bill-summary {
+.bill-card-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-dark-brown-muted);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px dashed rgba(46, 42, 57, 0.1);
+}
+
+.bill-breakdown-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 1.25rem;
+  gap: 8px;
 }
 
 .bill-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.88rem;
   color: var(--color-dark-brown-soft);
 }
 
-.delivery-badge-cost {
-  color: var(--color-leaf-green);
+.bill-val {
   font-weight: 700;
+  color: var(--color-dark-brown);
+}
+
+.delivery-badge-cost {
+  font-weight: 700;
+  color: var(--color-dark-brown);
+}
+
+.delivery-free-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.original-strike {
+  text-decoration: line-through;
+  color: #9CA3AF;
+  font-size: 0.82rem;
+}
+
+.free-badge {
+  font-weight: 800;
+  color: #059669;
+  background: #ECFDF5;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+}
+
+.bill-savings-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ECFDF5;
+  color: #065F46;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 6px;
 }
 
 .bill-row.grand-total {
-  font-size: 1.2rem;
+  border-top: 1px solid rgba(46, 42, 57, 0.1);
+  padding-top: 10px;
+  margin-top: 4px;
+}
+
+.total-label-wrap {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
   font-weight: 800;
   color: var(--color-dark-brown);
-  border-top: 1px solid rgba(46, 42, 57, 0.08);
-  padding-top: 8px;
-  margin-top: 4px;
+}
+
+.tax-inclusive-tag {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--color-dark-brown-muted);
 }
 
 .total-num {
   font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
   color: var(--color-terracotta);
+}
+
+/* 5. Trust Assurances */
+.cart-trust-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0.75rem;
+  background: #F9F7F2;
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+}
+
+.cart-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.74rem;
+  color: var(--color-dark-brown-soft);
+  line-height: 1.35;
+}
+
+/* 6. Drawer Sticky Footer */
+.drawer-footer {
+  border-top: 1px solid rgba(46, 42, 57, 0.1);
+  padding: 1rem 1.25rem;
+  background: #FFFFFF;
+}
+
+.sticky-footer-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.sticky-total-info {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.sticky-total-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-dark-brown-soft);
+}
+
+.sticky-total-val {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-terracotta);
+  font-family: var(--font-display);
+}
+
+.tag-free-deliv {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #059669;
+  background: #ECFDF5;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+
+.tag-paid-deliv {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-dark-brown-muted);
 }
 
 .btn-whatsapp-checkout {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 8px;
   width: 100%;
   background: #25D366;
   color: #FFFFFF;
-  padding: 13px 20px;
+  padding: 13px 18px;
   border-radius: var(--radius-full);
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 700;
   box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
   transition: all 0.2s ease;
@@ -2490,9 +2856,27 @@ h1, h2, h3, h4 {
   transform: translateY(-1px);
 }
 
+.btn-checkout-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+}
+
+.btn-main-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.btn-sub-amount {
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
 .cart-phone-assist {
   text-align: center;
-  margin-top: 0.75rem;
+  margin-top: 0.65rem;
 }
 
 .call-assist-link {
@@ -2506,16 +2890,6 @@ h1, h2, h3, h4 {
 
 .call-assist-link:hover {
   color: var(--color-dark-brown);
-}
-
-.drawer-guarantee {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  color: var(--color-dark-brown-muted);
-  margin-top: 0.65rem;
 }
 
 /* ==========================================================================
@@ -2952,7 +3326,8 @@ h1, h2, h3, h4 {
   .cart-drawer {
     width: 100%;
     max-width: 100%;
-    height: 92vh; /* leave small gap at top to see backdrop */
+    height: 94vh;
+    max-height: 94vh;
     border-radius: 20px 20px 0 0;
     animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
@@ -2961,24 +3336,23 @@ h1, h2, h3, h4 {
     overscroll-behavior: contain;
   }
 
-  /* Drawer handle indicator */
-  .drawer-header::before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 36px;
+  .cart-drawer-handle {
+    width: 40px;
     height: 4px;
     border-radius: 2px;
-    background: rgba(46, 42, 57, 0.15);
+    background: rgba(46, 42, 57, 0.2);
+    margin: 8px auto 0;
+    flex-shrink: 0;
   }
 
   .drawer-header {
     position: relative;
-    padding: 1.25rem 1rem 1rem;
+    padding: 0.85rem 1rem 0.85rem;
     flex-shrink: 0;
+  }
+
+  .drawer-title {
+    font-size: 1.25rem;
   }
 
   /* Body scrolls independently */
@@ -2986,7 +3360,7 @@ h1, h2, h3, h4 {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 1rem;
+    padding: 0.85rem 1rem;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     touch-action: pan-y;
@@ -3004,16 +3378,6 @@ h1, h2, h3, h4 {
   .drawer-body::-webkit-scrollbar-thumb {
     background: rgba(46, 42, 57, 0.2);
     border-radius: 2px;
-  }
-
-  /* Footer stays fixed at bottom */
-  .drawer-footer {
-    flex-shrink: 0;
-    padding: 1rem;
-    border-top: 1px solid rgba(46, 42, 57, 0.1);
-    background: #FFFFFF;
-    /* Ensure footer is visible above mobile browser chrome */
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 
   /* Cart item card — better mobile layout */
@@ -3053,13 +3417,30 @@ h1, h2, h3, h4 {
     min-width: auto;
   }
 
-  /* Bill summary compact */
-  .cart-bill-summary {
-    margin-bottom: 0.85rem;
+  /* Delivery form inputs on mobile */
+  .cart-delivery-card {
+    padding: 1rem;
+    margin-top: 0.75rem;
+    margin-bottom: 1rem;
   }
 
-  .bill-row.grand-total {
-    font-size: 1.05rem;
+  .cart-input-field {
+    font-size: 16px; /* Prevent zoom on iOS Safari */
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .cart-textarea-field {
+    font-size: 16px;
+  }
+
+  /* Footer stays fixed at bottom */
+  .drawer-footer {
+    flex-shrink: 0;
+    padding: 0.85rem 1rem calc(1rem + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(46, 42, 57, 0.1);
+    background: #FFFFFF;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
   }
 
   .btn-whatsapp-checkout {
@@ -3075,11 +3456,6 @@ h1, h2, h3, h4 {
 
   .quick-pick-add-btn {
     flex-shrink: 0;
-  }
-
-  /* Delivery form inputs */
-  .cart-input-field {
-    font-size: 16px; /* Prevent zoom on iOS */
   }
 }
 

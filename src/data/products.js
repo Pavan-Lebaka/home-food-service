@@ -382,7 +382,7 @@ export const BRAND_INFO = {
   name: 'Bramarambika Home Foods',
   tagline: 'Traditional Telugu Taste • Homemade with Love',
   heroSubtitle: 'Authentic Pindi Vantalu & Homemade Pickles',
-  announcement: 'Flat Rs. 100 on Delivery Across All Orders • Fresh Traditional Batches • WhatsApp: 7702808886',
+  announcement: 'FREE Delivery on Orders Above ₹1,000 • Flat ₹100 Below ₹1,000 • WhatsApp: 7702808886',
   whatsappNumber: '7702808886',
   whatsappDisplay: '7702808886',
   phoneNumber: '9705449968',
