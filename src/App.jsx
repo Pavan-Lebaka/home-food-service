@@ -12,10 +12,8 @@ import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import FloatingCart from './components/FloatingCart';
-import { useScrollReveal } from './hooks/useScrollReveal';
 
 export default function App() {
-  useScrollReveal();
 
   const [cartItems, setCartItems] = useState(() => {
     try {

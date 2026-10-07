@@ -273,310 +273,314 @@ export default function CartDrawer({
             </div>
           ) : (
             <div className="cart-items-flow">
-              {/* 1. Dynamic Delivery Charge & Free Delivery Gamification Bar */}
-              <div className={`delivery-gamify-card ${isFreeDelivery ? 'unlocked' : 'pending'}`}>
-                <div className="delivery-gamify-header">
-                  <div className="gamify-icon-pill">
+              {/* 1. Dynamic Free Delivery Slim Banner */}
+              <div className={`modern-gamify-banner ${isFreeDelivery ? 'is-unlocked' : 'is-pending'}`}>
+                <div className="modern-gamify-top">
+                  <div className="modern-gamify-icon">
                     {isFreeDelivery ? (
-                      <CheckCircle2 size={16} color="#059669" />
+                      <CheckCircle2 size={15} color="#059669" />
                     ) : (
-                      <Truck size={16} color="var(--color-terracotta)" />
+                      <Truck size={15} color="var(--color-terracotta)" />
                     )}
                   </div>
-                  <div className="gamify-text-wrap">
+                  <div className="modern-gamify-text">
                     {isFreeDelivery ? (
-                      <div className="gamify-title unlocked-text">
-                        {t('freeDeliveryUnlocked') || '🎉 You unlocked FREE Delivery! (Saved ₹100)'}
-                      </div>
+                      <span className="gamify-highlight unlocked">
+                        {t('freeDeliveryUnlocked') || '🎉 FREE Delivery Unlocked! (Saved ₹100)'}
+                      </span>
                     ) : (
-                      <div className="gamify-title">
+                      <span className="gamify-highlight">
                         {t('addMoreForFreeDelivery')?.replace('{amount}', amountNeededForFree) ||
                           `Add ₹${amountNeededForFree} more for FREE Delivery!`}
-                      </div>
+                      </span>
                     )}
-                    <div className="gamify-subtext">
-                      {isFreeDelivery
-                        ? 'Applied on orders above ₹1,000'
-                        : 'Free delivery above ₹1,000 • Flat ₹100 below ₹1,000'}
-                    </div>
                   </div>
                 </div>
 
-                {/* Progress bar track */}
-                <div className="gamify-progress-track">
-                  <div
-                    className={`gamify-progress-fill ${isFreeDelivery ? 'fill-complete' : ''}`}
-                    style={{ width: `${freeDeliveryProgress}%` }}
-                  />
+                {!isFreeDelivery && (
+                  <div className="modern-gamify-track">
+                    <div
+                      className="modern-gamify-fill"
+                      style={{ width: `${freeDeliveryProgress}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* 2. Cart Items Modern Card List */}
+              <div className="modern-cart-section">
+                <div className="modern-section-header">
+                  <span className="modern-section-title">{t('yourOrderCart')}</span>
+                  <span className="modern-count-pill">{cartItems.length} items</span>
                 </div>
-              </div>
 
-              {/* 2. Cart Items List */}
-              <div className="cart-section-label">
-                <span>{t('yourOrderCart')}</span>
-                <span className="items-count-tag">{cartItems.length} items</span>
-              </div>
+                <div className="modern-cart-items-list">
+                  {cartItems.map((item) => {
+                    const key = item.cartItemId || `${item.id}-${item.variantId || '500g'}`;
+                    const itemPrice = item.unitPrice || item.price || item.pricePerKg || 0;
+                    const lineTotal = itemPrice * item.quantity;
+                    return (
+                      <div key={key} className="modern-cart-item-card">
+                        <img src={item.image} alt={item.name} className="modern-item-thumb" />
 
-              <div className="cart-items-list">
-                {cartItems.map((item) => {
-                  const key = item.cartItemId || `${item.id}-${item.variantId || '500g'}`;
-                  const itemPrice = item.unitPrice || item.price || item.pricePerKg || 0;
-                  const lineTotal = itemPrice * item.quantity;
-                  return (
-                    <div key={key} className="cart-item-card">
-                      <img src={item.image} alt={item.name} className="cart-item-img" />
-
-                      <div className="cart-item-info">
-                        <div className="cart-item-title">{item.name}</div>
-                        <div className="cart-item-weight-badge">
-                          {t('packSize')} <strong>{item.variantLabel || '1/2 kg'}</strong>
+                        <div className="modern-item-main">
+                          <h4 className="modern-item-name">{item.name}</h4>
+                          <div className="modern-item-meta">
+                            <span className="modern-item-badge">{item.variantLabel || '1/2 kg'}</span>
+                            <span className="modern-item-rate">₹{itemPrice} {t('each')}</span>
+                          </div>
                         </div>
-                        <div className="cart-item-price-unit">
-                          ₹{itemPrice} {t('each')}
+
+                        <div className="modern-item-controls">
+                          {/* Tactile Modern Stepper */}
+                          <div className="modern-stepper">
+                            <button
+                              type="button"
+                              onClick={() => onUpdateQuantity(key, item.quantity - 1)}
+                              className="modern-stepper-btn minus"
+                              aria-label={`Decrease ${item.name}`}
+                              title={item.quantity === 1 ? 'Remove item' : 'Decrease quantity'}
+                            >
+                              {item.quantity === 1 ? <Trash2 size={12} color="#DC2626" /> : <Minus size={12} />}
+                            </button>
+                            <span className="modern-stepper-count">{item.quantity}</span>
+                            <button
+                              type="button"
+                              onClick={() => onUpdateQuantity(key, item.quantity + 1)}
+                              className="modern-stepper-btn plus"
+                              aria-label={`Increase ${item.name}`}
+                            >
+                              <Plus size={12} />
+                            </button>
+                          </div>
+
+                          <div className="modern-item-subtotal">
+                            ₹{lineTotal.toLocaleString('en-IN')}
+                          </div>
                         </div>
                       </div>
+                    );
+                  })}
+                </div>
 
-                      <div className="cart-item-actions">
-                        {/* Stepper */}
-                        <div className="cart-stepper">
-                          <button
-                            type="button"
-                            onClick={() => onUpdateQuantity(key, item.quantity - 1)}
-                            className="cart-stepper-btn"
-                            aria-label={`Decrease ${item.name}`}
-                          >
-                            <Minus size={12} />
-                          </button>
-                          <span className="cart-stepper-val">{item.quantity}</span>
-                          <button
-                            type="button"
-                            onClick={() => onUpdateQuantity(key, item.quantity + 1)}
-                            className="cart-stepper-btn"
-                            aria-label={`Increase ${item.name}`}
-                          >
-                            <Plus size={12} />
-                          </button>
-                        </div>
-
-                        <div className="cart-item-total">
-                          ₹{lineTotal.toLocaleString('en-IN')}
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => onRemoveItem(key)}
-                          className="cart-trash-btn"
-                          aria-label={`Remove ${item.name}`}
-                          title="Remove item"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
+                {/* Add more items shortcut */}
+                <button
+                  type="button"
+                  onClick={handleBrowseMenu}
+                  className="modern-add-more-link"
+                >
+                  <Plus size={14} />
+                  <span>{t('viewAllSpecials') || 'Add more items from menu'}</span>
+                </button>
               </div>
 
-              {/* 3. Customer & Delivery Details Section — Prominently Visible & Required */}
+              {/* 3. Customer & Delivery Booking Form (Modern 2-Column Responsive Card) */}
               <div
                 ref={formRef}
-                className={`cart-delivery-card ${formSubmitted && Object.keys(errors).length > 0 ? 'has-errors' : ''}`}
+                className={`modern-delivery-card ${formSubmitted && Object.keys(errors).length > 0 ? 'has-errors' : ''}`}
               >
-                <div className="delivery-card-header">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <MapPin size={18} color="var(--color-terracotta)" />
+                <div className="modern-delivery-header">
+                  <div className="delivery-header-left">
+                    <MapPin size={16} className="pin-icon" />
                     <div>
                       <h3 className="delivery-card-title">{t('deliveryInfo')}</h3>
-                      <p className="delivery-card-sub">{t('deliveryInfoSub')}</p>
+                      <p className="delivery-card-subtitle">{t('deliveryInfoSub')}</p>
                     </div>
                   </div>
-                  <span className="required-badge">
-                    * {t('requiredField') || 'Required'}
-                  </span>
+                  <span className="required-flag">* {t('requiredField') || 'Required'}</span>
                 </div>
 
-                {/* Validation alert banner if submitted with missing fields */}
                 {formSubmitted && Object.keys(errors).length > 0 && (
-                  <div className="form-error-alert" role="alert">
-                    <AlertCircle size={16} />
-                    <span>{t('pleaseFillAllDetails')}</span>
+                  <div className="modern-form-error-banner" role="alert">
+                    <AlertCircle size={14} />
+                    <span>{t('pleaseFillAllDetails') || 'Please fill in Name, Phone, Address & Pincode'}</span>
                   </div>
                 )}
 
-                <div className="delivery-form-fields">
-                  {/* Full Name Field */}
-                  <div className={`form-field-row ${errors.name ? 'field-error' : ''}`}>
-                    <label htmlFor="customer-name" className="field-label">
-                      <span>{t('yourFullName')}</span>
-                      <span className="star-required">*</span>
-                    </label>
-                    <div className="input-with-icon">
-                      <User size={16} className="field-icon" />
-                      <input
-                        ref={nameInputRef}
-                        id="customer-name"
-                        type="text"
-                        placeholder="e.g. Ramesh Reddy"
-                        value={customerDetails.name}
-                        onChange={e => handleInputChange('name', e.target.value)}
-                        className="cart-input-field"
-                        autoComplete="name"
-                      />
+                <div className="modern-form-grid">
+                  {/* Row 1: Name and Phone (2 columns) */}
+                  <div className="form-grid-row two-col">
+                    <div className={`modern-field-group ${errors.name ? 'field-has-error' : ''}`}>
+                      <label htmlFor="customer-name" className="modern-field-label">
+                        <span>{t('yourFullName')}</span>
+                        <span className="req-star">*</span>
+                      </label>
+                      <div className="modern-input-box">
+                        <User size={14} className="input-icon" />
+                        <input
+                          ref={nameInputRef}
+                          id="customer-name"
+                          type="text"
+                          placeholder="e.g. Ramesh Reddy"
+                          value={customerDetails.name}
+                          onChange={e => handleInputChange('name', e.target.value)}
+                          className="modern-input"
+                          autoComplete="name"
+                        />
+                      </div>
+                      {errors.name && (
+                        <span className="modern-error-text">{t('fieldRequiredError')} (Min 2 chars)</span>
+                      )}
                     </div>
-                    {errors.name && (
-                      <span className="field-error-msg">{t('fieldRequiredError')} (Min 2 letters)</span>
-                    )}
+
+                    <div className={`modern-field-group ${errors.phone ? 'field-has-error' : ''}`}>
+                      <label htmlFor="customer-phone" className="modern-field-label">
+                        <span>{t('phoneNumberLabel')}</span>
+                        <span className="req-star">*</span>
+                      </label>
+                      <div className="modern-input-box phone-box">
+                        <span className="phone-prefix-tag">+91</span>
+                        <input
+                          ref={phoneInputRef}
+                          id="customer-phone"
+                          type="tel"
+                          inputMode="numeric"
+                          maxLength={10}
+                          placeholder="10-digit Mobile"
+                          value={customerDetails.phone}
+                          onChange={e => {
+                            const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                            handleInputChange('phone', digits);
+                          }}
+                          className="modern-input phone-input"
+                          autoComplete="tel"
+                        />
+                      </div>
+                      {errors.phone && (
+                        <span className="modern-error-text">Valid 10 digits required</span>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Phone Number Field */}
-                  <div className={`form-field-row ${errors.phone ? 'field-error' : ''}`}>
-                    <label htmlFor="customer-phone" className="field-label">
-                      <span>{t('phoneNumberLabel')}</span>
-                      <span className="star-required">*</span>
+                  {/* Row 2: Complete Address (Full width) */}
+                  <div className={`modern-field-group full-width ${errors.address ? 'field-has-error' : ''}`}>
+                    <label htmlFor="customer-address" className="modern-field-label">
+                      <span>{t('deliveryCity')} (Door No, Street, City)</span>
+                      <span className="req-star">*</span>
                     </label>
-                    <div className="input-with-icon phone-input-wrap">
-                      <div className="phone-prefix">+91</div>
+                    <div className="modern-input-box">
+                      <MapPin size={14} className="input-icon" />
                       <input
-                        ref={phoneInputRef}
-                        id="customer-phone"
-                        type="tel"
-                        inputMode="numeric"
-                        maxLength={10}
-                        placeholder="10-digit Mobile Number"
-                        value={customerDetails.phone}
-                        onChange={e => {
-                          const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 10);
-                          handleInputChange('phone', digitsOnly);
-                        }}
-                        className="cart-input-field"
-                        autoComplete="tel"
-                      />
-                    </div>
-                    {errors.phone && (
-                      <span className="field-error-msg">Please enter a valid 10-digit mobile number</span>
-                    )}
-                  </div>
-
-                  {/* Complete Delivery Address Field */}
-                  <div className={`form-field-row ${errors.address ? 'field-error' : ''}`}>
-                    <label htmlFor="customer-address" className="field-label">
-                      <span>{t('deliveryCity')}</span>
-                      <span className="star-required">*</span>
-                    </label>
-                    <div className="input-with-icon">
-                      <MapPin size={16} className="field-icon textarea-icon" />
-                      <textarea
                         ref={addressInputRef}
                         id="customer-address"
-                        rows={2}
-                        placeholder="House / Flat No, Street, Landmark, Area, City"
+                        type="text"
+                        placeholder="Flat/House No, Landmark, Area, City"
                         value={customerDetails.address}
                         onChange={e => handleInputChange('address', e.target.value)}
-                        className="cart-input-field cart-textarea-field"
+                        className="modern-input"
                         autoComplete="street-address"
                       />
                     </div>
                     {errors.address && (
-                      <span className="field-error-msg">Please enter your complete delivery address</span>
+                      <span className="modern-error-text">Please enter complete delivery address</span>
                     )}
                   </div>
 
-                  {/* Pincode Field */}
-                  <div className={`form-field-row ${errors.pincode ? 'field-error' : ''}`}>
-                    <label htmlFor="customer-pincode" className="field-label">
-                      <span>{t('pincodeLabel')}</span>
-                      <span className="star-required">*</span>
-                    </label>
-                    <div className="input-with-icon">
-                      <Hash size={16} className="field-icon" />
-                      <input
-                        ref={pincodeInputRef}
-                        id="customer-pincode"
-                        type="tel"
-                        inputMode="numeric"
-                        maxLength={6}
-                        placeholder="6-digit Pincode (e.g. 500034)"
-                        value={customerDetails.pincode}
-                        onChange={e => {
-                          const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 6);
-                          handleInputChange('pincode', digitsOnly);
-                        }}
-                        className="cart-input-field"
-                        autoComplete="postal-code"
-                      />
+                  {/* Row 3: Pincode and Notes (2 columns) */}
+                  <div className="form-grid-row two-col">
+                    <div className={`modern-field-group ${errors.pincode ? 'field-has-error' : ''}`}>
+                      <label htmlFor="customer-pincode" className="modern-field-label">
+                        <span>{t('pincodeLabel')}</span>
+                        <span className="req-star">*</span>
+                      </label>
+                      <div className="modern-input-box">
+                        <Hash size={14} className="input-icon" />
+                        <input
+                          ref={pincodeInputRef}
+                          id="customer-pincode"
+                          type="tel"
+                          inputMode="numeric"
+                          maxLength={6}
+                          placeholder="6-digit Pincode"
+                          value={customerDetails.pincode}
+                          onChange={e => {
+                            const digits = e.target.value.replace(/\D/g, '').slice(0, 6);
+                            handleInputChange('pincode', digits);
+                          }}
+                          className="modern-input"
+                          autoComplete="postal-code"
+                        />
+                      </div>
+                      {errors.pincode && (
+                        <span className="modern-error-text">Valid 6 digits required</span>
+                      )}
                     </div>
-                    {errors.pincode && (
-                      <span className="field-error-msg">Please enter a valid 6-digit postal pincode</span>
-                    )}
-                  </div>
 
-                  {/* Special Cooking / Delivery Notes (Optional) */}
-                  <div className="form-field-row">
-                    <label htmlFor="customer-notes" className="field-label">
-                      <span>{t('specialRequest')}</span>
-                    </label>
-                    <div className="input-with-icon">
-                      <FileText size={16} className="field-icon" />
-                      <input
-                        id="customer-notes"
-                        type="text"
-                        placeholder="e.g. Less spicy, extra crisp, festive packing"
-                        value={customerDetails.notes}
-                        onChange={e => handleInputChange('notes', e.target.value)}
-                        className="cart-input-field"
-                      />
+                    <div className="modern-field-group">
+                      <label htmlFor="customer-notes" className="modern-field-label">
+                        <span>{t('specialRequest')}</span>
+                        <span className="optional-tag">(optional)</span>
+                      </label>
+                      <div className="modern-input-box">
+                        <FileText size={14} className="input-icon" />
+                        <input
+                          id="customer-notes"
+                          type="text"
+                          placeholder="e.g. Less spicy, extra crisp"
+                          value={customerDetails.notes}
+                          onChange={e => handleInputChange('notes', e.target.value)}
+                          className="modern-input"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* 4. Bill Details Breakdown Card */}
-              <div className="cart-bill-summary-card">
-                <div className="bill-card-title">Order Bill Details</div>
-                <div className="bill-breakdown-list">
-                  <div className="bill-row">
-                    <span>{t('itemsSubtotal')}</span>
-                    <span className="bill-val">₹{itemsSubtotal.toLocaleString('en-IN')}</span>
+              {/* 4. Order Bill Breakdown Card */}
+              <div className="modern-bill-card">
+                <div className="modern-bill-header">
+                  <span className="bill-title-text">Order Bill Details</span>
+                  <span className="bill-trust-tag">
+                    <ShieldCheck size={12} color="var(--color-leaf-green)" />
+                    <span>Pure & Authentic</span>
+                  </span>
+                </div>
+
+                <div className="modern-bill-table">
+                  <div className="bill-table-row">
+                    <span className="table-row-label">{t('itemsSubtotal')}</span>
+                    <span className="table-row-value">₹{itemsSubtotal.toLocaleString('en-IN')}</span>
                   </div>
 
-                  <div className="bill-row">
-                    <span>{t('deliveryCharge')}</span>
+                  <div className="bill-table-row">
+                    <span className="table-row-label">{t('deliveryCharge')}</span>
                     {isFreeDelivery ? (
-                      <div className="delivery-free-indicator">
-                        <span className="original-strike">₹100</span>
-                        <span className="free-badge">{t('freeDeliveryBadge') || 'FREE'}</span>
+                      <div className="free-delivery-combo">
+                        <s className="strike-amount">₹100</s>
+                        <span className="free-badge-pill">{t('freeDeliveryBadge') || 'FREE'}</span>
                       </div>
                     ) : (
-                      <span className="delivery-badge-cost">₹100</span>
+                      <span className="standard-deliv-badge">₹100</span>
                     )}
                   </div>
 
                   {isFreeDelivery && (
-                    <div className="bill-savings-banner">
-                      <Sparkles size={14} color="#059669" />
+                    <div className="modern-savings-strip">
+                      <Sparkles size={13} color="#059669" />
                       <span>You saved ₹100 on Delivery! 🎉</span>
                     </div>
                   )}
 
-                  <div className="bill-row grand-total">
-                    <div className="total-label-wrap">
-                      <span>{t('totalAmount')}</span>
-                      <span className="tax-inclusive-tag">All taxes included</span>
+                  <div className="bill-table-row grand-total-row">
+                    <div className="total-label-block">
+                      <span className="total-title">{t('totalAmount')}</span>
+                      <span className="total-tax-note">All taxes included</span>
                     </div>
-                    <span className="total-num">₹{grandTotal.toLocaleString('en-IN')}</span>
+                    <span className="total-amount-display">₹{grandTotal.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </div>
 
               {/* 5. Trust Assurances */}
-              <div className="cart-trust-badges">
-                <div className="cart-trust-item">
-                  <ShieldCheck size={16} color="var(--color-leaf-green)" />
-                  <span>100% Traditional Telugu Recipes • Brass Vessel Cooking</span>
+              <div className="modern-cart-assurances">
+                <div className="assurance-item">
+                  <ShieldCheck size={14} className="assurance-icon" />
+                  <span>100% Traditional Telugu Taste • Brass Vessel Cooking</span>
                 </div>
-                <div className="cart-trust-item">
-                  <Truck size={16} color="var(--color-terracotta)" />
-                  <span>Fresh Batches Dispatched in 24 Hours in Leakproof Packaging</span>
+                <div className="assurance-item">
+                  <Truck size={14} className="assurance-icon" />
+                  <span>Fresh Batches Dispatched in 24h • Pay on Delivery or UPI</span>
                 </div>
               </div>
             </div>
@@ -585,8 +589,7 @@ export default function CartDrawer({
 
         {/* Drawer Footer with Instant WhatsApp Action */}
         {cartItems.length > 0 && (
-          <div className="drawer-footer">
-            {/* Quick Bill Row in Sticky Footer for glanceability */}
+          <div className="drawer-footer modern-sticky-footer">
             <div className="sticky-footer-summary-row">
               <div className="sticky-total-info">
                 <span className="sticky-total-label">Total to Pay</span>
@@ -604,10 +607,10 @@ export default function CartDrawer({
             <button
               type="button"
               onClick={handleWhatsAppCheckout}
-              className="btn-whatsapp-checkout"
+              className="btn-whatsapp-checkout modern-checkout-btn"
               id="cart-checkout-whatsapp-btn"
             >
-              <MessageCircle size={20} />
+              <MessageCircle size={19} />
               <div className="btn-checkout-content">
                 <span className="btn-main-title">{t('bookOrderWhatsApp') || 'Book Order on WhatsApp'}</span>
                 <span className="btn-sub-amount">• ₹{grandTotal.toLocaleString('en-IN')}</span>

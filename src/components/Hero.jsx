@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Sparkles, Leaf, ShieldCheck, Heart, PackageCheck, Flame } from 'lucide-react';
+import { Sparkles, Leaf, ShieldCheck, Heart, PackageCheck, Flame } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const SLIDES = [
@@ -152,49 +152,6 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
           <div className="hero-weight-prompt-pill">
             <PackageCheck size={16} color="var(--color-leaf-green)" />
             <span>{t('heroPackSizes')}</span>
-          </div>
-        </div>
-
-        {/* Carousel Integrated Controls Pill: Prev Arrow + Dots + Next Arrow + Counter */}
-        <div className="hero-carousel-controls">
-          <button
-            type="button"
-            onClick={prevSlide}
-            className="hero-ctrl-arrow-btn"
-            aria-label={t('scrollLeft') || 'Previous slide'}
-            title="Previous slide"
-          >
-            <ChevronLeft size={16} />
-          </button>
-
-          <div className="hero-dots-indicator" role="tablist">
-            {SLIDES.map((slide, idx) => (
-              <button
-                key={slide.id}
-                type="button"
-                role="tab"
-                aria-label={`Slide ${idx + 1}`}
-                aria-selected={idx === currentSlide}
-                onClick={() => setCurrentSlide(idx)}
-                className={`hero-dot-pill ${idx === currentSlide ? 'active' : ''}`}
-              />
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={nextSlide}
-            className="hero-ctrl-arrow-btn"
-            aria-label={t('scrollRight') || 'Next slide'}
-            title="Next slide"
-          >
-            <ChevronRight size={16} />
-          </button>
-
-          <div className="hero-slide-counter">
-            <span className="counter-current">0{currentSlide + 1}</span>
-            <span className="counter-sep">/</span>
-            <span className="counter-total">0{totalSlides}</span>
           </div>
         </div>
       </div>

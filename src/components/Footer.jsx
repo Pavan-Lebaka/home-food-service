@@ -15,7 +15,7 @@ export default function Footer() {
           <div className="footer-brand">
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
               <Sparkles size={20} color="var(--color-turmeric-light)" />
-              <h3 style={{ margin: 0, letterSpacing: '0.04em' }}>BRAMARAMBIKA HOME FOODS</h3>
+              <h3 className="footer-brand-title" style={{ margin: 0, letterSpacing: '0.04em', color: '#FFFFFF', fontWeight: 800 }}>BRAMARAMBIKA HOME FOODS</h3>
             </div>
             <p className="footer-tagline">
               Traditional Telugu Taste • Homemade with Love
