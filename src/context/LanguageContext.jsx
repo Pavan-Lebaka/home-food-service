@@ -169,7 +169,7 @@ export const TRANSLATIONS = {
     noPreservativesTitle: 'No Preservatives',
     noPreservativesDesc: 'Zero artificial colors, flavors, or preservatives. Just real food, real taste.',
     cowGhee: 'Pure Cow Ghee',
-    cowGheeDesc: 'Only A2 bilona method desi cow ghee used in our sweets and traditional laddus.',
+    BuffaloGheeDesc: 'Only A2 bilona method desi cow ghee used in our sweets and traditional laddus.',
 
     // Testimonials
     customerLove: 'Customer Love',
@@ -371,8 +371,8 @@ export const TRANSLATIONS = {
     stoneGroundDesc: 'గరిష్ట రుచి మరియు వాసన కోసం సంప్రదాయ రాయి మిల్లులపై అన్ని మసాలాలు తాజాగా నలగబడతాయి.',
     noPreservativesTitle: 'పరిరక్షకాలు లేవు',
     noPreservativesDesc: 'జీరో కృత్రిమ రంగులు, రుచులు, లేదా పరిరక్షకాలు. కేవలం నిజమైన ఆహారం, నిజమైన రుచి.',
-    cowGhee: 'స్వచ్ఛమైన గోమాతా నెయ్యి',
-    cowGheeDesc: 'మా మిఠాయిలు మరియు సంప్రదాయ లడ్డులలో కేవలం A2 బిలోనా పద్ధతి దేశీ గోమాతా నెయ్యి వాడబడుతుంది.',
+    BuffaloGhee: 'స్వచ్ఛమైన గోమాతా నెయ్యి',
+    BuffaloGheeDesc: 'మా మిఠాయిలు మరియు సంప్రదాయ లడ్డులలో కేవలం A2 బిలోనా పద్ధతి దేశీ గోమాతా నెయ్యి వాడబడుతుంది.',
 
     // Testimonials
     customerLove: 'కస్టమర్ ప్రేమ',
@@ -574,8 +574,8 @@ export const TRANSLATIONS = {
     stoneGroundDesc: 'अधिकतम स्वाद और सुगंध के लिए पारंपरिक पत्थर मिल पर सभी मसाले ताज़ा पिसे जाते हैं।',
     noPreservativesTitle: 'कोई संरक्षक नहीं',
     noPreservativesDesc: 'शून्य कृत्रिम रंग, स्वाद या संरक्षक। बस असली खाना, असली स्वाद।',
-    cowGhee: 'शुद्ध गाय का घी',
-    cowGheeDesc: 'हमारी मिठाइयों और पारंपरिक लड्डू में केवल A2 बिलोना विधि देसी गाय का घी उपयोग।',
+    BuffaloGhee: 'शुद्ध गाय का घी',
+    BuffaloGheeDesc: 'हमारी मिठाइयों और पारंपरिक लड्डू में केवल A2 बिलोना विधि देसी गाय का घी उपयोग।',
 
     // Testimonials
     customerLove: 'ग्राहक प्यार',

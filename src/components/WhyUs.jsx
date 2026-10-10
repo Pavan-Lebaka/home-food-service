@@ -26,8 +26,8 @@ export default function WhyUs() {
     },
     {
       icon: <Heart size={24} strokeWidth={2} />,
-      title: t('cowGhee'),
-      desc: t('cowGheeDesc'),
+      title: t('BuffaloGhee'),
+      desc: t('BuffaloGheeDesc'),
       color: 'var(--color-terracotta)'
     }
   ];
