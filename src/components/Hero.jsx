@@ -10,7 +10,7 @@ const SLIDES = [
     subKey: 'heroSlide1Sub',
     ctaKey: 'heroSlide1Cta',
     categoryTarget: 'all',
-    image: '/images/hero.jpg', // Authentic Andhra Feast: Arisalu, Karapusa, Kajjikayalu, Boondhi, Avakaya jar
+    image: '/images/hero.jpg', // Authentic Diviseema Feast: Arisalu, Karapusa, Kajjikayalu, Boondhi, Avakaya jar
     accentColor: '#D99A17',
     icon: Sparkles
   },

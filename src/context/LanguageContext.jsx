@@ -15,10 +15,10 @@ export const TRANSLATIONS = {
     language: 'Language',
 
     // Hero
-    heroPill: 'Village Kitchen Soul • Andhra Heritage',
+    heroPill: 'Village Kitchen Soul • Diviseema Heritage',
     heroTitle: 'Traditional Telugu Taste,',
     heroTitleHighlight: 'Homemade With Love.',
-    heroSubtitle: 'Authentic Pindi Vantalu, pure desi ghee sweets, and sun-ripened Andhra pickles prepared using cold-pressed oils, stone-ground masalas, and generational family recipes.',
+    heroSubtitle: 'Authentic Pindi Vantalu, pure desi ghee sweets, and sun-ripened Diviseema pickles prepared using cold-pressed oils, stone-ground masalas, and generational family recipes.',
     heroPackSizes: 'Custom pack sizes available: 250 g, 1/2 kg, and 1 kg packs',
     exploreCollections: 'Explore Collections',
     orderOnWhatsApp: 'Order on WhatsApp',
@@ -29,9 +29,9 @@ export const TRANSLATIONS = {
     traditionalStoneGround: 'Traditional Stone Ground',
 
     // Hero Carousel Slides
-    heroSlide1Tag: 'Grand Andhra Heritage • Fresh Daily',
+    heroSlide1Tag: 'Grand Diviseema Heritage • Fresh Daily',
     heroSlide1Title: 'Traditional Telugu Taste, Homemade With Love',
-    heroSlide1Sub: 'Authentic Pindi Vantalu, pure desi ghee sweets, and sun-ripened Andhra pickles prepared using cold-pressed oils and stone-ground masalas.',
+    heroSlide1Sub: 'Authentic Pindi Vantalu, pure desi ghee sweets, and sun-ripened Diviseema pickles prepared using cold-pressed oils and stone-ground masalas.',
     heroSlide1Cta: 'Explore Collections',
 
     heroSlide2Tag: 'Ceramic Jaadi Aged • Zero Preservatives',
@@ -45,7 +45,7 @@ export const TRANSLATIONS = {
     heroSlide3Cta: 'Explore Pure Sweets',
 
     heroSlide4Tag: 'Freshly Fried • Handcrafted Crunchy Snacks',
-    heroSlide4Title: 'Crispy Pindi Vantalu, Authentic Andhra Crunch',
+    heroSlide4Title: 'Crispy Pindi Vantalu, Authentic Diviseema Crunch',
     heroSlide4Sub: 'Hand-pressed Chekkalu, spicy Karapusa, golden Karam Boondhi & Kajjikayalu made fresh to order in pure cold-pressed oil.',
     heroSlide4Cta: 'View Savouries',
 
@@ -56,14 +56,14 @@ export const TRANSLATIONS = {
     // Featured Collections
     ourCollectionsPill: 'Handpicked Favorites',
     ourCollectionsTitle: 'Our Homemade Collections',
-    ourCollectionsSubtitle: 'From fiery Andhra pickles to melt-in-mouth festive sweets — each made fresh in small batches using ancestral recipes.',
+    ourCollectionsSubtitle: 'From fiery Diviseema pickles to melt-in-mouth festive sweets — each made fresh in small batches using ancestral recipes.',
     shopCollection: 'Shop Collection',
     colNonVegTitle: 'Non-Veg Pickles',
     colNonVegSub: 'Boneless Chicken & Coastal Prawns',
     colNonVegTag: 'Spicy & Fiery',
     colVegTitle: 'Veg Pickles',
     colVegSub: 'Avakaya, Gongura, Tomato & Allam',
-    colVegTag: 'Andhra Icons',
+    colVegTag: 'Diviseema Icons',
     colSweetsTitle: 'Traditional Sweets',
     colSweetsSub: 'Arisalu, Sunnundalu, Ravva Laddu & Kajjikayalu',
     colSweetsTag: 'Pure Desi Ghee',
@@ -74,11 +74,11 @@ export const TRANSLATIONS = {
     // Menu
     farmHomeFresh: 'Farm & Home Fresh',
     ourHomemadeSpecials: 'Our Homemade Specials',
-    menuSubtitle: 'Authentic Andhra taste crafted using stone-ground spices, cold-pressed oils, and pure desi Buffalo ghee. Select weights in 250g, 1/2 kg, or 1 kg packs.',
+    menuSubtitle: 'Authentic Diviseema taste crafted using stone-ground spices, cold-pressed oils, and pure desi Buffalo ghee. Select weights in 250g, 1/2 kg, or 1 kg packs.',
     searchPlaceholderMenu: 'Search Avakaya, Arisalu, Chicken pickle...',
     allSpecials: 'All Specials',
     viewCategory: 'View Category',
-    fierAndhrSpecials: 'Fiery Andhra Specials',
+    fierAndhrSpecials: 'Fiery Diviseema Specials',
     nonVegPickles: 'Non Veg Pickles',
     nonVegSubtitle: 'Slow-cooked tender chunks steeped in aromatic stone-ground masala and cold-pressed oil.',
     vegPickles: 'Veg Pickles',
@@ -147,7 +147,7 @@ export const TRANSLATIONS = {
     madeInBatchesDesc: 'Freshly prepared in small daily batches so you receive peak crunch and aroma.',
     ourHeritage: 'Our Heritage',
     storyTitle: 'Crafted in a Village Home, Delivered to Your Door',
-    storyText1: 'Our journey began in a traditional Andhra kitchen, where our grandmother slow-cooked pickles in brass vessels, hand-pressed arisalu on banana leaves, and used only stone-ground spices for every recipe.',
+    storyText1: 'Our journey began in a traditional Diviseema kitchen, where our grandmother slow-cooked pickles in brass vessels, hand-pressed arisalu on banana leaves, and used only stone-ground spices for every recipe.',
     storyText2: 'Today, we follow the same methods — no commercial shortcuts, no artificial preservatives. Every batch is made fresh, hand-packed, and dispatched with love.',
     pureIngredients: 'Pure Ingredients',
     pureIngredientsDesc: 'Cold-pressed gingelly oil, fresh jaggery, stone-ground spices, and pure Buffalo ghee.',
@@ -182,7 +182,7 @@ export const TRANSLATIONS = {
     reviewOrderSendWhatsApp: 'Review Order & Send on WhatsApp',
 
     // Final CTA
-    readyToOrder: 'Ready to taste authentic Andhra at home?',
+    readyToOrder: 'Ready to taste authentic Diviseema at home?',
     ctaSubtitle: 'Order from our curated homemade collection — available in 250g, 1/2 kg, and 1 kg packs. Fresh batches dispatched within 24 hours.',
     viewFullMenu: 'View Full Menu',
     callUs: 'Call Us Directly',
@@ -192,7 +192,7 @@ export const TRANSLATIONS = {
     ourCategories: 'Our Categories',
     orderAndInquiries: 'Order & Inquiries',
     pindiVantaluFull: 'Pindi Vantalu (Sweets & Savouries)',
-    vegPicklesFull: 'Veg Pickles (Andhra Pachallu)',
+    vegPicklesFull: 'Veg Pickles (Diviseema Pachallu)',
     nonVegPicklesFull: 'Non-Veg Pickles (Chicken & Prawn)',
     ourHeritageStory: 'Our Heritage & Story',
     copyright: '© 2026 Bramarambika Home Foods. All rights reserved.',
