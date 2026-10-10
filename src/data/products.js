@@ -239,6 +239,29 @@ export const PRODUCTS = [
     }
   },
   {
+  id: 'neethi-arisalu',
+  name: 'Neethi (Ghee) Arisalu (22-25 arisalu per kg)',
+  teluguName: 'నెయ్యి అరిసెలు',
+  category: 'pindi-vantalu',
+  categoryLabel: 'Pindi Vantalu',
+  pricePerKg: 630,
+  unit: 'kg',
+  tagline: 'Traditional jaggery & sesame sweet made in pure ghee',
+  description: 'Slow-cooked soaked rice flour simmered with jaggery and fried in pure ghee.',
+  badge: 'Pure Ghee',
+  image: '/images/arisalu.jpg',
+  taste: 'Sweet',
+  rating: 4.9,
+  reviewCount: 0,
+  ingredients: 'Rice flour, Jaggery, White sesame seeds, Ghee',
+  variantPrices: {
+    '250g':165 ,
+    '500g':320 ,
+    '1kg': 630,
+    '2kg': 1250
+  }
+},
+  {
     id: 'karapusa',
     name: 'Karapusa / Jantikalu',
     teluguName: 'కారప్పూస / జంతికలు',
