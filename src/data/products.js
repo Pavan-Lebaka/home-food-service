@@ -315,14 +315,14 @@ export const PRODUCTS = [
     categoryLabel: 'Pindi Vantalu',
     pricePerKg: 300,
     unit: 'kg',
-    tagline: 'Fragrant semolina & pure cow ghee laddu',
-    description: 'Roasted Bombay rava bound with warm pure cow ghee, milk, aromatic green cardamom, golden raisins, and crunchy ghee-roasted cashew nuts.',
-    badge: 'Pure Cow Ghee',
+    tagline: 'Fragrant semolina & pure Buffalo ghee laddu',
+    description: 'Roasted Bombay rava bound with warm pure Buffalo ghee, milk, aromatic green cardamom, golden raisins, and crunchy ghee-roasted cashew nuts.',
+    badge: 'Pure Buffalo Ghee',
     image: '/images/ravva-laddu.jpg',
     taste: 'Sweet & Rich',
     rating: 4.9,
     reviewCount: 39,
-    ingredients: 'Roasted Semolina, Pure cow ghee, Sugar, Cashews, Raisins, Cardamom',
+    ingredients: 'Roasted Semolina, Pure Buffalo ghee, Sugar, Cashews, Raisins, Cardamom',
     variantPrices: {
       '250g': 80,
       '500g': 150,
@@ -345,7 +345,7 @@ export const PRODUCTS = [
     taste: 'Sweet & Wholesome',
     rating: 5.0,
     reviewCount: 68,
-    ingredients: 'Whole Urad dal (Minapappu), Organic Bellam (Jaggery), Pure cow ghee',
+    ingredients: 'Whole Urad dal (Minapappu), Organic Bellam (Jaggery), Pure Buffalo ghee',
     variantPrices: {
       '250g': 80,
       '500g': 150,
@@ -418,8 +418,8 @@ export const TESTIMONIALS = [
     name: 'Padmaja Rao',
     location: 'Vijayawada, AP',
     rating: 5,
-    title: 'Pure cow ghee Sunnundalu & Arisalu',
-    text: 'Bought 1 kg Sunnundalu for my children. The aroma of roasted urad dal and cow ghee was divine. Melt-in-mouth texture. Will keep reordering!',
+    title: 'Pure Buffalo ghee Sunnundalu & Arisalu',
+    text: 'Bought 1 kg Sunnundalu for my children. The aroma of roasted urad dal and Buffalo ghee was divine. Melt-in-mouth texture. Will keep reordering!',
     verified: true,
     product: 'Sunnundalu'
   }
