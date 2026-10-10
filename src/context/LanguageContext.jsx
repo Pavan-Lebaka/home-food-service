@@ -8,6 +8,7 @@ export const TRANSLATIONS = {
     collections: 'Collections',
     catalog: 'Catalog',
     ourStory: 'Our Story',
+    Who_we_are: 'Bramarambika Home Foods is a women-led self-help group from T. Kothapalem, in the heart of Diviseema, surrounded by water on two sides',
     contact: 'Contact',
     whatsapp: 'WhatsApp',
     searchPlaceholder: 'Search Avakaya, Arisalu, Chicken pickle...',
@@ -34,7 +35,7 @@ export const TRANSLATIONS = {
     heroSlide1Cta: 'Explore Collections',
 
     heroSlide2Tag: 'Ceramic Jaadi Aged • Zero Preservatives',
-    heroSlide2Title: 'Fiery Royal Andhra Pickles, Steeped In Mustard Oil',
+    heroSlide2Title: 'Fiery Royal Diviseema Pickles, Steeped In Mustard Oil',
     heroSlide2Sub: 'Signature Avakaya, Gongura, spicy Boneless Chicken & Prawn pickles made with pure Guntur chillies and wood-pressed gingelly oil.',
     heroSlide2Cta: 'Shop Spicy Pickles',
 

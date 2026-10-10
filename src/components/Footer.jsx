@@ -21,8 +21,7 @@ export default function Footer() {
               Traditional Telugu Taste • Homemade with Love
             </p>
             <p style={{ color: '#bca690', fontSize: '0.9rem', maxWidth: '420px', lineHeight: 1.6 }}>
-              Crafted in an authentic Andhra village home kitchen. Pure ingredients, slow-simmered brass cooking, and stone-ground spices delivered right to your doorstep.
-            </p>
+Crafted in an authentic home kitchen in T Kothapalem, Diviseema, Krishna District. Pure ingredients, slow-simmered brass cooking, and stone-ground spices delivered right to your doorstep.            </p>
           </div>
 
           {/* Quick Categories Column */}
@@ -92,7 +91,7 @@ export default function Footer() {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#bca690', fontSize: '0.875rem' }}>
                 <MapPin size={18} color="var(--color-terracotta)" />
-                <span>Andhra Pradesh, India</span>
+                <span>T.Kothapalem,Nagayalanka Mandal,Krishna District 521120,Andhra Pradesh, India</span>
               </div>
             </div>
           </div>

@@ -194,7 +194,7 @@ export const PRODUCTS = [
   // --- PINDI VANTALU (SWEETS & SAVOURIES) ---
   {
     id: 'arisalu',
-    name: 'Arisalu',
+    name: 'Arisalu(22-25 arisalu per kg)',
     teluguName: 'అరిసెలు (నువ్వుల అరిసెలు)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu',
@@ -217,7 +217,7 @@ export const PRODUCTS = [
   },
   {
     id: 'chekkalu',
-    name: 'Pappu Chekkalu',
+    name: 'Pappu Chekkalu(100-120 chekkalu per kg)',
     teluguName: 'చెక్కలు (పప్పు చెక్కలు)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu',
@@ -263,7 +263,7 @@ export const PRODUCTS = [
   },
   {
     id: 'kajjikayalu',
-    name: 'Kajjikayalu',
+    name: 'Kajjikayalu(22-25 kajjikayalu per kg)',
     teluguName: 'కజ్జికాయలు (కొబ్బరి కజ్జికాయలు)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu',
@@ -286,7 +286,7 @@ export const PRODUCTS = [
   },
   {
     id: 'gavvalu',
-    name: 'Bellam Gavvalu',
+    name: 'Bellam Gavvalu(110-120 gavvalu per kg)',
     teluguName: 'బెల్లం గవ్వలు',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu',
@@ -309,7 +309,7 @@ export const PRODUCTS = [
   },
   {
     id: 'ravva-laddu',
-    name: 'Ravva Laddu',
+    name: 'Ravva Laddu(23-26 laddus per kg)',
     teluguName: 'రవ్వ లడ్డూ (నెయ్యి లడ్డూ)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu',
@@ -332,12 +332,12 @@ export const PRODUCTS = [
   },
   {
     id: 'sunnundalu',
-    name: 'Sunnundalu',
+    name: 'Sunnundalu(27-30 sunnundalu per kg)',
     teluguName: 'సున్నుండలు (మినప సున్నుండ)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu',
     pricePerKg: 300,
-    unit: 'kg',
+    unit: 'kg(28-30Sunnundalu',
     tagline: 'Roasted urad dal & desi ghee laddus',
     description: 'Powerhouse of nutrition and heritage. Roasted black gram lentils finely stone-ground, blended with organic jaggery powder and generous molten ghee.',
     badge: 'Healthy Heritage',

@@ -69,6 +69,9 @@ export default function StorySection() {
             <p style={{ color: 'var(--color-dark-brown-soft)', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
               {t('noFactoriesDesc')}
             </p>
+            <p>
+              {t('whoWeAre')}
+            </p>
 
             <div className="story-pill-row">
               <div className="story-pillar-card">
