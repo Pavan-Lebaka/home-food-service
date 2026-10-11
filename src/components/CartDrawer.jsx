@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   X, Plus, Minus, Trash2, MessageCircle, Sparkles, ShoppingCart,
   ArrowRight, ShieldCheck, Phone, MapPin, User, Hash, AlertCircle,
-  Truck, CheckCircle2, FileText
+  Truck, CheckCircle2, FileText, Check, Gift
 } from 'lucide-react';
-import { formatCurrency, getWhatsAppOrderUrl } from '../lib/whatsapp.js';
-import { BRAND_INFO, PRODUCTS } from '../data/products.js';
+import { getWhatsAppOrderUrl } from '../lib/whatsapp.js';
+import { BRAND_INFO, PRODUCTS, PROMO_GIFTS } from '../data/products.js';
 import { useLanguage } from '../context/LanguageContext';
 import confetti from 'canvas-confetti';
 
@@ -18,7 +18,9 @@ export default function CartDrawer({
   cartItems,
   onUpdateQuantity,
   onRemoveItem,
-  onAddToCart
+  onAddToCart,
+  selectedGift,
+  onSelectGift
 }) {
   const { t } = useLanguage();
 
@@ -169,7 +171,7 @@ export default function CartDrawer({
       // safe fallback
     }
 
-    const url = getWhatsAppOrderUrl(cartItems, customerDetails);
+    const url = getWhatsAppOrderUrl(cartItems, { ...customerDetails, selectedGift });
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -374,6 +376,52 @@ export default function CartDrawer({
                 </button>
               </div>
 
+              {/* 2.5. First Order Surprise Gift Promo Selector */}
+              <div className="cart-gift-promo-card">
+                <div className="cart-gift-header">
+                  <div className="cart-gift-title-wrap">
+                    <Gift size={16} color="var(--color-terracotta)" />
+                    <span className="cart-gift-title">{t('firstOrderGiftCartTitle')}</span>
+                  </div>
+                  <span className="cart-gift-free-tag">{t('freeGiftLabel')}</span>
+                </div>
+
+                <div className="cart-gift-chips">
+                  {PROMO_GIFTS.map(gift => {
+                    const isSelected = selectedGift === gift.name;
+                    return (
+                      <button
+                        key={gift.id}
+                        type="button"
+                        onClick={() => {
+                          onSelectGift?.(gift.name);
+                          try {
+                            confetti({ particleCount: 35, spread: 50, origin: { y: 0.6 } });
+                          } catch (e) {}
+                        }}
+                        className={`cart-gift-chip ${isSelected ? 'active' : ''}`}
+                        aria-pressed={isSelected}
+                      >
+                        <span className="gift-chip-emoji">{gift.emoji}</span>
+                        <span className="gift-chip-name">{gift.name}</span>
+                        {isSelected && <Check size={13} className="gift-chip-check" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {selectedGift ? (
+                  <div className="cart-gift-selected-note">
+                    <Sparkles size={13} color="var(--color-turmeric)" />
+                    <span>Selected: <strong>{selectedGift}</strong> (Delivered FREE with your first order!)</span>
+                  </div>
+                ) : (
+                  <div className="cart-gift-hint-note">
+                    <span>Tap any gift above to receive it with your order!</span>
+                  </div>
+                )}
+              </div>
+
               {/* 3. Customer & Delivery Booking Form (Modern 2-Column Responsive Card) */}
               <div
                 ref={formRef}
@@ -554,6 +602,18 @@ export default function CartDrawer({
                       <span className="standard-deliv-badge">₹100</span>
                     )}
                   </div>
+
+                  {selectedGift && (
+                    <div className="bill-table-row gift-bill-row">
+                      <div className="gift-bill-label-wrap">
+                        <span className="gift-bill-icon">🎁</span>
+                        <span className="table-row-label">
+                          {t('firstOrderGift')}: <strong>{selectedGift}</strong>
+                        </span>
+                      </div>
+                      <span className="free-badge-pill">{t('freeGiftLabel')}</span>
+                    </div>
+                  )}
 
                   {isFreeDelivery && (
                     <div className="modern-savings-strip">

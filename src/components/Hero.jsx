@@ -1,8 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Sparkles, Leaf, ShieldCheck, Heart, PackageCheck, Flame } from 'lucide-react';
+import { Sparkles, Leaf, ShieldCheck, Heart, PackageCheck, Flame, Gift, ArrowRight, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const SLIDES = [
+  {
+    id: 'promo-banner',
+    tagKey: 'heroPromoTag',
+    titleKey: 'heroPromoTitle',
+    subKey: 'heroPromoSub',
+    ctaKey: 'heroPromoCta',
+    categoryTarget: 'promo',
+    image: '/images/Banner.jpg', // Official Festive Banner: Village women artisans, Murukulu, Chekkalu, Ravva Laddu, Sunnundalu, Kajjikayalu & First Order Surprise Gift
+    accentColor: '#D99A17',
+    icon: Gift,
+    isPromo: true
+  },
   {
     id: 1,
     tagKey: 'heroSlide1Tag',
@@ -65,11 +77,11 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
     setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   }, [totalSlides]);
 
-  // Continuous Autoplay timer: resets on slide change, advances automatically every 4.2s
+  // Autoplay timer: advances every 4.8s
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % totalSlides);
-    }, 4200);
+    }, 4800);
 
     return () => clearInterval(timer);
   }, [currentSlide, totalSlides]);
@@ -97,6 +109,29 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
 
   const activeSlideData = SLIDES[currentSlide];
   const IconComponent = activeSlideData.icon;
+
+  const handlePrimaryCta = () => {
+    if (activeSlideData.isPromo) {
+      const promoEl = document.getElementById('promo-offer');
+      if (promoEl) {
+        promoEl.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+    }
+    onWhatsAppClick?.();
+  };
+
+  const handleSecondaryCta = () => {
+    if (activeSlideData.categoryTarget && activeSlideData.categoryTarget !== 'promo') {
+      onSelectCategory?.(activeSlideData.categoryTarget);
+    } else {
+      onSelectCategory?.('all');
+    }
+    const menuEl = document.getElementById('menu');
+    if (menuEl) {
+      menuEl.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <section
@@ -152,6 +187,49 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
           <div className="hero-weight-prompt-pill">
             <PackageCheck size={16} color="var(--color-leaf-green)" />
             <span>{t('heroPackSizes')}</span>
+          </div>
+
+          {/* Hero Action Buttons */}
+          <div className="hero-cta-button-row">
+            <button
+              type="button"
+              onClick={handlePrimaryCta}
+              className={`hero-cta-btn-primary ${activeSlideData.isPromo ? 'promo-pulse-btn' : ''}`}
+            >
+              {activeSlideData.isPromo ? (
+                <>
+                  <Gift size={18} />
+                  <span>{t('heroPromoCta')}</span>
+                </>
+              ) : (
+                <>
+                  <MessageCircle size={18} />
+                  <span>{t('orderOnWhatsApp')}</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSecondaryCta}
+              className="hero-cta-btn-secondary"
+            >
+              <span>{t('exploreCollections')}</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+
+          {/* Slide Indicator Dots */}
+          <div className="hero-slide-dots-bar" aria-label="Slide indicators">
+            {SLIDES.map((slide, idx) => (
+              <button
+                key={slide.id}
+                type="button"
+                className={`hero-dot-btn ${idx === currentSlide ? 'active' : ''}`}
+                onClick={() => setCurrentSlide(idx)}
+                aria-label={`Jump to slide ${idx + 1}`}
+              />
+            ))}
           </div>
         </div>
       </div>

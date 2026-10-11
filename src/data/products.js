@@ -6,10 +6,10 @@ export const WEIGHT_VARIANTS = [
 ];
 
 export const CATEGORIES = [
-  { id: 'all', label: 'All Specials', count: 14 },
+  { id: 'all', label: 'All Specials', count: 15 },
   { id: 'non-veg-pickles', label: 'Non-Veg Pickles', count: 2, bg: '#F1E2C5' },
   { id: 'veg-pickles', label: 'Veg Pickles', count: 4, bg: '#E8F0E3' },
-  { id: 'pindi-vantalu', label: 'Pindi Vantalu (Sweets & Snacks)', count: 8, bg: '#FFFCF7' },
+  { id: 'pindi-vantalu', label: 'Pindi Vantalu (Sweets & Snacks)', count: 9, bg: '#FFFCF7' },
 ];
 
 export const FEATURED_COLLECTIONS = [
@@ -239,28 +239,28 @@ export const PRODUCTS = [
     }
   },
   {
-  id: 'neethi-arisalu',
-  name: 'Neethi (Ghee) Arisalu (22-25 arisalu per kg)',
-  teluguName: 'నెయ్యి అరిసెలు',
-  category: 'pindi-vantalu',
-  categoryLabel: 'Pindi Vantalu',
-  pricePerKg: 630,
-  unit: 'kg',
-  tagline: 'Traditional jaggery & sesame sweet made in pure ghee',
-  description: 'Slow-cooked soaked rice flour simmered with jaggery and fried in pure ghee.',
-  badge: 'Pure Ghee',
-  image: '/images/arisalu.jpg',
-  taste: 'Sweet',
-  rating: 4.9,
-  reviewCount: 0,
-  ingredients: 'Rice flour, Jaggery, White sesame seeds, Ghee',
-  variantPrices: {
-    '250g':165 ,
-    '500g':320 ,
-    '1kg': 630,
-    '2kg': 1250
-  }
-},
+    id: 'neethi-arisalu',
+    name: 'Neethi (Ghee) Arisalu (22-25 arisalu per kg)',
+    teluguName: 'నెయ్యి అరిసెలు',
+    category: 'pindi-vantalu',
+    categoryLabel: 'Pindi Vantalu',
+    pricePerKg: 630,
+    unit: 'kg',
+    tagline: 'Traditional jaggery & sesame sweet made in pure ghee',
+    description: 'Slow-cooked soaked rice flour simmered with jaggery and fried in pure ghee.',
+    badge: 'Pure Ghee',
+    image: '/images/arisalu.jpg',
+    taste: 'Sweet',
+    rating: 4.9,
+    reviewCount: 0,
+    ingredients: 'Rice flour, Jaggery, White sesame seeds, Ghee',
+    variantPrices: {
+      '250g': 165,
+      '500g': 320,
+      '1kg': 630,
+      '2kg': 1250
+    }
+  },
   {
     id: 'karapusa',
     name: 'Karapusa / Jantikalu',
@@ -457,3 +457,53 @@ export function getProductVariantPrice(product, variantId = '500g') {
   const multiplier = variant ? variant.multiplier : 1.0;
   return Math.round(product.pricePerKg * multiplier);
 }
+
+// 5 specialties highlighted in official promotional Banner.jpg
+export const BANNER_SPECIAL_IDS = [
+  'murukulu',
+  'chekkalu',
+  'ravva-laddu',
+  'sunnundalu',
+  'kajjikayalu'
+];
+
+// 3 First-Order Surprise Gifts from Banner.jpg
+export const PROMO_GIFTS = [
+  {
+    id: 'junnu',
+    name: 'Junnu',
+    teluguName: 'జున్ను',
+    subtitle: 'Traditional Milk Sweet',
+    teluguSubtitle: 'సంప్రదాయ పాల మిఠాయి',
+    badge: 'Sweet Heritage',
+    valueText: '₹150 Value • FREE',
+    description: 'Creamy authentic village colostrum milk pudding slow-steamed with black pepper and cardamom.',
+    imageLabel: 'Junnu',
+    emoji: '🍮'
+  },
+  {
+    id: 'country-eggs',
+    name: 'Country Eggs',
+    teluguName: 'నాటుకోడి గుడ్లు',
+    subtitle: 'Farm Fresh & Natural',
+    teluguSubtitle: 'ఫార్మ్ ఫ్రెష్ & సహజమైనవి',
+    badge: 'Farm Fresh',
+    valueText: '₹120 Value • FREE',
+    description: 'Free-range country chicken eggs direct from village poultry, pure and unadulterated.',
+    imageLabel: 'Country Eggs',
+    emoji: '🥚'
+  },
+  {
+    id: 'honey',
+    name: 'Original Honey',
+    teluguName: 'అసలైన తేనె',
+    subtitle: 'Pure • Natural • Healthy',
+    teluguSubtitle: 'స్వచ్ఛమైన • సహజమైన • ఆరోగ్యకరమైన',
+    badge: '100% Pure Forest Honey',
+    valueText: '₹180 Value • FREE',
+    description: 'Raw, unprocessed wild forest honey harvested with traditional care for optimal health & immunity.',
+    imageLabel: 'Original Honey',
+    emoji: '🍯'
+  }
+];
+

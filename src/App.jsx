@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import PromoBannerSection from './components/PromoBannerSection';
 import FeaturedCollections from './components/FeaturedCollections';
 import MenuSection from './components/MenuSection';
 import ProductModal from './components/ProductModal';
 import SearchModal from './components/SearchModal';
+import BannerModal from './components/BannerModal';
 import Testimonials from './components/Testimonials';
 import StorySection from './components/StorySection';
 import WhyUs from './components/WhyUs';
@@ -14,7 +16,6 @@ import CartDrawer from './components/CartDrawer';
 import FloatingCart from './components/FloatingCart';
 
 export default function App() {
-
   const [cartItems, setCartItems] = useState(() => {
     try {
       const saved = localStorage.getItem('bramarambika_cart_v2');
@@ -24,8 +25,17 @@ export default function App() {
     }
   });
 
+  const [selectedGift, setSelectedGift] = useState(() => {
+    try {
+      return localStorage.getItem('bramarambika_selected_gift') || 'Junnu';
+    } catch (e) {
+      return 'Junnu';
+    }
+  });
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [modalProduct, setModalProduct] = useState(null);
   const [activeCategory, setActiveCategory] = useState('all');
 
@@ -37,9 +47,19 @@ export default function App() {
     }
   }, [cartItems]);
 
-  // Lock background page scroll whenever Cart Drawer, Search Modal, or Product Details is open
   useEffect(() => {
-    const isLocked = isCartOpen || isSearchOpen || Boolean(modalProduct);
+    try {
+      if (selectedGift) {
+        localStorage.setItem('bramarambika_selected_gift', selectedGift);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [selectedGift]);
+
+  // Lock background page scroll whenever Cart Drawer, Search Modal, Banner Modal, or Product Details is open
+  useEffect(() => {
+    const isLocked = isCartOpen || isSearchOpen || Boolean(modalProduct) || isBannerModalOpen;
     if (isLocked) {
       document.body.classList.add('modal-open-scroll-locked');
       document.documentElement.classList.add('modal-open-scroll-locked');
@@ -51,7 +71,7 @@ export default function App() {
       document.body.classList.remove('modal-open-scroll-locked');
       document.documentElement.classList.remove('modal-open-scroll-locked');
     };
-  }, [isCartOpen, isSearchOpen, modalProduct]);
+  }, [isCartOpen, isSearchOpen, modalProduct, isBannerModalOpen]);
 
   const handleAddToCart = ({ product, variantId = '500g', variantLabel = '1/2 kg', unitPrice, quantity = 1 }) => {
     const cartItemId = `${product.id}-${variantId}`;
@@ -125,10 +145,19 @@ export default function App() {
       />
 
       <main>
-        {/* 2. Hero Section */}
+        {/* 2. Hero Section with Carousel & Banner Slide */}
         <Hero
           onWhatsAppClick={() => setIsCartOpen(true)}
           onSelectCategory={setActiveCategory}
+        />
+
+        {/* 2.5. Official Festival Promotional Banner & First Order Surprise Gift Section */}
+        <PromoBannerSection
+          selectedGift={selectedGift}
+          onSelectGift={setSelectedGift}
+          onOpenBannerModal={() => setIsBannerModalOpen(true)}
+          onAddToCart={handleAddToCart}
+          onOpenCart={() => setIsCartOpen(true)}
         />
 
         {/* 3. Featured Collections Showcase ("Our Collections") */}
@@ -144,7 +173,7 @@ export default function App() {
           setActiveCategory={setActiveCategory}
         />
 
-        {/* 5. Customer Reviews Section (Like Annapurna Judge.me Reviews) */}
+        {/* 5. Customer Reviews Section */}
         <Testimonials />
 
         {/* 6. Story & Traditional Cooking Heritage */}
@@ -178,6 +207,8 @@ export default function App() {
         onRemoveItem={handleRemoveItem}
         onClearCart={handleClearCart}
         onAddToCart={handleAddToCart}
+        selectedGift={selectedGift}
+        onSelectGift={setSelectedGift}
       />
 
       {/* 12. Quick Product Details Modal */}
@@ -192,6 +223,13 @@ export default function App() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         onSelectProduct={(p) => setModalProduct(p)}
+      />
+
+      {/* 14. Fullscreen Official Banner / Poster Lightbox Modal */}
+      <BannerModal
+        isOpen={isBannerModalOpen}
+        onClose={() => setIsBannerModalOpen(false)}
+        selectedGift={selectedGift}
       />
     </div>
   );

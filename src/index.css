@@ -5404,5 +5404,1023 @@ body.modal-open-scroll-locked {
   touch-action: pan-y !important;
 }
 
+/* ==========================================================================
+   48. PROMOTIONAL BANNER & FIRST ORDER SPECIAL OFFER SYSTEM
+   Banner.jpg Integration • First Order Surprise Gifts • Interactive Lightbox
+   ========================================================================== */
+
+/* Navbar Promo Highlights */
+.nav-promo-highlight {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  background: rgba(217, 154, 23, 0.12);
+  color: #925805 !important;
+  padding: 6px 12px !important;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(217, 154, 23, 0.35);
+  font-weight: 700 !important;
+  transition: all 0.25s ease;
+}
+
+.nav-promo-highlight:hover {
+  background: rgba(217, 154, 23, 0.22);
+  border-color: rgba(217, 154, 23, 0.6);
+  transform: translateY(-1px);
+}
+
+.gift-dot-badge {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.mobile-promo-link {
+  color: #925805 !important;
+  font-weight: 700 !important;
+  background: rgba(217, 154, 23, 0.12);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px !important;
+}
+
+/* Hero Carousel Slide CTAs & Dots */
+.hero-cta-button-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.hero-cta-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  background: var(--color-leaf-green);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 14px rgba(36, 90, 50, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-cta-btn-primary:hover {
+  background: var(--color-leaf-green-light);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(36, 90, 50, 0.45);
+}
+
+.hero-cta-btn-primary.promo-pulse-btn {
+  background: linear-gradient(135deg, #A83A24 0%, #D99A17 100%);
+  box-shadow: 0 4px 16px rgba(168, 58, 36, 0.4);
+  animation: pulsePromoBtn 2.4s infinite ease-in-out;
+}
+
+@keyframes pulsePromoBtn {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(168, 58, 36, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 6px 24px rgba(217, 154, 23, 0.65);
+    transform: scale(1.02);
+  }
+}
+
+.hero-cta-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: all 0.2s ease;
+}
+
+.hero-cta-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.hero-slide-dots-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1.75rem;
+}
+
+.hero-dot-btn {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-dot-btn.active {
+  width: 26px;
+  background: var(--color-turmeric-light);
+  box-shadow: 0 0 10px rgba(247, 202, 101, 0.6);
+}
+
+/* ==========================================================================
+   FESTIVE OFFER BANNER SECTION (#promo-offer)
+   Grand Festive Celebration • Banner.jpg Centerpiece • First Order Surprise Gift
+   ========================================================================== */
+.festive-offer-section {
+  padding: 5rem 0 4rem;
+  background: radial-gradient(circle at 50% 0%, #FFF7E6 0%, #FAF4E8 40%, #F5EFE0 100%);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid rgba(217, 154, 23, 0.25);
+}
+
+.festive-offer-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #D99A17, #A83A24, #245A32, #D99A17);
+}
+
+.festive-section-header {
+  text-align: center;
+  max-width: 860px;
+  margin: 0 auto 3rem;
+}
+
+.festive-top-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, rgba(168, 58, 36, 0.12), rgba(217, 154, 23, 0.2));
+  color: #882B18;
+  border: 1.5px solid rgba(217, 154, 23, 0.45);
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 1.1rem;
+  box-shadow: 0 4px 14px rgba(217, 154, 23, 0.18);
+}
+
+.festive-diya-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.festive-sparkle-icon {
+  color: #D99A17;
+}
+
+.festive-main-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.1rem, 4.5vw, 3.2rem);
+  font-weight: 700;
+  color: var(--color-dark-brown);
+  line-height: 1.22;
+  margin-bottom: 0.75rem;
+}
+
+.festive-telugu-slogan {
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+  color: var(--color-terracotta);
+  font-weight: 700;
+  margin-bottom: 0.85rem;
+  letter-spacing: 0.01em;
+}
+
+.festive-subtitle-text {
+  font-size: 1.1rem;
+  color: var(--color-dark-brown-soft);
+  line-height: 1.6;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Grand Festive Banner Showcase */
+.festive-banner-showcase {
+  max-width: 1060px;
+  margin: 0 auto 4rem;
+}
+
+.festive-banner-frame {
+  background: #FFFFFF;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(168, 58, 36, 0.16), 0 6px 20px rgba(0, 0, 0, 0.06);
+  border: 3px solid #D99A17;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.festive-banner-frame:hover {
+  box-shadow: 0 26px 72px rgba(168, 58, 36, 0.22), 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.festive-toranam-ribbon {
+  background: linear-gradient(135deg, #A83A24 0%, #882B18 50%, #681E10 100%);
+  color: #FFF3CD;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid #D99A17;
+}
+
+.toranam-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.festive-image-viewport {
+  position: relative;
+  cursor: pointer;
+  background: #2E2A39;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.festive-banner-full-img {
+  width: 100%;
+  max-height: 720px;
+  object-fit: contain;
+  display: block;
+  background: #FAF6EE;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.festive-image-viewport:hover .festive-banner-full-img {
+  transform: scale(1.015);
+}
+
+.festive-hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(30, 24, 20, 0.35);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 3;
+}
+
+.festive-image-viewport:hover .festive-hover-overlay {
+  opacity: 1;
+}
+
+.festive-zoom-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 26px;
+  border-radius: var(--radius-full);
+  background: #FFFFFF;
+  color: var(--color-dark-brown);
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  transform: translateY(6px);
+  transition: transform 0.25s ease;
+}
+
+.festive-image-viewport:hover .festive-zoom-btn {
+  transform: translateY(0);
+}
+
+/* Festive Banner Action Bar */
+.festive-banner-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.4rem 2rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF8 100%);
+  border-top: 2px solid rgba(217, 154, 23, 0.25);
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+@media (max-width: 880px) {
+  .festive-banner-action-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.2rem 1.4rem;
+  }
+}
+
+.action-bar-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 280px;
+}
+
+.festive-offer-callout {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.gift-emoji-lead {
+  font-size: 2.2rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(217, 154, 23, 0.35));
+}
+
+.callout-heading {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #882B18;
+  letter-spacing: -0.01em;
+}
+
+.callout-desc {
+  font-size: 0.9rem;
+  color: var(--color-dark-brown-soft);
+  margin-top: 2px;
+}
+
+.action-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .action-bar-right {
+    flex-direction: column;
+    width: 100%;
+  }
+  .festive-btn-whatsapp,
+  .festive-btn-call,
+  .festive-btn-zoom {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.festive-btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 24px;
+  border-radius: var(--radius-full);
+  background: var(--color-whatsapp);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.98rem;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.38);
+  transition: all 0.22s ease;
+  text-decoration: none;
+}
+
+.festive-btn-whatsapp:hover {
+  background: var(--color-whatsapp-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(37, 211, 102, 0.48);
+  color: #FFFFFF;
+}
+
+.festive-btn-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-full);
+  background: var(--bg-subtle);
+  color: var(--color-dark-brown);
+  font-weight: 700;
+  font-size: 0.92rem;
+  border: 1px solid rgba(46, 42, 57, 0.14);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.festive-btn-call:hover {
+  background: #FFFFFF;
+  border-color: var(--color-leaf-green);
+  color: var(--color-leaf-green);
+  transform: translateY(-1px);
+}
+
+.festive-btn-zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 18px;
+  border-radius: var(--radius-full);
+  background: #FFF9E6;
+  color: #8C6207;
+  font-weight: 700;
+  font-size: 0.88rem;
+  border: 1px solid rgba(217, 154, 23, 0.35);
+  transition: all 0.2s ease;
+}
+
+.festive-btn-zoom:hover {
+  background: #FFFFFF;
+  border-color: #D99A17;
+  color: #A83A24;
+}
+
+/* 4 Pillars of Festive Trust Strip */
+.festive-highlights-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 900px) {
+  .festive-highlights-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .festive-highlights-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+.festive-highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1.1rem 1.3rem;
+  background: #FFFFFF;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(46, 42, 57, 0.05);
+  border: 1px solid rgba(217, 154, 23, 0.2);
+}
+
+.festive-highlight-item .highlight-icon {
+  flex-shrink: 0;
+}
+
+.festive-highlight-item .highlight-icon.terracotta {
+  color: var(--color-terracotta);
+}
+
+.festive-highlight-item .highlight-icon.green {
+  color: var(--color-leaf-green);
+}
+
+.festive-highlight-item .highlight-icon.gold {
+  color: var(--color-turmeric);
+}
+
+.festive-highlight-item div {
+  display: flex;
+  flex-direction: column;
+}
+
+.festive-highlight-item strong {
+  font-size: 0.92rem;
+  color: var(--color-dark-brown);
+  font-weight: 700;
+}
+
+.festive-highlight-item span {
+  font-size: 0.78rem;
+  color: var(--color-dark-brown-soft);
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   FESTIVE SPECIALS SHELF
+   Murukulu, Chekkalu, Ravva Laddu, Sunnundalu, Kajjikayalu
+   ========================================================================== */
+.festive-specials-shelf {
+  background: #FFFFFF;
+  border-radius: var(--radius-xl);
+  padding: 2.75rem;
+  box-shadow: 0 12px 36px rgba(46, 42, 57, 0.06);
+  border: 2px solid rgba(217, 154, 23, 0.22);
+}
+
+@media (max-width: 768px) {
+  .festive-specials-shelf {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+.festive-shelf-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.shelf-pill-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-turmeric);
+  margin-bottom: 0.4rem;
+}
+
+.festive-shelf-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--color-dark-brown);
+  line-height: 1.3;
+}
+
+.festive-shelf-sub {
+  font-size: 0.94rem;
+  color: var(--color-dark-brown-soft);
+  margin-top: 4px;
+}
+
+.festive-view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-leaf-green);
+  font-weight: 700;
+  font-size: 0.92rem;
+  transition: gap 0.2s ease;
+}
+
+.festive-view-all-btn:hover {
+  gap: 12px;
+  color: var(--color-leaf-green-light);
+}
+
+.festive-delicacies-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 1100px) {
+  .festive-delicacies-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .festive-delicacies-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 440px) {
+  .festive-delicacies-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.festive-delicacy-card {
+  background: var(--bg-store);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(46, 42, 57, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+}
+
+.festive-delicacy-card:hover {
+  transform: translateY(-4px);
+  background: #FFFFFF;
+  border-color: var(--color-turmeric);
+  box-shadow: 0 8px 24px rgba(46, 42, 57, 0.1);
+}
+
+.delicacy-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #f1ede3;
+}
+
+.delicacy-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.festive-delicacy-card:hover .delicacy-img {
+  transform: scale(1.05);
+}
+
+.delicacy-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(30, 24, 20, 0.85);
+  color: #FFE082;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(4px);
+}
+
+.delicacy-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.delicacy-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-dark-brown);
+  line-height: 1.3;
+}
+
+.delicacy-telugu {
+  font-size: 0.8rem;
+  color: var(--color-terracotta);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.delicacy-tagline {
+  font-size: 0.76rem;
+  color: var(--color-dark-brown-soft);
+  margin-top: 4px;
+  margin-bottom: 0.75rem;
+  line-height: 1.35;
+}
+
+.delicacy-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(46, 42, 57, 0.06);
+}
+
+.delicacy-price-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.delicacy-price-unit {
+  font-size: 0.7rem;
+  color: var(--color-dark-brown-muted);
+}
+
+.delicacy-price-value {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-dark-brown);
+}
+
+.delicacy-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-leaf-green);
+  color: #FFFFFF;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.delicacy-add-btn:hover {
+  background: var(--color-leaf-green-light);
+  transform: scale(1.04);
+}
+
+
+
+
+/* ==========================================================================
+   BANNER MODAL LIGHTBOX (Fullscreen View of Banner.jpg)
+   ========================================================================== */
+.banner-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 11, 8, 0.88);
+  backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+.banner-modal-content {
+  background: #FFFFFF;
+  border-radius: var(--radius-xl);
+  max-width: 820px;
+  width: 100%;
+  max-height: 94vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(217, 154, 23, 0.4);
+  animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.banner-modal-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.4rem;
+  background: #FAF6EE;
+  border-bottom: 1px solid rgba(46, 42, 57, 0.1);
+}
+
+.banner-modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.banner-modal-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-dark-brown);
+}
+
+.banner-modal-close-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(46, 42, 57, 0.08);
+  color: var(--color-dark-brown);
+  transition: all 0.2s ease;
+}
+
+.banner-modal-close-btn:hover {
+  background: var(--color-terracotta);
+  color: #FFFFFF;
+}
+
+.banner-modal-image-container {
+  overflow-y: auto;
+  max-height: calc(94vh - 140px);
+  background: #1A1612;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.banner-modal-full-img {
+  max-width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.banner-modal-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.4rem;
+  background: #FFFFFF;
+  border-top: 1px solid rgba(46, 42, 57, 0.1);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.banner-modal-offer-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gift-highlight-icon {
+  font-size: 1.5rem;
+}
+
+.summary-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-headline {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--color-dark-brown);
+}
+
+.summary-details {
+  font-size: 0.82rem;
+  color: var(--color-dark-brown-soft);
+}
+
+.banner-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.banner-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--bg-subtle);
+  color: var(--color-dark-brown);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid rgba(46, 42, 57, 0.12);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.banner-btn-secondary:hover {
+  background: #FFFFFF;
+  border-color: var(--color-turmeric);
+}
+
+.banner-btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  background: var(--color-whatsapp);
+  color: #FFFFFF;
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.banner-btn-whatsapp:hover {
+  background: var(--color-whatsapp-dark);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   CART DRAWER FIRST ORDER GIFT PROMO CARD
+   ========================================================================== */
+.cart-gift-promo-card {
+  margin-top: 1rem;
+  padding: 1.1rem;
+  background: linear-gradient(135deg, #FFFDF8 0%, #FAF6EE 100%);
+  border: 1.5px solid rgba(217, 154, 23, 0.3);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cart-gift-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-gift-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cart-gift-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--color-dark-brown);
+}
+
+.cart-gift-free-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--color-leaf-green);
+  background: #E8F5E9;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.cart-gift-chips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 480px) {
+  .cart-gift-chips {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cart-gift-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(46, 42, 57, 0.1);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-dark-brown);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cart-gift-chip:hover {
+  border-color: var(--color-turmeric);
+  background: #FFFBF2;
+}
+
+.cart-gift-chip.active {
+  background: #E8F5E9;
+  border-color: var(--color-leaf-green);
+  color: #1B5E20;
+  font-weight: 700;
+}
+
+.gift-chip-emoji {
+  font-size: 1.05rem;
+}
+
+.gift-chip-check {
+  color: var(--color-leaf-green);
+}
+
+.cart-gift-selected-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #2E7D32;
+  background: rgba(76, 175, 80, 0.08);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.cart-gift-hint-note {
+  font-size: 0.76rem;
+  color: var(--color-dark-brown-muted);
+  text-align: center;
+}
+
+.gift-bill-row {
+  background: #F4FBF4;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.gift-bill-label-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gift-bill-icon {
+  font-size: 0.95rem;
+}
+
+
 
 

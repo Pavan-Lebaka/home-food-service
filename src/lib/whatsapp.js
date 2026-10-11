@@ -34,13 +34,17 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
 
   let message = `Hello ${BRAND_INFO.name},\n\nI would like to place an order from your website:\n\n${itemsList}\n\n─────────────────────\nItems Subtotal: ₹${itemsSubtotal.toLocaleString('en-IN')}\nDelivery Fee: ${deliveryText}\nTotal Payable: ₹${grandTotal.toLocaleString('en-IN')}`;
 
-  const { name, phone, address, pincode, notes } = customerDetails;
+  const { name, phone, address, pincode, notes, selectedGift } = customerDetails;
   const details = [];
   if (name && name.trim()) details.push(`• Customer Name: ${name.trim()}`);
   if (phone && phone.trim()) details.push(`• Phone Number: ${phone.trim()}`);
   if (address && address.trim()) details.push(`• Delivery Address: ${address.trim()}`);
   if (pincode && pincode.trim()) details.push(`• Pincode: ${pincode.trim()}`);
   if (notes && notes.trim()) details.push(`• Special Request / Note: ${notes.trim()}`);
+
+  if (selectedGift) {
+    message += `\n\n─────────────────────\n🎁 FIRST ORDER SURPRISE GIFT (CLAIMED):\n• ${selectedGift} (FREE - First Order Welcome Gift)`;
+  }
 
   if (details.length > 0) {
     message += `\n\n─────────────────────\nCUSTOMER & DELIVERY DETAILS:\n${details.join('\n')}`;
@@ -60,6 +64,14 @@ export function getWhatsAppOrderUrl(cartItems, customerDetails = {}) {
 
 export function getDirectWhatsAppChatUrl() {
   const text = `Hello ${BRAND_INFO.name},\n\nI am interested in your authentic homemade Telugu sweets & pickles. Could you please share today's fresh batch menu?`;
+  const cleanPhone = BRAND_INFO.whatsappNumber.replace(/\D/g, '');
+  const internationalPhone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
+  return `https://wa.me/${internationalPhone}?text=${encodeURIComponent(text)}`;
+}
+
+export function getPromoClaimWhatsAppUrl(giftName) {
+  const giftSuffix = giftName ? ` - ${giftName}` : '';
+  const text = `Hello ${BRAND_INFO.name},\n\nI saw your First Order Surprise Gift banner offer on your website and would like to claim my FREE GIFT${giftSuffix}!\n\nPlease share the menu and let me know how to proceed with placing my order.\n\nThank you!`;
   const cleanPhone = BRAND_INFO.whatsappNumber.replace(/\D/g, '');
   const internationalPhone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
   return `https://wa.me/${internationalPhone}?text=${encodeURIComponent(text)}`;

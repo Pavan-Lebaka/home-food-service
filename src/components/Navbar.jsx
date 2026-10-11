@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, MessageCircle, Search, ChevronLeft, ChevronRight, Phone } from 'lucide-react';
-import { BRAND_INFO } from '../data/products';
+import { ShoppingCart, MessageCircle, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
 
@@ -94,6 +93,10 @@ export default function Navbar({
           {/* Center Navigation Links */}
           <nav className="nav-desktop-links" aria-label="Main Navigation">
             <a href="#hero" className="store-nav-link">{t('home')}</a>
+            <a href="#promo-offer" className="store-nav-link nav-promo-highlight">
+              <span className="gift-dot-badge">🎁</span>
+              <span>{t('firstOrderGift')}</span>
+            </a>
             <a href="#collections" className="store-nav-link">{t('collections')}</a>
             <a href="#menu" className="store-nav-link" onClick={() => onSelectCategory && onSelectCategory('all')}>{t('catalog')}</a>
             <a href="#story" className="store-nav-link">{t('ourStory')}</a>
@@ -146,6 +149,7 @@ export default function Navbar({
         {/* Mobile Nav Bottom Links */}
         <div className="mobile-nav-bottom-links">
           <a href="#hero" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{t('home')}</a>
+          <a href="#promo-offer" className="mobile-nav-link mobile-promo-link" onClick={() => setMobileMenuOpen(false)}>🎁 {t('firstOrderGift')}</a>
           <a href="#collections" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{t('collections')}</a>
           <a href="#menu" className="mobile-nav-link" onClick={() => { onSelectCategory && onSelectCategory('all'); setMobileMenuOpen(false); }}>{t('catalog')}</a>
           <a href="#story" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{t('ourStory')}</a>
