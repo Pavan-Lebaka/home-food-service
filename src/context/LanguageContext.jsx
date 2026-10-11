@@ -204,6 +204,7 @@ export const TRANSLATIONS = {
     ann2: '100% Homemade • Pure Cold Pressed Oils & Desi Ghee • No Preservatives',
     ann3: 'Order on WhatsApp: 7702808886 | Call: 9705449968',
     ann4: 'Fresh Batches Handcrafted Daily • Available in 250g, 1/2 kg & 1 kg packs',
+    ann5: 'Get a FREE 1/2 kg sweet/snack item on orders above ₹2000',
   },
 
   te: {

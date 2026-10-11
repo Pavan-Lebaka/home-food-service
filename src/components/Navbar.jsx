@@ -20,6 +20,7 @@ export default function Navbar({
     t('ann2'),
     t('ann3'),
     t('ann4'),
+    t('ann5'),
   ];
 
   // Auto-rotate announcement carousel every 4 seconds
