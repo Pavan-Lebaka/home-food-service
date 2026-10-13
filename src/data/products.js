@@ -6,9 +6,9 @@ export const WEIGHT_VARIANTS = [
 ];
 
 export const CATEGORIES = [
-  { id: 'all', label: 'All Specials', count: 15 },
+  { id: 'all', label: 'All Specials', count: 17 },
   { id: 'non-veg-pickles', label: 'Non-Veg Pickles', count: 2, bg: '#F1E2C5' },
-  { id: 'veg-pickles', label: 'Veg Pickles', count: 4, bg: '#E8F0E3' },
+  { id: 'veg-pickles', label: 'Veg Pickles', count: 6, bg: '#E8F0E3' },
   { id: 'pindi-vantalu', label: 'Pindi Vantalu (Sweets & Snacks)', count: 9, bg: '#FFFCF7' },
 ];
 
@@ -16,7 +16,7 @@ export const FEATURED_COLLECTIONS = [
   {
     id: 'non-veg-pickles',
     title: 'Non-Veg Pickles',
-    subtitle: 'Boneless Chicken & Coastal Prawns',
+    subtitle: 'Chicken & Coastal Prawns',
     image: '/images/nonveg-pickles.jpg',
     startingPrice: 'From ₹275',
     tag: 'Spicy & Fiery'
@@ -24,7 +24,7 @@ export const FEATURED_COLLECTIONS = [
   {
     id: 'veg-pickles',
     title: 'Veg Pickles',
-    subtitle: 'Avakaya, Gongura, Tomato & Allam',
+    subtitle: 'Avakaya, Gongura, Cauliflower & Dondakaya',
     image: '/images/veg-pickles.jpg',
     startingPrice: 'From ₹110',
     tag: 'Diviseema Icons'
@@ -52,13 +52,13 @@ export const PRODUCTS = [
   // --- NON-VEG PICKLES ---
   {
     id: 'chicken-pickle',
-    name: 'Chicken Pickle (Boneless)',
+    name: 'Chicken Pickle',
     teluguName: 'నాటుకోడి తరహా చికెన్ పచ్చడి',
     category: 'non-veg-pickles',
     categoryLabel: 'Non-Veg Pickles',
     pricePerKg: 1000,
     unit: 'kg',
-    tagline: 'Boneless tender chicken in spicy Andhra masala',
+    tagline: 'Tender chicken in spicy Andhra masala',
     description: 'Succulent chicken chunks crisped in ginger-garlic paste and simmered in fiery Andhra ground spices, cold-pressed oil, and roasted curry leaves.',
     badge: 'Hot Seller',
     image: '/images/chicken-pickle.jpg',
@@ -190,6 +190,52 @@ export const PRODUCTS = [
       '2kg': 780
     }
   },
+  {
+    id: 'cauliflower-pickle',
+    name: 'Cauliflower Pickle',
+    teluguName: 'కాలీఫ్లవర్ నిల్వ పచ్చడి',
+    category: 'veg-pickles',
+    categoryLabel: 'Veg Pickles',
+    pricePerKg: 400,
+    unit: 'kg',
+    tagline: 'Crunchy cauliflower florets in spicy mustard masala',
+    description: 'Fresh crisp cauliflower florets sun-dried and pickled in stone-ground mustard, spicy Guntur red chilli powder, aromatic fenugreek, garlic, and pure cold-pressed oil.',
+    badge: 'Seasonal Special',
+    image: '/images/cauliflower-pickle.jpg',
+    taste: 'Crunchy & Spicy',
+    rating: 4.9,
+    reviewCount: 24,
+    ingredients: 'Fresh cauliflower florets, Yellow mustard powder, Guntur red chilli, Garlic cloves, Cold-pressed gingelly oil, Turmeric, Salt',
+    variantPrices: {
+      '250g': 110,
+      '500g': 200,
+      '1kg': 400,
+      '2kg': 780
+    }
+  },
+  {
+    id: 'dondakaya-pachadi',
+    name: 'Dondakaya Pachadi',
+    teluguName: 'దొండకాయ పచ్చడి',
+    category: 'veg-pickles',
+    categoryLabel: 'Veg Pickles',
+    pricePerKg: 400,
+    unit: 'kg',
+    tagline: 'Tender ivy gourd roasted in authentic spices',
+    description: 'Farm-fresh tender ivy gourd (dondakaya) slow-roasted in cold-pressed oil, pounded with whole red chillies, tamarind, garlic, and golden cumin-mustard tadka.',
+    badge: 'Homestyle Classic',
+    image: '/images/dondakaya-pachadi.jpg',
+    taste: 'Tangy & Spicy',
+    rating: 4.8,
+    reviewCount: 20,
+    ingredients: 'Fresh tender ivy gourd (dondakaya), Red chillies, Tamarind, Mustard, Cumin, Garlic cloves, Curry leaves, Cold-pressed oil, Salt',
+    variantPrices: {
+      '250g': 110,
+      '500g': 200,
+      '1kg': 400,
+      '2kg': 780
+    }
+  },
 
   // --- PINDI VANTALU (SWEETS & SAVOURIES) ---
   {
@@ -217,7 +263,7 @@ export const PRODUCTS = [
   },
   {
     id: 'chekkalu',
-    name: 'Pappu Chekkalu(100-120 chekkalu per kg)',
+    name: 'Pappu Chekkalu',
     teluguName: 'చెక్కలు (పప్పు చెక్కలు)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu',
@@ -431,10 +477,10 @@ export const TESTIMONIALS = [
     name: 'Murali Krishna V.',
     location: 'Bengaluru, Karnataka',
     rating: 5,
-    title: 'Boneless chicken pickle is outstanding',
+    title: 'Chicken pickle is outstanding',
     text: 'Tender succulent chicken chunks, not rock hard like mass-market bottles. Spice level is spot on Diviseema style. Delivered safely within 2 days with leakproof pack.',
     verified: true,
-    product: 'Chicken Pickle (Boneless)'
+    product: 'Chicken Pickle'
   },
   {
     id: 3,

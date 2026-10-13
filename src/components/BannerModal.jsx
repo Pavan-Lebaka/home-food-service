@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { X, MessageCircle, Download, Sparkles } from 'lucide-react';
+import { X, Download, Sparkles } from 'lucide-react';
 import { BRAND_INFO } from '../data/products';
-import { getPromoClaimWhatsAppUrl } from '../lib/whatsapp';
+import { useLanguage } from '../context/LanguageContext';
 
-export default function BannerModal({ isOpen, onClose, selectedGift }) {
+export default function BannerModal({ isOpen, onClose, selectedGift, onSelectCategory }) {
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -25,7 +26,18 @@ export default function BannerModal({ isOpen, onClose, selectedGift }) {
 
   if (!isOpen) return null;
 
-  const whatsappUrl = getPromoClaimWhatsAppUrl(selectedGift?.name || selectedGift || '');
+  const handleSelectItems = () => {
+    onClose();
+    if (onSelectCategory) {
+      onSelectCategory('all');
+    }
+    setTimeout(() => {
+      const menuEl = document.getElementById('menu');
+      if (menuEl) {
+        menuEl.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 120);
+  };
 
   return (
     <div className="banner-modal-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-label="Official Promotional Banner">
@@ -78,15 +90,15 @@ export default function BannerModal({ isOpen, onClose, selectedGift }) {
               <span>Download</span>
             </a>
 
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={handleSelectItems}
               className="banner-btn-whatsapp"
+              aria-label="Select items to claim offer"
             >
-              <MessageCircle size={18} />
-              <span>Claim Offer on WhatsApp</span>
-            </a>
+              <Sparkles size={18} />
+              <span>{t('selectItemsToClaim')}</span>
+            </button>
           </div>
         </div>
       </div>

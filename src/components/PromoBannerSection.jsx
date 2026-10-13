@@ -10,7 +10,8 @@ import { useLanguage } from '../context/LanguageContext';
 export default function PromoBannerSection({
   onOpenBannerModal,
   onAddToCart,
-  onOpenCart
+  onOpenCart,
+  onSelectCategory
 }) {
   const { t } = useLanguage();
 
@@ -34,6 +35,17 @@ export default function PromoBannerSection({
       });
     } catch (e) {
       // safe fallback
+    }
+  };
+
+  const handleNavigateToMenu = () => {
+    handleCelebrate();
+    if (onSelectCategory) {
+      onSelectCategory('all');
+    }
+    const menuEl = document.getElementById('menu');
+    if (menuEl) {
+      menuEl.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -116,17 +128,15 @@ export default function PromoBannerSection({
               </div>
 
               <div className="action-bar-right">
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={handleNavigateToMenu}
                   className="festive-btn-whatsapp"
-                  onClick={handleCelebrate}
-                  aria-label="Order on WhatsApp and claim festive offer"
+                  aria-label="Select items to claim offer"
                 >
-                  <MessageCircle size={20} />
-                  <span>Order on WhatsApp & Claim Offer</span>
-                </a>
+                  <Sparkles size={18} />
+                  <span>{t('selectItemsToClaim')}</span>
+                </button>
 
                 <a
                   href={`tel:${BRAND_INFO.phoneNumber}`}

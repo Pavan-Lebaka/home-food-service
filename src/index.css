@@ -5797,6 +5797,9 @@ body.modal-open-scroll-locked {
   box-shadow: 0 6px 20px rgba(37, 211, 102, 0.38);
   transition: all 0.22s ease;
   text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .festive-btn-whatsapp:hover {
@@ -6291,6 +6294,9 @@ body.modal-open-scroll-locked {
   box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
   transition: all 0.2s ease;
   text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .banner-btn-whatsapp:hover {

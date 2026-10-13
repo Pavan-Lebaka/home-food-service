@@ -158,6 +158,7 @@ export default function App() {
           onOpenBannerModal={() => setIsBannerModalOpen(true)}
           onAddToCart={handleAddToCart}
           onOpenCart={() => setIsCartOpen(true)}
+          onSelectCategory={setActiveCategory}
         />
 
         {/* 3. Featured Collections Showcase ("Our Collections") */}
@@ -230,6 +231,7 @@ export default function App() {
         isOpen={isBannerModalOpen}
         onClose={() => setIsBannerModalOpen(false)}
         selectedGift={selectedGift}
+        onSelectCategory={setActiveCategory}
       />
     </div>
   );
