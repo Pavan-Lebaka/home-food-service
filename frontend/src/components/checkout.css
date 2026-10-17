@@ -557,62 +557,6 @@
   margin: 4px 0 0;
 }
 
-/* UPI QR Section */
-.upi-pay-card {
-  margin-top: 12px;
-  padding: 14px;
-  background: #FDF8F0;
-  border-radius: 10px;
-  border: 1px dashed rgba(217, 154, 23, 0.4);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.upi-qr-placeholder {
-  width: 90px;
-  height: 90px;
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #8C2F1C;
-  text-align: center;
-  padding: 6px;
-}
-
-.upi-details-wrap {
-  flex: 1;
-}
-
-.upi-id-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #FFFFFF;
-  border: 1px solid #D1D5DB;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #1F2937;
-  margin-top: 6px;
-}
-
-.copy-upi-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: #8C2F1C;
-  display: flex;
-  align-items: center;
-  padding: 2px;
-}
 
 /* --- Right Column: Order Summary --- */
 .checkout-summary-col {
@@ -1117,20 +1061,32 @@
 /* ==========================================================================
    MODERN PAYMENT & WHATSAPP CONFIRMATION CARD (NO BADGES)
    ========================================================================== */
-.checkout-pay-card {
+.checkout-card.checkout-pay-card {
+  padding: 0 !important;
+  overflow: hidden;
   border: 1.5px solid #86EFAC;
   box-shadow: 0 4px 20px rgba(22, 163, 74, 0.06);
+}
+
+.checkout-pay-card .checkout-card-header {
+  padding: 1.25rem 1.4rem 0.85rem;
+  margin-bottom: 0;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .pay-card-body {
   padding: 0;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .pay-flow-section {
   padding: 1.25rem 1.4rem;
   border-bottom: 1px solid #E2E8F0;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .pay-flow-section:last-child {
@@ -1142,6 +1098,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 0.85rem;
+  flex-wrap: wrap;
 }
 
 .pay-section-icon {
@@ -1168,6 +1125,9 @@
 
 /* UPI Pay Card */
 .upi-pay-card {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
   background: linear-gradient(145deg, #F0FDF4 0%, #FFFFFF 100%);
   border: 1.5px solid #86EFAC;
   border-radius: 12px;
@@ -1182,6 +1142,8 @@
   padding-bottom: 0.75rem;
   border-bottom: 1px dashed rgba(22, 163, 74, 0.3);
   margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .upi-amount-label {
@@ -1193,7 +1155,7 @@
 }
 
 .upi-amount-value {
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: #15803D;
   letter-spacing: -0.5px;
@@ -1204,18 +1166,21 @@
   background: #FFFFFF;
   border: 1.5px solid #CBD5E1;
   border-radius: 10px;
-  padding: 0.65rem 0.85rem;
+  padding: 0.75rem 0.85rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 1rem;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .upi-address-info {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  flex: 1;
 }
 
 .upi-address-label {
@@ -1227,7 +1192,7 @@
 }
 
 .upi-address-text {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #0F172A;
   word-break: break-all;
@@ -1236,11 +1201,12 @@
 .btn-copy-upi {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   background: #15803D;
   color: #FFFFFF;
   border: none;
-  padding: 7px 14px;
+  padding: 8px 14px;
   border-radius: 8px;
   font-size: 0.82rem;
   font-weight: 700;
@@ -1261,6 +1227,35 @@
   border: 1px solid #86EFAC;
 }
 
+@media (max-width: 520px) {
+  .upi-address-box {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 0.85rem;
+  }
+
+  .upi-address-info {
+    text-align: center;
+  }
+
+  .upi-address-text {
+    font-size: 1.15rem;
+    letter-spacing: 0.3px;
+    text-align: center;
+  }
+
+  .upi-address-label {
+    text-align: center;
+  }
+
+  .btn-copy-upi {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+  }
+}
+
 /* Quick App Launchers Grid */
 .upi-apps-launch-label {
   font-size: 0.76rem;
@@ -1276,8 +1271,27 @@
 }
 
 @media (max-width: 600px) {
+  .checkout-pay-card .checkout-card-header {
+    padding: 1rem 1rem 0.75rem;
+  }
+
+  .pay-flow-section {
+    padding: 1rem 1rem;
+  }
+
+  .upi-pay-card {
+    padding: 0.85rem 0.9rem;
+  }
+
   .upi-apps-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .upi-apps-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1286,7 +1300,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 9px 8px;
+  padding: 10px 8px;
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
   border-radius: 8px;
@@ -1296,6 +1310,7 @@
   color: #334155;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
 }
 
 .upi-app-link:hover {
