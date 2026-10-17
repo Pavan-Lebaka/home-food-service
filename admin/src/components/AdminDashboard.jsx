@@ -228,7 +228,12 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
         courier_name: courier
       } : o));
 
-      alert(`🎉 Shiprocket Courier Scheduled Successfully!\n\nCourier: ${courier}\nAWB Tracking Code: ${awb || 'Assigned'}\nOrder status updated to 'Shipped'.`);
+      const isLive = res.data?.isLive ?? res.isLive ?? false;
+      if (!isLive) {
+        alert(`⚠️ Staging / Simulated Mode: AWB assigned (${awb}), but this was NOT sent to your live Shiprocket dashboard because SHIPROCKET_PASSWORD is not configured in backend/.env or Render!\n\nTo push live orders to your real Shiprocket dashboard, please add your SHIPROCKET_PASSWORD.`);
+      } else {
+        alert(`🎉 Live Shiprocket Order Created Successfully!\n\nCourier: ${courier}\nAWB Tracking Code: ${awb || 'Assigned'}\nOrder is now visible in your live Shiprocket dashboard.`);
+      }
     } catch (err) {
       alert('Failed to book with Shiprocket: ' + err.message);
     } finally {

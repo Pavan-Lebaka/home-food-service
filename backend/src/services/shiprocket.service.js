@@ -136,8 +136,14 @@ class ShiprocketService {
         headers: { Authorization: `Bearer ${token}` }
       });
 
+      console.log('[ShiprocketService] Live order created in Shiprocket:', response.data);
+
       return {
         isLive: true,
+        shipmentId: response.data?.shipment_id,
+        orderId: response.data?.order_id,
+        awbCode: response.data?.awb_code || `SR-${response.data?.shipment_id}`,
+        courierName: response.data?.courier_name || 'Shiprocket Express',
         ...response.data
       };
     } catch (err) {
