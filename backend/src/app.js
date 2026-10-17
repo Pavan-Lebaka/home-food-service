@@ -15,11 +15,17 @@ const app = express();
 // Static images serving
 app.use('/images', express.static(path.resolve(__dirname, '../../frontend/public/images')));
 
-// 1. CORS setup (allows frontend Vite dev server & production client)
+// 1. CORS setup (allows frontend Vite dev server, admin portal, and Netlify production client)
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow non-browser requests (Postman, curl, server-to-server) or listed origins
-    if (!origin || env.CORS_ORIGIN.includes(origin) || env.isDev) {
+    // Allow non-browser requests (Postman, curl, server-to-server) or listed origins or netlify.app
+    if (
+      !origin ||
+      env.isDev ||
+      env.CORS_ORIGIN.includes('*') ||
+      env.CORS_ORIGIN.includes(origin) ||
+      (typeof origin === 'string' && (origin.endsWith('.netlify.app') || origin.includes('localhost')))
+    ) {
       return callback(null, true);
     }
     return callback(new Error(`CORS policy does not allow origin: ${origin}`));

@@ -1,6 +1,7 @@
 import { supabase, fetchAllOrders as fetchSupabaseOrders, updateOrder as updateSupabaseOrder } from './supabase';
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const rawBackendUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000/api';
+const BACKEND_URL = rawBackendUrl.replace(/\/+$/, '');
 
 /**
  * Token management
