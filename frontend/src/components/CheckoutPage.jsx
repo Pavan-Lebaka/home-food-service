@@ -545,46 +545,46 @@ export default function CheckoutPage({
   // -------------------------------------------------------------
   return (
     <div className="checkout-page-wrapper">
-      {/* 1. Header */}
+      {/* 1. Sleek Modern Header */}
       <header className="checkout-header">
         <div className="checkout-header-inner">
           <div className="checkout-brand">
             <span className="checkout-brand-diya">🪔</span>
-            <div>
+            <div className="checkout-brand-info">
               <div className="checkout-brand-title">Bramarambika Home Foods</div>
               <div className="checkout-brand-sub">Express Kitchen Checkout</div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div className="checkout-security-badge">
-              <ShieldCheck size={16} />
-              <span>Verified Kitchen Order</span>
+          <div className="checkout-header-right">
+            <div className="checkout-security-badge" title="Verified Kitchen Order">
+              <ShieldCheck size={15} />
+              <span>Verified Order</span>
             </div>
 
-            <button type="button" onClick={handleBackToStore} className="checkout-back-link">
+            <button type="button" onClick={handleBackToStore} className="checkout-back-link" title="Return to store">
               <ArrowLeft size={16} />
-              <span>Back to Store</span>
+              <span>Back</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* 2. Stepper Indicator */}
+      {/* 2. Sleek Non-Wrapping Stepper */}
       <div className="checkout-stepper">
         <div className="step-item completed">
-          <div className="step-bubble"><Check size={14} /></div>
-          <span>1. Cart</span>
+          <div className="step-bubble"><Check size={13} /></div>
+          <span>Cart</span>
         </div>
-        <div className="step-divider" style={{ background: '#15803D' }} />
+        <div className="step-divider completed" />
         <div className="step-item active">
           <div className="step-bubble">2</div>
-          <span>2. Delivery & Courier</span>
+          <span>Checkout</span>
         </div>
         <div className="step-divider" />
         <div className="step-item">
           <div className="step-bubble">3</div>
-          <span>3. Confirmation</span>
+          <span>Confirmation</span>
         </div>
       </div>
 

@@ -14,10 +14,10 @@
 .checkout-header {
   background: #FFFFFF;
   border-bottom: 1px solid rgba(140, 47, 28, 0.1);
-  padding: 1rem 1.5rem;
+  padding: 0.85rem 1.25rem;
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 50;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
@@ -27,87 +27,131 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .checkout-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
   color: inherit;
+  min-width: 0;
 }
 
 .checkout-brand-diya {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   line-height: 1;
+  flex-shrink: 0;
+}
+
+.checkout-brand-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .checkout-brand-title {
   font-family: 'Playfair Display', serif;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #8C2F1C;
-  line-height: 1.1;
+  line-height: 1.15;
+  white-space: nowrap;
 }
 
 .checkout-brand-sub {
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.68rem;
+  font-weight: 700;
   color: #D99A17;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.checkout-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .checkout-security-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.82rem;
-  font-weight: 600;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: #15803D;
   background: #F0FDF4;
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: 20px;
-  border: 1px solid rgba(22, 163, 74, 0.2);
+  border: 1px solid rgba(22, 163, 74, 0.25);
+  white-space: nowrap;
 }
 
 .checkout-back-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.88rem;
-  font-weight: 600;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 700;
   color: #8C2F1C;
-  background: transparent;
-  border: none;
+  background: #FFF5F2;
+  border: 1px solid rgba(140, 47, 28, 0.15);
   cursor: pointer;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 8px;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .checkout-back-link:hover {
-  background: rgba(140, 47, 28, 0.06);
+  background: #FDE8E2;
+}
+
+@media (max-width: 480px) {
+  .checkout-header {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .checkout-brand-title {
+    font-size: 1.05rem;
+  }
+
+  .checkout-security-badge span {
+    display: none;
+  }
+
+  .checkout-security-badge {
+    padding: 6px;
+    border-radius: 50%;
+  }
+
+  .checkout-back-link {
+    padding: 6px 10px;
+  }
 }
 
 /* --- Breadcrumb Stepper --- */
 .checkout-stepper {
-  max-width: 1200px;
-  margin: 1.5rem auto 1rem;
-  padding: 0 1.5rem;
+  max-width: 520px;
+  margin: 1.25rem auto 1rem;
+  padding: 0 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .step-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #9CA3AF;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #94A3B8;
+  white-space: nowrap;
 }
 
 .step-item.active {
@@ -119,15 +163,17 @@
 }
 
 .step-bubble {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  background: #E5E7EB;
-  color: #4B5563;
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: #F1F5F9;
+  color: #64748B;
+  flex-shrink: 0;
 }
 
 .step-item.active .step-bubble {
@@ -141,9 +187,16 @@
 }
 
 .step-divider {
-  width: 32px;
+  flex: 1;
+  max-width: 44px;
+  min-width: 14px;
   height: 2px;
-  background: #E5E7EB;
+  background: #E2E8F0;
+  border-radius: 2px;
+}
+
+.step-divider.completed {
+  background: #15803D;
 }
 
 /* --- Checkout Main Container --- */
