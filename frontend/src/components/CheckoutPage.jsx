@@ -330,11 +330,17 @@ export default function CheckoutPage({
       try {
         const opened = window.open(waUrl, '_blank', 'noopener,noreferrer');
         if (!opened || opened.closed || typeof opened.closed === 'undefined') {
-          // If browser popup blocker intercepts, redirect directly in tab
-          window.location.href = waUrl;
+          // Fallback via anchor with target="_blank" so the current page is NEVER replaced
+          const a = document.createElement('a');
+          a.href = waUrl;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
         }
       } catch (err) {
-        window.location.href = waUrl;
+        console.warn('Auto-open WhatsApp blocked; customer can use on-screen WhatsApp button:', err);
       }
 
       // Trigger festive celebration confetti

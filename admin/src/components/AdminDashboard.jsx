@@ -273,7 +273,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
       text += `\nTotal: ₹${order.grand_total}\n\nCould you kindly share your UPI payment screenshot to this WhatsApp number so we can start fresh preparation right away? 🙏`;
     }
 
-    window.open(`https://wa.me/${intlPhone}?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/${intlPhone}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
   };
 
   // Filtered orders
