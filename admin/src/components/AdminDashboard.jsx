@@ -7,7 +7,8 @@ import {
   Package, ShoppingBag, Truck, CheckCircle2, Clock,
   Search, RefreshCw, LogOut, Phone, MessageCircle,
   Copy, ExternalLink, Calendar, MapPin, AlertCircle,
-  User, Check, ChevronDown, Sparkles, UtensilsCrossed, Trash2
+  User, Check, ChevronDown, ChevronUp, Sparkles, UtensilsCrossed, Trash2,
+  Eye, X, ArrowRight, ShieldCheck, HelpCircle
 } from 'lucide-react';
 
 export default function AdminDashboard({ user, onLogout, onBackToStore }) {
@@ -26,6 +27,8 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showWorkflowGuide, setShowWorkflowGuide] = useState(true);
+  const [previewScreenshotUrl, setPreviewScreenshotUrl] = useState(null);
 
   // Persist status filter across page refresh
   const [statusFilter, setStatusFilter] = useState(() => {
@@ -195,7 +198,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
       const updated = await updateOrderApi(orderId, {
         courier_name: courierName,
         tracking_number: trackingNumber,
-        status: 'Dispatched'
+        status: 'Shipped'
       });
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...updated } : o));
     } catch (err) {
@@ -205,7 +208,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
     }
   };
 
-  // Copy full customer address formatted for Shiprocket
+  // Copy full customer address formatted for Courier / Shiprocket
   const handleCopyShiprocketAddress = (order) => {
     const text = `Name: ${order.customer_name}\nPhone: ${order.phone}\nAddress: ${order.address}\nPincode: ${order.pincode}\nItems: ${(order.items || []).map(i => `${i.name} (${i.variant}) x${i.quantity}`).join(', ')}`;
     navigator.clipboard.writeText(text);
@@ -251,20 +254,23 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
       text += `Your parcel has been DISPATCHED from our Andhra kitchen via ${order.courier_name || 'Express Courier'}.\n`;
       if (order.tracking_number) {
         text += `Tracking Number / AWB: ${order.tracking_number}\n`;
+        text += `Track live here: https://shiprocket.co/tracking/${order.tracking_number}\n`;
       }
       text += `Estimated doorstep arrival: 2–3 business days.\n\nThank you for choosing Bramarambika Home Foods! ❤️`;
     } else if (order.status === 'Preparing in Kitchen') {
-      text += `Your delicacies are now being prepared fresh in our kitchen with cold-pressed oils and traditional recipes. We will seal and dispatch within 24–48 hours!\n\nDhanyavadalu! 🙏`;
+      text += `Your delicacies are now being prepared fresh in our Andhra kitchen with cold-pressed oils and traditional recipes. We will pack in 5-layer leak-proof containers and dispatch within 24–48 hours!\n\nDhanyavadalu! 🙏`;
     } else if (order.status === 'Ready for Pickup') {
       text += `Your order has been freshly packed with 5-layer leak-proof seal and is ready for courier pickup. It will be dispatched today!\n\nThank you! ❤️`;
+    } else if (order.status === 'Delivered') {
+      text += `We hope your parcel of traditional delicacies arrived safely and in great taste! 🪔✨\n\nPlease let us know how you liked them. Your review means the world to our kitchen team!\n\nDhanyavadalu! 🙏`;
     } else if (order.payment_status === 'Paid') {
-      text += `We have received your payment of ₹${order.grand_total}. Our kitchen has scheduled your fresh batch preparation.\n\nThank you! 🙏`;
+      text += `We have verified your payment of ₹${order.grand_total}. Our kitchen has scheduled your fresh batch preparation.\n\nThank you! 🙏`;
     } else {
-      text += `We have received your order request for:\n`;
+      text += `Namaste! We received your order request (#${order.order_number || order.id.slice(0, 8)}) for:\n`;
       (order.items || []).forEach(i => {
         text += `• ${i.name} (${i.variant}) x${i.quantity}\n`;
       });
-      text += `\nTotal: ₹${order.grand_total}\n\nPlease share your UPI payment screenshot to +91 ${BRAND_INFO.whatsappNumber} so we can start fresh preparation!`;
+      text += `\nTotal: ₹${order.grand_total}\n\nCould you kindly share your UPI payment screenshot to this WhatsApp number so we can start fresh preparation right away? 🙏`;
     }
 
     window.open(`https://wa.me/${intlPhone}?text=${encodeURIComponent(text)}`, '_blank');
@@ -407,6 +413,48 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
               </div>
             </div>
 
+            {/* Step-by-Step Order Lifecycle Guide */}
+            {showWorkflowGuide && (
+              <div className="kitchen-workflow-guide">
+                <div className="guide-header">
+                  <div className="guide-title">
+                    <Sparkles size={18} color="#D97706" />
+                    <span>What to do when an order is placed? (Simple 4-Step Guide)</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowWorkflowGuide(false)}
+                    style={{ background: 'none', border: 'none', color: '#92400E', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
+                  >
+                    Hide Guide ✕
+                  </button>
+                </div>
+                <div className="guide-steps-grid">
+                  <div className="guide-step-card">
+                    <div className="guide-step-num">1</div>
+                    <div className="guide-step-text">
+                      <h4>Verify UPI Payment</h4>
+                      <p>Click "Inspect Proof" to review the UPI receipt. Then click <strong>"✓ Confirm Payment"</strong> to approve kitchen preparation.</p>
+                    </div>
+                  </div>
+                  <div className="guide-step-card">
+                    <div className="guide-step-num">2</div>
+                    <div className="guide-step-text">
+                      <h4>Fresh Kitchen Prep</h4>
+                      <p>Prepare fresh in Andhra kitchen. Once packed in 5-layer leak-proof containers, click <strong>"📦 Mark Packed"</strong>.</p>
+                    </div>
+                  </div>
+                  <div className="guide-step-card">
+                    <div className="guide-step-num">3</div>
+                    <div className="guide-step-text">
+                      <h4>Ship & Send Tracking</h4>
+                      <p>Click <strong>"🚀 Book Shiprocket"</strong> or enter manual AWB. Then 1-click WhatsApp tracking link to customer!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* 3. Action Toolbar (Search & Status Filters) */}
             <div className="admin-controls-card">
               <div className="admin-search-wrap">
@@ -420,7 +468,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
               </div>
 
               <div className="admin-filter-pills">
-                {['All', 'New', 'Payment Verified', 'Preparing in Kitchen', 'Ready for Pickup', 'Shipped', 'Delivered', 'Cancelled'].map(status => (
+                {['All', 'New', 'Preparing in Kitchen', 'Ready for Pickup', 'Shipped', 'Delivered', 'Cancelled'].map(status => (
                   <button
                     key={status}
                     type="button"
@@ -440,6 +488,18 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
                   <RefreshCw size={14} className={loading ? 'spin-icon' : ''} />
                   <span>Refresh</span>
                 </button>
+
+                {!showWorkflowGuide && (
+                  <button
+                    type="button"
+                    onClick={() => setShowWorkflowGuide(true)}
+                    className="refresh-btn"
+                    title="Show step-by-step order workflow guide"
+                  >
+                    <HelpCircle size={14} />
+                    <span>Workflow Guide</span>
+                  </button>
+                )}
 
                 {orders.length > 0 && (
                   <button
@@ -495,6 +555,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
                       onWhatsAppNotify={handleSendWhatsAppNotification}
                       onBookShiprocket={handleBookShiprocket}
                       onDeleteOrder={handleDeleteOrder}
+                      onPreviewScreenshot={setPreviewScreenshotUrl}
                     />
                   ))}
                 </div>
@@ -503,11 +564,56 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
           </>
         )}
       </main>
+
+      {/* High-Resolution UPI Payment Screenshot Modal */}
+      {previewScreenshotUrl && (
+        <div
+          className="screenshot-modal-backdrop"
+          onClick={() => setPreviewScreenshotUrl(null)}
+        >
+          <div
+            className="screenshot-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="screenshot-modal-header">
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <ShieldCheck size={18} color="#15803D" />
+                <span>Customer UPI Payment Receipt Verification</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setPreviewScreenshotUrl(null)}
+                className="btn-close-modal"
+                title="Close Modal"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="screenshot-modal-img-wrap">
+              <img
+                src={previewScreenshotUrl}
+                alt="UPI Payment Proof Receipt"
+                className="screenshot-modal-img"
+              />
+            </div>
+            <div className="screenshot-modal-footer">
+              <a
+                href={previewScreenshotUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-open-full"
+              >
+                Open Full Size in New Tab ↗
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ─── Individual Order Card Component ──────────────────────────────────────────
+// ─── Individual Clean Step-by-Step Order Card Component ─────────────────────────
 function OrderCard({
   order,
   updating,
@@ -518,11 +624,13 @@ function OrderCard({
   onCopyAddress,
   onWhatsAppNotify,
   onBookShiprocket,
-  onDeleteOrder
+  onDeleteOrder,
+  onPreviewScreenshot
 }) {
   const [courierInput, setCourierInput] = useState(order.courier_name || 'Delhivery');
   const [awbInput, setAwbInput] = useState(order.tracking_number || '');
   const [showDetails, setShowDetails] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const formattedDate = useMemo(() => {
     try {
@@ -535,12 +643,26 @@ function OrderCard({
     }
   }, [order.created_at]);
 
+  // Map order status to 1-5 step index
+  const stepIndex = useMemo(() => {
+    switch (order.status) {
+      case 'New': return 1;
+      case 'Payment Verified':
+      case 'Preparing in Kitchen': return 2;
+      case 'Ready for Pickup':
+      case 'Packed': return 3;
+      case 'Shipped': return 4;
+      case 'Delivered': return 5;
+      default: return 1;
+    }
+  }, [order.status]);
+
   const statusColorClass = useMemo(() => {
     switch (order.status) {
       case 'New': return 'status-badge new';
       case 'Payment Verified': return 'status-badge verified';
       case 'Preparing in Kitchen': return 'status-badge preparing';
-      case 'Ready for Pickup': return 'status-badge packed';
+      case 'Ready for Pickup':
       case 'Packed': return 'status-badge packed';
       case 'Shipped': return 'status-badge shipped';
       case 'Delivered': return 'status-badge delivered';
@@ -551,7 +673,7 @@ function OrderCard({
 
   return (
     <article className="order-manage-card">
-      {/* Order Card Top Bar */}
+      {/* 1. Header: Order ID, Date, Status & Payment Pill */}
       <div className="order-card-header">
         <div className="order-header-left">
           <span className="order-id-badge">Order #{order.order_number || order.id.slice(0, 8)}</span>
@@ -571,23 +693,192 @@ function OrderCard({
           >
             {order.payment_status === 'Paid' ? '✓ Paid' : '⏳ Payment Pending'}
           </button>
-          {onDeleteOrder && (
-            <button
-              type="button"
-              onClick={() => onDeleteOrder(order.id)}
-              className="order-delete-btn"
-              title="Delete this order"
-              disabled={updating}
-            >
-              <Trash2 size={13} />
-            </button>
-          )}
         </div>
       </div>
 
-      {/* Main Order Body */}
+      {/* 2. Visual Progress Stepper (1 -> 2 -> 3 -> 4 -> 5) */}
+      <div className="order-stepper-container">
+        <div className="order-stepper-track">
+          <div className={`order-step-node ${stepIndex >= 1 ? (stepIndex === 1 ? 'active' : 'completed') : ''}`}>
+            <span className="order-step-dot">{stepIndex > 1 ? '✓' : '1'}</span>
+            <span>1. Verify Pay</span>
+          </div>
+          <span className="order-step-arrow">→</span>
+
+          <div className={`order-step-node ${stepIndex >= 2 ? (stepIndex === 2 ? 'active' : 'completed') : ''}`}>
+            <span className="order-step-dot">{stepIndex > 2 ? '✓' : '2'}</span>
+            <span>2. Kitchen Cooking</span>
+          </div>
+          <span className="order-step-arrow">→</span>
+
+          <div className={`order-step-node ${stepIndex >= 3 ? (stepIndex === 3 ? 'active' : 'completed') : ''}`}>
+            <span className="order-step-dot">{stepIndex > 3 ? '✓' : '3'}</span>
+            <span>3. Pack & Seal</span>
+          </div>
+          <span className="order-step-arrow">→</span>
+
+          <div className={`order-step-node ${stepIndex >= 4 ? (stepIndex === 4 ? 'active' : 'completed') : ''}`}>
+            <span className="order-step-dot">{stepIndex > 4 ? '✓' : '4'}</span>
+            <span>4. Dispatched</span>
+          </div>
+          <span className="order-step-arrow">→</span>
+
+          <div className={`order-step-node ${stepIndex >= 5 ? 'completed' : ''}`}>
+            <span className="order-step-dot">{stepIndex >= 5 ? '✓' : '5'}</span>
+            <span>5. Delivered</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Primary Next Recommended Action Bar (Removes Confusion!) */}
+      <div className="order-next-step-bar">
+        <div className="next-action-prompt">
+          <span className="next-action-label">Next Action:</span>
+          <span className="next-action-status-text">
+            {order.status === 'New' && 'Verify UPI payment receipt & start kitchen preparation'}
+            {(order.status === 'Payment Verified' || order.status === 'Preparing in Kitchen') && 'Fresh cooking in progress. Seal & pack when ready to ship'}
+            {(order.status === 'Ready for Pickup' || order.status === 'Packed') && 'Package sealed with 5-layer leak proof. Ready for courier pickup'}
+            {order.status === 'Shipped' && `In transit via ${order.courier_name || 'Courier'}${order.tracking_number ? ` (AWB: ${order.tracking_number})` : ''}`}
+            {order.status === 'Delivered' && 'Order successfully delivered to customer! 🎉'}
+            {order.status === 'Cancelled' && 'This order has been cancelled.'}
+          </span>
+        </div>
+
+        <div className="next-action-buttons-wrap">
+          {/* Step 1 Actions (New) */}
+          {order.status === 'New' && (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  onStatusChange(order.id, 'Preparing in Kitchen');
+                  if (order.payment_status !== 'Paid') onPaymentToggle(order.id, 'Pending');
+                }}
+                disabled={updating}
+                className="btn-primary-workflow"
+                title="Mark Payment Verified and start preparing in kitchen"
+              >
+                <Check size={14} />
+                <span>✓ Confirm Payment & Start Cooking</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onWhatsAppNotify(order)}
+                className="btn-secondary-workflow whatsapp"
+                title="Send WhatsApp message asking customer for UPI screenshot"
+              >
+                <MessageCircle size={14} />
+                <span>Ping for Payment</span>
+              </button>
+            </>
+          )}
+
+          {/* Step 2 Actions (Preparing / Payment Verified) */}
+          {(order.status === 'Payment Verified' || order.status === 'Preparing in Kitchen') && (
+            <>
+              <button
+                type="button"
+                onClick={() => onStatusChange(order.id, 'Ready for Pickup')}
+                disabled={updating}
+                className="btn-primary-workflow amber"
+                title="Cooking complete, 5-layer leak-proof packed and ready for courier pickup"
+              >
+                <Package size={14} />
+                <span>📦 Mark Packed & Ready to Ship</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onWhatsAppNotify(order)}
+                className="btn-secondary-workflow whatsapp"
+                title="Notify customer on WhatsApp that fresh cooking is in progress"
+              >
+                <MessageCircle size={14} />
+                <span>Send Prep Update</span>
+              </button>
+            </>
+          )}
+
+          {/* Step 3 Actions (Ready for Pickup / Packed) */}
+          {(order.status === 'Ready for Pickup' || order.status === 'Packed') && (
+            <>
+              <button
+                type="button"
+                onClick={() => onBookShiprocket(order)}
+                disabled={updating}
+                className="btn-primary-workflow purple"
+                title="1-Click schedule courier pickup and generate AWB tracking code via Shiprocket"
+              >
+                <Truck size={14} />
+                <span>{updating ? 'Booking Shiprocket...' : '🚀 Book Shiprocket Courier'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(true)}
+                className="btn-secondary-workflow"
+                title="Enter manual AWB / Courier details"
+              >
+                <span>Manual Dispatch ✎</span>
+              </button>
+            </>
+          )}
+
+          {/* Step 4 Actions (Shipped) */}
+          {order.status === 'Shipped' && (
+            <>
+              <button
+                type="button"
+                onClick={() => onWhatsAppNotify(order)}
+                className="btn-secondary-workflow whatsapp"
+                title="Send WhatsApp message with live courier tracking link & ETA"
+              >
+                <MessageCircle size={14} />
+                <span>📲 WhatsApp Tracking to Customer</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onStatusChange(order.id, 'Delivered')}
+                disabled={updating}
+                className="btn-primary-workflow"
+                title="Mark order as delivered"
+              >
+                <CheckCircle2 size={14} />
+                <span>✅ Mark Delivered</span>
+              </button>
+            </>
+          )}
+
+          {/* Step 5 Actions (Delivered) */}
+          {order.status === 'Delivered' && (
+            <button
+              type="button"
+              onClick={() => onWhatsAppNotify(order)}
+              className="btn-secondary-workflow whatsapp"
+              title="Send a thank you note and request review"
+            >
+              <Sparkles size={14} />
+              <span>Ask for Feedback</span>
+            </button>
+          )}
+
+          {/* Toggle Advanced / Manual overrides */}
+          <button
+            type="button"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="btn-toggle-advanced"
+            title="Toggle manual status and courier options"
+          >
+            <span>{showAdvanced ? 'Hide Options ▲' : '⚙ More Options ▼'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 4. Main Order Details (Clean 2-Column Split) */}
       <div className="order-card-body">
-        {/* Left Column: Customer Details */}
+        {/* Left Column: Customer & Delivery Info */}
         <div className="order-customer-pane">
           <div className="customer-info-row">
             <span className="customer-name-val">{order.customer_name}</span>
@@ -611,21 +902,39 @@ function OrderCard({
             </div>
           )}
 
-          {order.payment_screenshot && (
-            <div style={{ marginTop: '10px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '8px', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '0.8rem', color: '#166534', fontWeight: 600 }}>📸 Payment Screenshot Attached</span>
-              <a
-                href={order.payment_screenshot}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ fontSize: '0.75rem', color: '#15803D', fontWeight: 700, textDecoration: 'underline' }}
+          {/* Payment Proof Screenshot Widget */}
+          {order.payment_screenshot ? (
+            <div className="payment-proof-widget">
+              <div className="payment-proof-left">
+                <img
+                  src={order.payment_screenshot}
+                  alt="UPI Proof"
+                  className="payment-proof-thumb"
+                  onClick={() => onPreviewScreenshot(order.payment_screenshot)}
+                  title="Click to view full screenshot"
+                />
+                <div className="payment-proof-info">
+                  <span className="payment-proof-label">📸 Payment Screenshot Attached</span>
+                  <span className="payment-proof-sub">Uploaded by customer at checkout</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-view-proof"
+                onClick={() => onPreviewScreenshot(order.payment_screenshot)}
               >
-                View Screenshot
-              </a>
+                <Eye size={12} style={{ marginRight: '4px', display: 'inline' }} />
+                Inspect Proof
+              </button>
+            </div>
+          ) : (
+            <div style={{ fontSize: '0.75rem', color: '#B45309', background: '#FFFBEB', padding: '6px 10px', borderRadius: '6px', border: '1px solid #FDE68A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <AlertCircle size={13} />
+              <span>No screenshot uploaded online. Verify via customer's WhatsApp message.</span>
             </div>
           )}
 
-          {/* Customer Action Pills */}
+          {/* Quick Contact & Address Copy Pills */}
           <div className="customer-action-cluster">
             <a
               href={`tel:${order.phone}`}
@@ -643,42 +952,22 @@ function OrderCard({
               title="Open WhatsApp chat with prefilled message"
             >
               <MessageCircle size={13} />
-              <span>WhatsApp Customer</span>
+              <span>WhatsApp Chat</span>
             </button>
 
             <button
               type="button"
               onClick={() => onCopyAddress(order)}
               className={`action-pill-btn shiprocket ${copied ? 'copied' : ''}`}
-              title="Copy formatted address to paste into Shiprocket App"
+              title="Copy formatted address to paste into Courier App"
             >
               {copied ? <Check size={13} /> : <Copy size={13} />}
-              <span>{copied ? 'Copied for Shiprocket!' : 'Copy for Shiprocket'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onBookShiprocket(order)}
-              disabled={updating}
-              className="action-pill-btn shiprocket-book"
-              style={{
-                background: order.tracking_number ? '#ECFDF5' : '#7C3AED',
-                color: order.tracking_number ? '#065F46' : '#FFFFFF',
-                border: order.tracking_number ? '1px solid #A7F3D0' : 'none',
-                fontWeight: 600,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-              title={order.tracking_number ? `AWB: ${order.tracking_number}` : '1-Click Schedule Courier & Generate AWB via Shiprocket'}
-            >
-              <Truck size={13} />
-              <span>{order.tracking_number ? `AWB: ${order.tracking_number}` : (updating ? 'Booking...' : '🚀 Book Shiprocket')}</span>
+              <span>{copied ? 'Copied Address!' : 'Copy Address'}</span>
             </button>
           </div>
         </div>
 
-        {/* Right Column: Ordered Items & Bill */}
+        {/* Right Column: Ordered Items & Bill Summary */}
         <div className="order-items-pane">
           <div className="items-title-bar">
             <span>Delicacies Ordered ({(order.items || []).length} items)</span>
@@ -716,7 +1005,7 @@ function OrderCard({
           <div className="order-financial-strip">
             <div className="fin-row">
               <span>Items Subtotal:</span>
-              <span>₹{Number(order.subtotal).toLocaleString('en-IN')}</span>
+              <span>₹{Number(order.subtotal || 0).toLocaleString('en-IN')}</span>
             </div>
             <div className="fin-row">
               <span>Delivery Fee:</span>
@@ -724,65 +1013,82 @@ function OrderCard({
             </div>
             <div className="fin-row grand">
               <span>Grand Total:</span>
-              <span className="grand-val">₹{Number(order.grand_total).toLocaleString('en-IN')}</span>
+              <span className="grand-val">₹{Number(order.grand_total || 0).toLocaleString('en-IN')}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Order Card Footer: Dispatch & Tracking Form */}
-      <div className="order-card-footer">
-        <div className="status-change-block">
-          <label htmlFor={`status-${order.id}`}>Update Order Status:</label>
-          <select
-            id={`status-${order.id}`}
-            value={order.status}
-            onChange={(e) => onStatusChange(order.id, e.target.value)}
-            disabled={updating}
-            className="status-select"
-          >
-            <option value="New">New (Unprocessed)</option>
-            <option value="Payment Verified">Payment Verified</option>
-            <option value="Preparing in Kitchen">🥣 Preparing in Kitchen (Cooking)</option>
-            <option value="Ready for Pickup">📦 Ready for Pickup (Packed & Sealed)</option>
-            <option value="Shipped">🚚 Shipped (Courier In Transit)</option>
-            <option value="Delivered">✅ Delivered</option>
-            <option value="Cancelled">❌ Cancelled</option>
-          </select>
+      {/* 5. Collapsible Advanced Options Drawer */}
+      {showAdvanced && (
+        <div className="advanced-options-drawer">
+          <div className="status-change-block">
+            <label htmlFor={`status-${order.id}`}>Override Status:</label>
+            <select
+              id={`status-${order.id}`}
+              value={order.status}
+              onChange={(e) => onStatusChange(order.id, e.target.value)}
+              disabled={updating}
+              className="status-select"
+            >
+              <option value="New">1. New (Payment Pending)</option>
+              <option value="Payment Verified">2. Payment Verified</option>
+              <option value="Preparing in Kitchen">2b. 🥣 Preparing in Kitchen</option>
+              <option value="Ready for Pickup">3. 📦 Ready for Pickup (Packed)</option>
+              <option value="Shipped">4. 🚚 Shipped (In Transit)</option>
+              <option value="Delivered">5. ✅ Delivered</option>
+              <option value="Cancelled">❌ Cancelled</option>
+            </select>
+          </div>
+
+          <div className="tracking-dispatch-block">
+            <select
+              value={courierInput}
+              onChange={(e) => setCourierInput(e.target.value)}
+              className="courier-select"
+            >
+              <option value="Delhivery">Delhivery</option>
+              <option value="India Post Speed Post">India Post Speed Post</option>
+              <option value="DTDC">DTDC</option>
+              <option value="Blue Dart">Blue Dart</option>
+              <option value="Trackon">Trackon</option>
+            </select>
+
+            <input
+              type="text"
+              placeholder="Manual AWB Tracking #"
+              value={awbInput}
+              onChange={(e) => setAwbInput(e.target.value)}
+              className="awb-input"
+            />
+
+            <button
+              type="button"
+              onClick={() => onSaveTracking(order.id, courierInput, awbInput)}
+              disabled={updating || !awbInput}
+              className="btn-save-dispatch"
+              title="Save manual tracking and set status to Shipped"
+            >
+              <Truck size={14} />
+              <span>Save Tracking</span>
+            </button>
+          </div>
+
+          {onDeleteOrder && (
+            <button
+              type="button"
+              onClick={() => onDeleteOrder(order.id)}
+              className="order-delete-btn"
+              title="Delete this order"
+              disabled={updating}
+              style={{ marginLeft: 'auto', background: '#FEE2E2', color: '#DC2626', border: '1px solid #FCA5A5', padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+            >
+              <Trash2 size={13} />
+              <span>Delete Order</span>
+            </button>
+          )}
         </div>
-
-        <div className="tracking-dispatch-block">
-          <select
-            value={courierInput}
-            onChange={(e) => setCourierInput(e.target.value)}
-            className="courier-select"
-          >
-            <option value="Delhivery">Delhivery</option>
-            <option value="India Post Speed Post">India Post Speed Post</option>
-            <option value="DTDC">DTDC</option>
-            <option value="Blue Dart">Blue Dart</option>
-          </select>
-
-          <input
-            type="text"
-            placeholder="Enter AWB / Tracking #"
-            value={awbInput}
-            onChange={(e) => setAwbInput(e.target.value)}
-            className="awb-input"
-          />
-
-          <button
-            type="button"
-            onClick={() => onSaveTracking(order.id, courierInput, awbInput)}
-            disabled={updating || !awbInput}
-            className="btn-save-dispatch"
-            title="Save tracking and mark as Shipped"
-          >
-            <Truck size={14} />
-            <span>Mark Shipped</span>
-          </button>
-        </div>
-      </div>
+      )}
     </article>
   );
 }
