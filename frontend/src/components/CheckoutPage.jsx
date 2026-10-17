@@ -77,6 +77,7 @@ export default function CheckoutPage({
   const [paymentMethod, setPaymentMethod] = useState('whatsapp');
   const [isCopiedUpi, setIsCopiedUpi] = useState(false);
   const [paymentScreenshot, setPaymentScreenshot] = useState(null);
+  const [showMobileSummary, setShowMobileSummary] = useState(false);
 
   const handleScreenshotUpload = (e) => {
     const file = e.target.files?.[0];
@@ -174,7 +175,38 @@ export default function CheckoutPage({
   }, [formData.pincode, paymentMethod]);
 
   const handleInputChange = (field, val) => {
-    setFormData(prev => ({ ...prev, [field]: val }));
+    setFormData(prev => {
+      const updated = { ...prev, [field]: val };
+      if (field === 'pincode' && val.length === 6) {
+        const p = val;
+        if (p.startsWith('500') || p.startsWith('501') || p.startsWith('502')) {
+          if (!prev.city) updated.city = 'Hyderabad';
+          updated.state = 'Telangana';
+        } else if (p.startsWith('520') || p.startsWith('521')) {
+          if (!prev.city) updated.city = 'Vijayawada';
+          updated.state = 'Andhra Pradesh';
+        } else if (p.startsWith('530') || p.startsWith('531')) {
+          if (!prev.city) updated.city = 'Visakhapatnam';
+          updated.state = 'Andhra Pradesh';
+        } else if (p.startsWith('522')) {
+          if (!prev.city) updated.city = 'Guntur';
+          updated.state = 'Andhra Pradesh';
+        } else if (p.startsWith('518')) {
+          if (!prev.city) updated.city = 'Kurnool';
+          updated.state = 'Andhra Pradesh';
+        } else if (p.startsWith('517')) {
+          if (!prev.city) updated.city = 'Tirupati';
+          updated.state = 'Andhra Pradesh';
+        } else if (p.startsWith('560')) {
+          if (!prev.city) updated.city = 'Bengaluru';
+          updated.state = 'Karnataka';
+        } else if (p.startsWith('600')) {
+          if (!prev.city) updated.city = 'Chennai';
+          updated.state = 'Tamil Nadu';
+        }
+      }
+      return updated;
+    });
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
@@ -535,6 +567,62 @@ export default function CheckoutPage({
         </div>
       </div>
 
+      {/* Mobile-Only Collapsible Order Summary Bar */}
+      <div className="mobile-order-summary-accordion">
+        <button
+          type="button"
+          onClick={() => setShowMobileSummary(!showMobileSummary)}
+          className="mobile-summary-toggle"
+        >
+          <div className="summary-toggle-left">
+            <ShoppingBag size={18} color="#8C2F1C" />
+            <span style={{ fontWeight: 700 }}>
+              {showMobileSummary ? 'Hide Order Summary' : 'Show Order Summary'}
+            </span>
+            <span className="summary-item-count">
+              ({cartItems.reduce((acc, i) => acc + i.quantity, 0)} items)
+            </span>
+            <ChevronDown size={16} className={`chevron-rotate ${showMobileSummary ? 'open' : ''}`} />
+          </div>
+          <span className="mobile-summary-price">₹{grandTotal.toLocaleString('en-IN')}</span>
+        </button>
+
+        {showMobileSummary && (
+          <div className="mobile-summary-drawer-content">
+            <div className="mobile-summary-items">
+              {cartItems.map((item, idx) => {
+                const itemPrice = item.price || item.unitPrice || item.pricePerKg || 0;
+                return (
+                  <div key={idx} className="mobile-item-row">
+                    <img src={item.image || '/images/avakaya.jpg'} alt={item.name} className="mobile-item-thumb" />
+                    <div className="mobile-item-info">
+                      <span className="mobile-item-title">{item.name}</span>
+                      <span className="mobile-item-var">{item.variantLabel || '1/2 kg'} × {item.quantity}</span>
+                    </div>
+                    <span className="mobile-item-price">₹{(itemPrice * item.quantity).toLocaleString('en-IN')}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mobile-calc-strip">
+              <div className="calc-row">
+                <span>Items Subtotal:</span>
+                <span>₹{itemsSubtotal.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="calc-row">
+                <span>Express Delivery:</span>
+                <span>{deliveryFee === 0 ? 'FREE 🎉' : `₹${deliveryFee}`}</span>
+              </div>
+              <div className="calc-row grand">
+                <span>Grand Total:</span>
+                <span>₹{grandTotal.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* 3. Main Form Grid */}
       <main className="checkout-container">
         {/* Left Column: Form Details */}
@@ -731,6 +819,37 @@ export default function CheckoutPage({
                 </button>
               </div>
 
+              {/* Quick Mobile UPI Launch Buttons */}
+              <div className="mobile-upi-launch-row">
+                <span className="launch-hint">📱 Tap to open UPI App on your phone:</span>
+                <div className="launch-buttons-flex">
+                  <a
+                    href={`upi://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                    className="upi-app-btn gpay"
+                  >
+                    <span>Google Pay</span>
+                  </a>
+                  <a
+                    href={`phonepe://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                    className="upi-app-btn phonepe"
+                  >
+                    <span>PhonePe</span>
+                  </a>
+                  <a
+                    href={`paytmmp://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                    className="upi-app-btn paytm"
+                  >
+                    <span>Paytm</span>
+                  </a>
+                  <a
+                    href={`upi://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                    className="upi-app-btn upi-generic"
+                  >
+                    <span>Any UPI App</span>
+                  </a>
+                </div>
+              </div>
+
               {/* Step 2: Upload Screenshot */}
               <div className="screenshot-drop-zone">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
@@ -897,6 +1016,22 @@ export default function CheckoutPage({
           </div>
         </aside>
       </main>
+
+      {/* Mobile Sticky Bottom Place Order Bar */}
+      <div className="checkout-mobile-sticky-bar">
+        <div className="mobile-sticky-left">
+          <span className="sticky-total-label">Grand Total</span>
+          <span className="sticky-total-amount">₹{grandTotal.toLocaleString('en-IN')}</span>
+        </div>
+        <button
+          type="button"
+          onClick={handlePlaceOrder}
+          disabled={submitting}
+          className="btn-sticky-place-order"
+        >
+          {submitting ? 'Placing Order...' : 'Confirm on WhatsApp →'}
+        </button>
+      </div>
     </div>
   );
 }
