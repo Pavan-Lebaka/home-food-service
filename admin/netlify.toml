@@ -2,6 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  VITE_STOREFRONT_URL = "https://bramarambika-home-food.netlify.app"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
