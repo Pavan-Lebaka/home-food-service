@@ -1,4 +1,5 @@
 import express from 'express';
+import fs from 'fs';
 import cors from 'cors';
 import { env } from './config/env.js';
 import { requestLogger } from './middlewares/logger.middleware.js';
@@ -12,8 +13,18 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Static images serving
-app.use('/images', express.static(path.resolve(__dirname, '../../frontend/public/images')));
+// Static images serving - serve backend's own public images first
+app.use('/images', express.static(path.resolve(__dirname, '../public/images')));
+
+// Also serve monorepo frontend images if present locally
+const localFrontendImgPath = path.resolve(__dirname, '../../frontend/public/images');
+try {
+  if (fs.existsSync(localFrontendImgPath)) {
+    app.use('/images', express.static(localFrontendImgPath));
+  }
+} catch (e) {
+  // Ignore in isolated container
+}
 
 // 1. CORS setup (allows frontend Vite dev server, admin portal, and Netlify production client)
 const corsOptions = {

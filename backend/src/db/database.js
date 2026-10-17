@@ -7,8 +7,28 @@ import { INITIAL_PRODUCTS } from '../constants/initialProducts.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DATA_DIR = path.resolve(__dirname, '../../data');
-const DB_FILE = path.resolve(DATA_DIR, 'db.json');
+
+// Primary data location is backend/data, with automatic fallback to /tmp/data if container permissions are restricted
+let DATA_DIR = process.env.DATA_DIR || path.resolve(__dirname, '../../data');
+let DB_FILE = path.resolve(DATA_DIR, 'db.json');
+
+function ensureDataDir() {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.accessSync(DATA_DIR, fs.constants.W_OK);
+  } catch (err) {
+    if (DATA_DIR !== '/tmp/data') {
+      console.warn(`[LiveDatabase] Cannot write to ${DATA_DIR} (${err.message}). Falling back to /tmp/data for container execution.`);
+      DATA_DIR = '/tmp/data';
+      DB_FILE = path.resolve(DATA_DIR, 'db.json');
+      if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      }
+    }
+  }
+}
 
 class LiveDatabase {
   constructor() {
@@ -26,9 +46,7 @@ class LiveDatabase {
 
   init() {
     try {
-      if (!fs.existsSync(DATA_DIR)) {
-        fs.mkdirSync(DATA_DIR, { recursive: true });
-      }
+      ensureDataDir();
 
       if (fs.existsSync(DB_FILE)) {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
@@ -45,9 +63,7 @@ class LiveDatabase {
 
   save() {
     try {
-      if (!fs.existsSync(DATA_DIR)) {
-        fs.mkdirSync(DATA_DIR, { recursive: true });
-      }
+      ensureDataDir();
       fs.writeFileSync(DB_FILE, JSON.stringify(this.data, null, 2), 'utf-8');
     } catch (err) {
       console.error('[LiveDatabase] Failed to save database to disk:', err.message);

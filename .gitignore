@@ -19,8 +19,11 @@ build/
 .vite/
 
 # Local databases & runtimes
-backend/data/
-data/
+backend/data/*
+!backend/data/db.json
+!backend/data/.gitkeep
+data/*
+!data/db.json
 *.db
 *.sqlite
 

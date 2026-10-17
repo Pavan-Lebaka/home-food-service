@@ -34,7 +34,13 @@ export const env = {
   SHIPROCKET_PASSWORD: process.env.SHIPROCKET_PASSWORD || '',
   SHIPROCKET_PICKUP_PINCODE: process.env.SHIPROCKET_PICKUP_PINCODE || '518001',
   SHIPROCKET_PICKUP_LOCATION: process.env.SHIPROCKET_PICKUP_LOCATION || 'Bramarambika_Kitchen',
-  SHIPROCKET_BASE_URL: 'https://apiv2.shiprocket.in/v1/external'
+  SHIPROCKET_BASE_URL: 'https://apiv2.shiprocket.in/v1/external',
+
+  // Cloudinary Image Storage & CDN
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || '',
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '',
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || '',
+  CLOUDINARY_URL: process.env.CLOUDINARY_URL || ''
 };
 
 // Strict Environment Validation

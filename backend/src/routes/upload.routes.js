@@ -2,6 +2,7 @@ import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cloudinary, { isCloudinaryConfigured } from '../config/cloudinary.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -13,21 +14,23 @@ const __dirname = path.dirname(__filename);
 const router = Router();
 
 // Directories to persist uploaded images
+const BACKEND_IMG_DIR = path.resolve(__dirname, '../../public/images');
 const FRONTEND_IMG_DIR = path.resolve(__dirname, '../../../frontend/public/images');
 const ADMIN_IMG_DIR = path.resolve(__dirname, '../../../admin/public/images');
-const BACKEND_IMG_DIR = path.resolve(__dirname, '../../public/images');
 
-// Ensure image directories exist
-[FRONTEND_IMG_DIR, ADMIN_IMG_DIR, BACKEND_IMG_DIR].forEach(dir => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+// Safely ensure backend image directory exists without crashing on containerized environments
+try {
+  if (!fs.existsSync(BACKEND_IMG_DIR)) {
+    fs.mkdirSync(BACKEND_IMG_DIR, { recursive: true });
   }
-});
+} catch (err) {
+  console.warn('[Upload] Note: Backend images directory not initialized at startup:', err.message);
+}
 
 /**
  * POST /api/upload
  * Handles base64 or dataURL image uploads from admin panel
- * Saves authentic high-res image files to public/images and returns public URL
+ * Uploads to Cloudinary CDN for persistent public HTTPS URLs, or falls back to local storage
  */
 router.post('/', asyncHandler(async (req, res) => {
   const { image, name } = req.body;
@@ -36,11 +39,51 @@ router.post('/', asyncHandler(async (req, res) => {
     throw new ApiError(HTTP_STATUS.BAD_REQUEST, 'No image data provided for upload');
   }
 
-  // If it's already an existing clean path (e.g. /images/avakaya.jpg), just return it
-  if (typeof image === 'string' && image.startsWith('/images/')) {
+  // If it's already an existing clean path (e.g. /images/avakaya.jpg) or full URL, return it
+  if (typeof image === 'string' && (image.startsWith('/images/') || image.startsWith('http://') || image.startsWith('https://'))) {
     return res.status(HTTP_STATUS.OK).json(
       new ApiResponse(HTTP_STATUS.OK, { url: image }, 'Image path verified')
     );
+  }
+
+  // 1. If Cloudinary is configured, upload directly to Cloudinary CDN
+  if (isCloudinaryConfigured()) {
+    try {
+      const safePublicId = (name || 'dish')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+        .substring(0, 30) || 'dish';
+
+      const uploadResult = await cloudinary.uploader.upload(image, {
+        folder: 'bramarambika_foods',
+        public_id: `${safePublicId}_${Date.now()}`,
+        resource_type: 'image',
+        transformation: [
+          { quality: 'auto', fetch_format: 'auto' }
+        ]
+      });
+
+      console.log(`[Upload] Cloudinary upload successful: ${uploadResult.secure_url}`);
+
+      return res.status(HTTP_STATUS.CREATED).json(
+        new ApiResponse(
+          HTTP_STATUS.CREATED,
+          {
+            url: uploadResult.secure_url,
+            public_id: uploadResult.public_id,
+            width: uploadResult.width,
+            height: uploadResult.height,
+            format: uploadResult.format,
+            bytes: uploadResult.bytes
+          },
+          'Photo uploaded successfully to Cloudinary CDN'
+        )
+      );
+    } catch (cloudErr) {
+      console.error('[Upload] Cloudinary upload error:', cloudErr.message);
+      // Fall through to local storage if Cloudinary upload fails
+    }
   }
 
   // Match data URL format
@@ -69,10 +112,23 @@ router.post('/', asyncHandler(async (req, res) => {
     .substring(0, 30) || 'dish';
 
   const filename = `${safeBase}_${Date.now()}.${ext}`;
-  const publicUrl = `/images/${filename}`;
 
-  // Write to all client public image folders
-  const targetDirs = [FRONTEND_IMG_DIR, ADMIN_IMG_DIR, BACKEND_IMG_DIR];
+  // Build public URL - use full URL if host available so Netlify storefront can load Render backend images directly
+  const host = req.get('host');
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+  const publicUrl = host ? `${protocol}://${host}/images/${filename}` : `/images/${filename}`;
+
+  // Write to backend public folder first
+  const targetDirs = [BACKEND_IMG_DIR];
+
+  // In local monorepo development, also save to frontend and admin if directories exist
+  try {
+    if (fs.existsSync(FRONTEND_IMG_DIR)) targetDirs.push(FRONTEND_IMG_DIR);
+    if (fs.existsSync(ADMIN_IMG_DIR)) targetDirs.push(ADMIN_IMG_DIR);
+  } catch (err) {
+    // Ignore errors checking external directories in containerized environments
+  }
+
   for (const dir of targetDirs) {
     try {
       if (!fs.existsSync(dir)) {
