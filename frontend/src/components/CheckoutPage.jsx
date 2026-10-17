@@ -73,14 +73,10 @@ export default function CheckoutPage({
 
   const isFreeDelivery = itemsSubtotal >= FREE_DELIVERY_THRESHOLD;
 
-  // Courier delivery fee calculation
+  // Flat standard delivery fee: Free above ₹2,000, flat ₹100 below ₹2,000
   const deliveryFee = useMemo(() => {
-    if (isFreeDelivery) return 0;
-    if (selectedCourier && typeof selectedCourier.rate === 'number') {
-      return selectedCourier.rate;
-    }
-    return STANDARD_DELIVERY_FEE;
-  }, [isFreeDelivery, selectedCourier]);
+    return isFreeDelivery ? 0 : STANDARD_DELIVERY_FEE;
+  }, [isFreeDelivery]);
 
   const grandTotal = itemsSubtotal + deliveryFee;
 
@@ -194,6 +190,24 @@ export default function CheckoutPage({
       setCreatedOrder(placedOrder);
       onClearCart && onClearCart();
 
+      // Automatically open pre-filled WhatsApp confirmation in a new tab
+      const waUrl = getWhatsAppOrderUrl(placedOrder.items || orderPayload.items || [], {
+        orderId: placedOrder.id,
+        name: placedOrder.customer_name,
+        phone: placedOrder.phone,
+        address: placedOrder.address,
+        pincode: placedOrder.pincode,
+        courierName: placedOrder.courier_name,
+        estimatedDelivery: placedOrder.estimated_delivery,
+        deliveryFee: placedOrder.delivery_fee,
+        paymentMethod: placedOrder.payment_method,
+        notes: placedOrder.notes
+      });
+
+      try {
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
+      } catch (err) {}
+
       // Trigger festive celebration confetti
       try {
         confetti({
@@ -255,11 +269,16 @@ export default function CheckoutPage({
   // -------------------------------------------------------------
   if (createdOrder) {
     const whatsappOrderUrl = getWhatsAppOrderUrl(createdOrder.items || [], {
+      orderId: createdOrder.id,
       name: createdOrder.customer_name,
       phone: createdOrder.phone,
       address: createdOrder.address,
       pincode: createdOrder.pincode,
-      notes: `Order ID: ${createdOrder.id} • Courier: ${createdOrder.courier_name} (${createdOrder.estimated_delivery}) • Payment: ${createdOrder.payment_method}`
+      courierName: createdOrder.courier_name,
+      estimatedDelivery: createdOrder.estimated_delivery,
+      deliveryFee: createdOrder.delivery_fee,
+      paymentMethod: createdOrder.payment_method,
+      notes: createdOrder.notes
     });
 
     return (
@@ -270,7 +289,7 @@ export default function CheckoutPage({
               <span className="checkout-brand-diya">🪔</span>
               <div>
                 <div className="checkout-brand-title">Bramarambika Home Foods</div>
-                <div className="checkout-brand-sub">Order Confirmed</div>
+                <div className="checkout-brand-sub">Order Acknowledgment</div>
               </div>
             </div>
             <button type="button" onClick={onBackToStore} className="checkout-back-link">
@@ -282,30 +301,30 @@ export default function CheckoutPage({
 
         <div className="success-screen-wrapper">
           <div className="success-card">
-            <div className="success-icon-wrap">
-              <CheckCircle2 size={40} />
+            <div className="success-icon-wrap" style={{ background: '#DCFCE7', color: '#15803D' }}>
+              <CheckCircle2 size={44} />
             </div>
-            <h2 className="success-title">Thank You, {createdOrder.customer_name}!</h2>
+            <h2 className="success-title">Order Received & Acknowledged!</h2>
             <p style={{ color: '#4B5563', fontSize: '1rem', marginBottom: '1rem' }}>
-              Your order has been received by our kitchen and recorded in our live database.
+              Thank you, <strong>{createdOrder.customer_name}</strong>! Your order has been registered in our kitchen management system.
             </p>
 
-            <div className="order-id-chip">
-              <span>Order ID:</span>
-              <strong style={{ color: '#8C2F1C' }}>#{createdOrder.id}</strong>
+            <div className="order-id-chip" style={{ background: '#FFF9F6', border: '1.5px dashed #8C2F1C', padding: '8px 16px', borderRadius: '10px', display: 'inline-block', marginBottom: '1.25rem' }}>
+              <span style={{ color: '#6B7280', fontSize: '0.85rem' }}>Official Kitchen Order ID: </span>
+              <strong style={{ color: '#8C2F1C', fontSize: '1.05rem', letterSpacing: '0.5px' }}>#{createdOrder.id}</strong>
             </div>
 
             {/* Delivery Tracking Step Progress */}
             <div className="tracking-timeline">
               <div className="timeline-step completed">
                 <div className="timeline-dot"><Check size={18} /></div>
-                <div className="timeline-label">Confirmed</div>
-                <div className="timeline-sub">Kitchen Received</div>
+                <div className="timeline-label">Registered</div>
+                <div className="timeline-sub">Kitchen Database</div>
               </div>
               <div className="timeline-step active">
                 <div className="timeline-dot"><Clock size={18} /></div>
-                <div className="timeline-label">Packing Fresh</div>
-                <div className="timeline-sub">Sealed Jars</div>
+                <div className="timeline-label">WhatsApp Notice</div>
+                <div className="timeline-sub">Confirmation Sent</div>
               </div>
               <div className="timeline-step">
                 <div className="timeline-dot"><Truck size={18} /></div>
@@ -315,39 +334,87 @@ export default function CheckoutPage({
               <div className="timeline-step">
                 <div className="timeline-dot"><MapPin size={18} /></div>
                 <div className="timeline-label">Delivered</div>
-                <div className="timeline-sub">At Doorstep</div>
+                <div className="timeline-sub">Doorstep Delivery</div>
               </div>
             </div>
 
-            {/* Order Highlights Card */}
-            <div style={{ background: '#FAF5EE', borderRadius: '12px', padding: '1rem 1.25rem', textAlign: 'left', marginBottom: '1.5rem', border: '1px solid rgba(217, 154, 23, 0.2)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
-                <span style={{ color: '#6B7280' }}>Delivery To:</span>
+            {/* Order Receipt Card */}
+            <div style={{ background: '#FAF5EE', borderRadius: '12px', padding: '1.25rem', textAlign: 'left', marginBottom: '1.5rem', border: '1px solid rgba(217, 154, 23, 0.25)' }}>
+              <h4 style={{ margin: '0 0 10px', color: '#8C2F1C', fontSize: '0.95rem', fontWeight: 800 }}>
+                📋 Order Receipt Summary
+              </h4>
+
+              {/* Items Table */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px', borderBottom: '1px solid #E5E7EB', paddingBottom: '10px' }}>
+                {(createdOrder.items || []).map((item, idx) => (
+                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                    <span style={{ color: '#374151' }}>
+                      {idx + 1}. {item.name} ({item.variant || '1kg'}) × {item.quantity}
+                    </span>
+                    <strong style={{ color: '#1F2937' }}>
+                      ₹{((item.price || 0) * item.quantity).toLocaleString('en-IN')}
+                    </strong>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.88rem' }}>
+                <span style={{ color: '#6B7280' }}>Customer:</span>
                 <strong>{createdOrder.customer_name} ({createdOrder.phone})</strong>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
-                <span style={{ color: '#6B7280' }}>Address:</span>
-                <span style={{ maxWidth: '60%', textAlign: 'right' }}>{createdOrder.address} - {createdOrder.pincode}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.88rem' }}>
+                <span style={{ color: '#6B7280' }}>Delivery Address:</span>
+                <span style={{ maxWidth: '65%', textAlign: 'right', color: '#374151' }}>
+                  {createdOrder.address} - {createdOrder.pincode}
+                </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
-                <span style={{ color: '#6B7280' }}>Selected Courier:</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.88rem' }}>
+                <span style={{ color: '#6B7280' }}>Courier Partner:</span>
                 <strong>{createdOrder.courier_name} ({createdOrder.estimated_delivery})</strong>
               </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.88rem' }}>
+                <span style={{ color: '#6B7280' }}>Payment Mode:</span>
+                <strong style={{ color: '#15803D' }}>{createdOrder.payment_method}</strong>
+              </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #E5E7EB', fontSize: '1.05rem' }}>
-                <span style={{ fontWeight: 700 }}>Total Paid / Payable:</span>
+                <span style={{ fontWeight: 700 }}>Total Amount:</span>
                 <strong style={{ color: '#8C2F1C' }}>₹{createdOrder.grand_total?.toLocaleString('en-IN')}</strong>
               </div>
             </div>
 
+            {/* WhatsApp Confirmation Box */}
+            <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '10px', padding: '12px 16px', marginBottom: '1.5rem', textAlign: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#166534', fontWeight: 700, fontSize: '0.9rem', marginBottom: '4px' }}>
+                <span>💬 WhatsApp Order Confirmation</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '0.82rem', color: '#166534', lineHeight: 1.45 }}>
+                Click below to send your structured order confirmation to our WhatsApp kitchen number (<strong>7702808886</strong>). Our team will confirm the dispatch date!
+              </p>
+            </div>
+
             {/* Actions */}
-            <div className="success-actions">
+            <div className="success-actions" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <a
                 href={whatsappOrderUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-whatsapp-confirm"
+                style={{
+                  background: '#25D366',
+                  color: '#FFFFFF',
+                  fontWeight: 800,
+                  fontSize: '0.95rem',
+                  padding: '14px 20px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 14px rgba(37, 211, 102, 0.35)'
+                }}
               >
-                <span>💬 Chat on WhatsApp with Kitchen</span>
+                <span>📲 Send Order Confirmation to Kitchen WhatsApp (7702808886)</span>
               </a>
 
               <button
@@ -561,8 +628,10 @@ export default function CheckoutPage({
                         >
                           <div className="courier-card-top">
                             <span className="courier-name">{c.name}</span>
-                            <span className={`courier-rate ${isFreeDelivery ? 'free-rate' : ''}`}>
-                              {isFreeDelivery ? 'FREE' : `₹${c.rate}`}
+                            <span className="courier-speed-badge">
+                              {c.name.toLowerCase().includes('air') || c.name.toLowerCase().includes('prime')
+                                ? '⚡ Express Air'
+                                : '🚚 Surface Express'}
                             </span>
                           </div>
                           <div className="courier-etd">
@@ -616,7 +685,25 @@ export default function CheckoutPage({
             </div>
 
             <div className="payment-methods-grid">
-              {/* Option 1: Direct UPI */}
+              {/* Option 1: Cash on Delivery */}
+              <div
+                className={`payment-option ${paymentMethod === 'cod' ? 'active' : ''}`}
+                onClick={() => setPaymentMethod('cod')}
+              >
+                <input
+                  type="radio"
+                  name="payment_choice"
+                  checked={paymentMethod === 'cod'}
+                  onChange={() => setPaymentMethod('cod')}
+                  className="payment-radio"
+                />
+                <div className="payment-info">
+                  <h4>📦 Cash on Delivery (COD) / Pay on Delivery</h4>
+                  <p>Pay cash or scan UPI directly to the courier executive upon doorstep parcel arrival.</p>
+                </div>
+              </div>
+
+              {/* Option 2: Direct UPI */}
               <div
                 className={`payment-option ${paymentMethod === 'upi' ? 'active' : ''}`}
                 onClick={() => setPaymentMethod('upi')}
@@ -630,59 +717,33 @@ export default function CheckoutPage({
                 />
                 <div className="payment-info" style={{ width: '100%' }}>
                   <h4>
-                    <span>⚡ Instant UPI / QR Code (GPay, PhonePe, Paytm, BHIM)</span>
+                    <span>⚡ Instant UPI Transfer (GPay, PhonePe, Paytm, BHIM)</span>
                     <span className="payment-badge">Recommended</span>
                   </h4>
-                  <p>Scan the kitchen QR code or send payment to our verified kitchen UPI ID.</p>
+                  <p>Pay directly to our verified kitchen UPI ID. Quick dispatch upon WhatsApp confirmation.</p>
 
                   {paymentMethod === 'upi' && (
-                    <div className="upi-pay-card">
-                      <div className="upi-qr-placeholder">
-                        <span>BHIM UPI</span>
-                        <span style={{ fontSize: '1.2rem', marginTop: '2px' }}>📲</span>
-                        <span style={{ fontSize: '0.62rem', color: '#166534' }}>Instant Pay</span>
+                    <div className="upi-pay-card-clean">
+                      <div className="upi-id-badge">
+                        <span>Official UPI ID: <strong>7702808886@upi</strong></span>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); handleCopyUpi(); }}
+                          className="copy-upi-btn"
+                          title="Copy UPI ID"
+                        >
+                          {isCopiedUpi ? <Check size={16} color="#15803D" /> : <Copy size={16} />}
+                        </button>
                       </div>
-                      <div className="upi-details-wrap">
-                        <div style={{ fontSize: '0.78rem', color: '#6B7280' }}>Bramarambika Kitchen Official UPI ID:</div>
-                        <div className="upi-id-badge">
-                          <span>7702808886@upi</span>
-                          <button
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); handleCopyUpi(); }}
-                            className="copy-upi-btn"
-                            title="Copy UPI ID"
-                          >
-                            {isCopiedUpi ? <Check size={16} color="#15803D" /> : <Copy size={16} />}
-                          </button>
-                        </div>
-                        <div style={{ fontSize: '0.72rem', color: '#15803D', marginTop: '4px', fontWeight: 600 }}>
-                          {isCopiedUpi ? '✅ Copied to clipboard!' : 'Pay with Google Pay, PhonePe, Paytm or Cred'}
-                        </div>
+                      <div style={{ fontSize: '0.74rem', color: '#15803D', marginTop: '6px', fontWeight: 600 }}>
+                        {isCopiedUpi ? '✅ Copied to clipboard! Open your UPI app to transfer.' : '💡 Tap copy button to paste into Google Pay / PhonePe / Paytm / BHIM.'}
                       </div>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Option 2: Cash on Delivery */}
-              <div
-                className={`payment-option ${paymentMethod === 'cod' ? 'active' : ''}`}
-                onClick={() => setPaymentMethod('cod')}
-              >
-                <input
-                  type="radio"
-                  name="payment_choice"
-                  checked={paymentMethod === 'cod'}
-                  onChange={() => setPaymentMethod('cod')}
-                  className="payment-radio"
-                />
-                <div className="payment-info">
-                  <h4>📦 Cash on Delivery (COD)</h4>
-                  <p>Pay cash or UPI directly to the courier executive upon doorstep parcel arrival.</p>
-                </div>
-              </div>
-
-              {/* Option 3: WhatsApp Direct Order */}
+              {/* Option 3: WhatsApp Order */}
               <div
                 className={`payment-option ${paymentMethod === 'whatsapp' ? 'active' : ''}`}
                 onClick={() => setPaymentMethod('whatsapp')}
@@ -695,8 +756,8 @@ export default function CheckoutPage({
                   className="payment-radio"
                 />
                 <div className="payment-info">
-                  <h4>💬 WhatsApp Kitchen Checkout</h4>
-                  <p>Place your order directly via WhatsApp with our head cook for personalized assistance.</p>
+                  <h4>💬 Pay on WhatsApp Confirmation</h4>
+                  <p>Our kitchen head will share an official payment link or bank details directly in your WhatsApp order chat.</p>
                 </div>
               </div>
             </div>
@@ -720,11 +781,11 @@ export default function CheckoutPage({
                 return (
                   <div key={`${item.id}-${item.variantId || idx}`} className="summary-item">
                     <img
-                      src={item.image || '/images/default-dish.jpg'}
+                      src={item.image || '/images/avakaya.jpg'}
                       alt={item.name}
                       className="summary-item-img"
                       onError={(e) => {
-                        e.target.src = 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=100';
+                        e.target.src = '/images/avakaya.jpg';
                       }}
                     />
                     <div className="summary-item-info">

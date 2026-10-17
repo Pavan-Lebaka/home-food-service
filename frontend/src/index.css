@@ -6427,6 +6427,548 @@ body.modal-open-scroll-locked {
   font-size: 0.95rem;
 }
 
+/* ==========================================================================
+   49. MODERN CART DRAWER STYLES
+   Item cards, Quantity Stepper, Free Shipping Meter & Order Breakdown
+   ========================================================================== */
+
+.free-delivery-meter-card {
+  background: #FFFDF9;
+  border: 1.5px solid rgba(217, 154, 23, 0.28);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.free-delivery-meter-card.unlocked {
+  background: #F0FDF4;
+  border-color: rgba(22, 163, 74, 0.35);
+}
+
+.meter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.meter-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.meter-icon {
+  color: #D99A17;
+  flex-shrink: 0;
+}
+
+.free-delivery-meter-card.unlocked .meter-icon {
+  color: #15803D;
+}
+
+.meter-text {
+  font-size: 0.82rem;
+  color: #4A3E3D;
+  line-height: 1.35;
+}
+
+.meter-highlight {
+  color: #8C2F1C;
+  font-weight: 700;
+}
+
+.meter-highlight-green {
+  color: #15803D;
+  font-weight: 700;
+}
+
+.free-tag {
+  color: #15803D;
+  font-weight: 700;
+}
+
+.meter-pct-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #925805;
+  background: #FEF3C7;
+  padding: 2px 8px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.free-delivery-meter-card.unlocked .meter-pct-badge {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.meter-progress-track {
+  height: 7px;
+  background: #F3ECE1;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.meter-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #D99A17 0%, #15803D 100%);
+  border-radius: 10px;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Items List */
+.modern-cart-items-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.items-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(46, 42, 57, 0.12);
+}
+
+.header-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #2E2A39;
+}
+
+.header-sub {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #15803D;
+  background: #DCFCE7;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.cart-items-scroll-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modern-cart-item-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  background: #FFFFFF;
+  border: 1px solid rgba(46, 42, 57, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
+}
+
+.modern-cart-item-row:hover {
+  border-color: rgba(140, 47, 28, 0.25);
+  box-shadow: 0 4px 12px rgba(140, 47, 28, 0.06);
+}
+
+.modern-item-media {
+  flex-shrink: 0;
+  width: 68px;
+  height: 68px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(46, 42, 57, 0.1);
+  background: #FAF5F0;
+}
+
+.modern-item-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modern-item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.modern-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.modern-item-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #2E2A39;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.modern-item-telugu {
+  font-size: 0.76rem;
+  color: #8C2F1C;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.modern-item-delete-btn {
+  background: transparent;
+  border: none;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.modern-item-delete-btn:hover {
+  color: #DC2626;
+  background: #FEE2E2;
+}
+
+.modern-item-pack-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #F8F5F0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  color: #6B7280;
+  margin: 6px 0 8px;
+  width: fit-content;
+  font-weight: 600;
+}
+
+.pill-dot {
+  color: #D1D5DB;
+  font-size: 0.6rem;
+}
+
+.modern-item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.modern-stepper-wrap {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  background: #F9FAFB;
+  overflow: hidden;
+}
+
+.modern-step-btn {
+  border: none;
+  background: transparent;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.15s ease;
+}
+
+.modern-step-btn:hover {
+  background: #E5E7EB;
+  color: #111827;
+}
+
+.modern-step-val {
+  min-width: 28px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1F2937;
+}
+
+.modern-item-subtotal {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #8C2F1C;
+}
+
+.modern-add-more-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  margin-top: 12px;
+  background: #FFF9F6;
+  border: 1px dashed rgba(140, 47, 28, 0.35);
+  border-radius: 8px;
+  color: #8C2F1C;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modern-add-more-link:hover {
+  background: #FEEFEA;
+  border-color: #8C2F1C;
+}
+
+/* Bill Details */
+.modern-bill-card {
+  background: #FAF7F2;
+  border: 1px solid rgba(46, 42, 57, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-top: 14px;
+}
+
+.modern-bill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(46, 42, 57, 0.08);
+}
+
+.bill-title-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #2E2A39;
+}
+
+.bill-trust-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: #15803D;
+  font-weight: 600;
+  background: #DCFCE7;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+
+.modern-bill-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bill-table-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.84rem;
+  color: #4B5563;
+}
+
+.table-row-label {
+  font-weight: 500;
+}
+
+.table-row-value {
+  font-weight: 700;
+  color: #1F2937;
+}
+
+.free-delivery-combo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.strike-amount {
+  color: #9CA3AF;
+  font-size: 0.8rem;
+  text-decoration: line-through;
+}
+
+.free-badge-pill {
+  background: #DCFCE7;
+  color: #15803D;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.standard-deliv-badge {
+  font-weight: 700;
+  color: #1F2937;
+}
+
+.modern-savings-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: #065F46;
+  background: #D1FAE5;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.grand-total-row {
+  padding-top: 10px;
+  margin-top: 4px;
+  border-top: 1.5px solid rgba(46, 42, 57, 0.12);
+}
+
+.total-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1F2937;
+}
+
+.total-tax-note {
+  font-size: 0.7rem;
+  color: #9CA3AF;
+  display: block;
+}
+
+.total-amount-display {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #8C2F1C;
+  font-family: var(--font-serif);
+}
+
+/* Assurances */
+.modern-cart-assurances {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.assurance-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.74rem;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.assurance-icon {
+  color: #15803D;
+  flex-shrink: 0;
+}
+
+/* Sticky Footer */
+.modern-sticky-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(46, 42, 57, 0.1);
+  background: #FFFFFF;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.sticky-footer-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sticky-total-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.sticky-total-label {
+  font-size: 0.74rem;
+  color: #6B7280;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.sticky-total-val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #8C2F1C;
+  line-height: 1.1;
+  font-family: var(--font-serif);
+}
+
+.sticky-delivery-note {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.tag-free-deliv {
+  color: #15803D;
+  background: #DCFCE7;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.tag-paid-deliv {
+  color: #6B7280;
+  background: #F3F4F6;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.modern-checkout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: none;
+  color: #FFFFFF;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, #8C2F1C 0%, #A83A24 100%);
+  box-shadow: 0 8px 20px rgba(140, 47, 28, 0.28);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modern-checkout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(140, 47, 28, 0.38) !important;
+}
+
+.btn-checkout-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.btn-main-title {
+  font-weight: 800;
+}
+
+.btn-sub-amount {
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.cart-order-reassurance {
+  text-align: center;
+  font-size: 0.74rem;
+  color: #6B7280;
+  margin-top: 8px;
+}
+
 
 
 

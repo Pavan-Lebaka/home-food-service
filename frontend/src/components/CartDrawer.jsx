@@ -182,11 +182,11 @@ export default function CartDrawer({
                       <div key={itemCartKey} className="modern-cart-item-row">
                         <div className="modern-item-media">
                           <img
-                            src={item.image || '/images/default-dish.jpg'}
+                            src={item.image || '/images/avakaya.jpg'}
                             alt={item.name}
                             className="modern-item-thumbnail"
                             onError={(e) => {
-                              e.target.src = 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=100';
+                              e.target.src = '/images/avakaya.jpg';
                             }}
                           />
                         </div>
@@ -333,43 +333,26 @@ export default function CartDrawer({
               </div>
             </div>
 
-            {/* Primary Action: Go to Dedicated Checkout Page */}
+            {/* Primary Action: Go to Dedicated Checkout Page with WhatsApp Confirmation */}
             <button
               type="button"
               onClick={() => {
                 onClose();
                 onProceedToCheckout && onProceedToCheckout();
               }}
-              className="btn-whatsapp-checkout modern-checkout-btn"
-              style={{
-                background: 'linear-gradient(135deg, #8C2F1C 0%, #A83A24 100%)',
-                boxShadow: '0 8px 20px rgba(140, 47, 28, 0.28)'
-              }}
+              className="modern-checkout-btn"
               id="cart-proceed-checkout-btn"
             >
               <div className="btn-checkout-content">
-                <span className="btn-main-title">Proceed to Checkout</span>
+                <span className="btn-main-title">Proceed to Order & Confirmation</span>
                 <span className="btn-sub-amount">• ₹{grandTotal.toLocaleString('en-IN')}</span>
               </div>
               <ArrowRight size={18} />
             </button>
 
-            {/* Secondary Action: Instant WhatsApp Checkout */}
-            <button
-              type="button"
-              onClick={handleQuickWhatsApp}
-              className="btn-whatsapp-checkout"
-              style={{
-                background: '#25D366',
-                marginTop: '8px',
-                padding: '10px 14px',
-                fontSize: '0.88rem'
-              }}
-            >
-              <MessageCircle size={17} />
-              <span>Direct WhatsApp Order</span>
-              <ArrowUpRight size={14} />
-            </button>
+            <div className="cart-order-reassurance">
+              💬 Delivery address confirmed directly with Kitchen on WhatsApp
+            </div>
           </div>
         )}
       </div>

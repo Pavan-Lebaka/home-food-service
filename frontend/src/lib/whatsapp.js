@@ -10,7 +10,7 @@ export function formatCurrency(amount) {
 
 export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
   if (!cartItems || cartItems.length === 0) {
-    return `Hello ${BRAND_INFO.name},\n\nI would like to enquire about your homemade specials.\n\nThank you.`;
+    return `Hello ${BRAND_INFO.name},\n\nI would like to enquire about your homemade Andhra pickles & sweets.\n\nThank you!`;
   }
 
   let itemsSubtotal = 0;
@@ -19,34 +19,57 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
     const itemPrice = item.price || item.unitPrice || item.pricePerKg || 0;
     const itemTotal = itemPrice * item.quantity;
     itemsSubtotal += itemTotal;
-    const variantStr = item.variantLabel ? ` (${item.variantLabel})` : '';
+    const variantStr = item.variantLabel || item.variant || '1 kg';
     const packsStr = item.quantity > 1 ? ` × ${item.quantity} packs` : ` × 1 pack`;
-    return `${index + 1}. ${item.name}${variantStr}${packsStr} - ₹${itemTotal.toLocaleString('en-IN')}`;
+    return `${index + 1}. *${item.name}* (${variantStr})${packsStr} — ₹${itemTotal.toLocaleString('en-IN')}`;
   }).join('\n');
 
-  // Delivery charge rule: Free above Rs. 2000, Rs. 100 below Rs. 2000
+  // Delivery rule
   const isFreeDelivery = itemsSubtotal >= 2000;
-  const deliveryFee = isFreeDelivery ? 0 : 100;
+  const deliveryFee = typeof customerDetails.deliveryFee === 'number' 
+    ? customerDetails.deliveryFee 
+    : (isFreeDelivery ? 0 : 100);
   const grandTotal = itemsSubtotal + deliveryFee;
-  const deliveryText = isFreeDelivery
-    ? 'FREE Delivery (Order above ₹2,000 🎉)'
-    : '₹100 (Below ₹2,000 order)';
 
-  let message = `Hello ${BRAND_INFO.name},\n\nI would like to place an order from your website:\n\n${itemsList}\n\n─────────────────────\nItems Subtotal: ₹${itemsSubtotal.toLocaleString('en-IN')}\nDelivery Fee: ${deliveryText}\nTotal Payable: ₹${grandTotal.toLocaleString('en-IN')}`;
+  const orderId = customerDetails.orderId ? `#${customerDetails.orderId}` : 'New Website Order';
+  const courierInfo = customerDetails.courierName 
+    ? `${customerDetails.courierName}${customerDetails.estimatedDelivery ? ` (${customerDetails.estimatedDelivery})` : ''}` 
+    : 'Standard Express Courier';
+  const paymentMode = customerDetails.paymentMethod 
+    ? customerDetails.paymentMethod 
+    : 'Cash on Delivery / UPI';
+
+  const deliveryText = deliveryFee === 0 
+    ? 'FREE (Order above ₹2,000 🎉)' 
+    : `₹${deliveryFee}`;
+
+  // Clean, professional, structured WhatsApp template
+  let message = `🌟 *BRAMARAMBIKA HOME FOODS — ORDER CONFIRMATION* 🌟\n\n`;
+  message += `Namaste! I have placed an order on your website.\n\n`;
+  message += `🧾 *Order ID:* ${orderId}\n`;
+  message += `📅 *Date:* ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}\n\n`;
+  message += `🛒 *ORDERED ITEMS:*\n${itemsList}\n\n`;
+  message += `──────────────────────────\n`;
+  message += `💰 *Items Subtotal:* ₹${itemsSubtotal.toLocaleString('en-IN')}\n`;
+  message += `🚚 *Courier Partner:* ${courierInfo}\n`;
+  message += `📦 *Delivery Fee:* ${deliveryText}\n`;
+  message += `💳 *Payment Mode:* ${paymentMode}\n`;
+  message += `🔥 *Grand Total Payable:* ₹${grandTotal.toLocaleString('en-IN')}\n`;
+  message += `──────────────────────────\n\n`;
 
   const { name, phone, address, pincode, notes } = customerDetails;
-  const details = [];
-  if (name && name.trim()) details.push(`• Customer Name: ${name.trim()}`);
-  if (phone && phone.trim()) details.push(`• Phone Number: ${phone.trim()}`);
-  if (address && address.trim()) details.push(`• Delivery Address: ${address.trim()}`);
-  if (pincode && pincode.trim()) details.push(`• Pincode: ${pincode.trim()}`);
-  if (notes && notes.trim()) details.push(`• Special Request / Note: ${notes.trim()}`);
+  message += `📍 *DELIVERY DESTINATION:*\n`;
+  if (name && name.trim()) message += `• *Customer:* ${name.trim()}\n`;
+  if (phone && phone.trim()) message += `• *Mobile:* ${phone.trim()}\n`;
+  if (address && address.trim()) message += `• *Address:* ${address.trim()}\n`;
+  if (pincode && pincode.trim()) message += `• *Pincode:* ${pincode.trim()}\n`;
 
-  if (details.length > 0) {
-    message += `\n\n─────────────────────\nCUSTOMER & DELIVERY DETAILS:\n${details.join('\n')}`;
+  // Only include genuine kitchen request notes
+  if (notes && notes.trim() && !notes.includes('Order ID:')) {
+    message += `\n📝 *Kitchen Request:* ${notes.trim()}\n`;
   }
 
-  message += `\n\nPlease confirm my order and share payment details (UPI/GPay/PhonePe).\n\nThank you!`;
+  message += `\nPlease confirm order acceptance and share kitchen dispatch date. Dhanyavadalu! 🙏`;
 
   return message;
 }
