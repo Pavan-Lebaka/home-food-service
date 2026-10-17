@@ -1123,59 +1123,38 @@
   box-shadow: 0 4px 16px rgba(22, 163, 74, 0.05);
 }
 
-.pay-card-instruction-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 1.2rem 1.4rem;
-  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-  border-bottom: 1px dashed rgba(22, 163, 74, 0.25);
+.upi-step-one-container {
+  padding: 1.25rem 1.4rem;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
 }
 
-.pay-step-badge {
-  background: #15803D;
-  color: #FFFFFF;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.upi-id-highlight-box {
+  background: #F0FDF4;
+  border: 1.5px solid #86EFAC;
+  border-radius: 10px;
+  padding: 12px 14px;
 }
 
-.pay-amount-label {
-  font-size: 0.95rem;
-  color: #166534;
-  font-weight: 700;
-}
-
-.upi-details-strip {
-  padding: 1rem 1.4rem;
+.upi-id-val-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: #FFFFFF;
-  border-bottom: 1px solid #F3F4F6;
   flex-wrap: wrap;
 }
 
-.upi-app-tags {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.76rem;
-  color: #4B5563;
-  font-weight: 600;
+.upi-id-text {
+  font-size: 1.1rem;
+  color: #166534;
+  letter-spacing: 0.3px;
 }
 
-.upi-app-tags span {
-  background: #F3F4F6;
-  padding: 2px 8px;
-  border-radius: 4px;
-  color: #374151;
+.upi-amount-hint {
+  font-size: 0.82rem;
+  color: #15803D;
+  margin-top: 6px;
+  font-weight: 500;
 }
 
 .screenshot-drop-zone {

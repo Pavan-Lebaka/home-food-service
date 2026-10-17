@@ -792,37 +792,37 @@ export default function CheckoutPage({
             </div>
 
             <div className="pay-screenshot-card">
-              {/* Step 1: Transfer Amount */}
-              <div className="pay-card-instruction-row">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {/* Step 1: Make payment in any UPI app */}
+              <div className="upi-step-one-container">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <span className="pay-step-badge">Step 1</span>
-                  <span className="pay-amount-label">Pay ₹{grandTotal.toLocaleString('en-IN')} via any UPI App</span>
+                  <span style={{ fontSize: '0.92rem', fontWeight: 700, color: '#166534' }}>
+                    Make payment in any UPI app for this UPI ID:
+                  </span>
                 </div>
-                <div className="upi-app-tags">
-                  <span>Google Pay</span> • <span>PhonePe</span> • <span>Paytm</span> • <span>BHIM</span>
+
+                <div className="upi-id-highlight-box">
+                  <div className="upi-id-val-row">
+                    <span className="upi-id-text">
+                      <strong>{BRAND_INFO.whatsappNumber}@upi</strong>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleCopyUpi}
+                      className="copy-upi-btn"
+                      title="Copy UPI ID"
+                    >
+                      {isCopiedUpi ? <Check size={14} color="#15803D" /> : <Copy size={14} />}
+                      <span>{isCopiedUpi ? 'Copied to Clipboard!' : 'Copy UPI ID'}</span>
+                    </button>
+                  </div>
+                  <div className="upi-amount-hint">
+                    Total Amount to Pay: <strong>₹{grandTotal.toLocaleString('en-IN')}</strong> (Google Pay, PhonePe, Paytm, BHIM)
+                  </div>
                 </div>
-              </div>
 
-              {/* UPI Details */}
-              <div className="upi-details-strip">
-                <span style={{ fontSize: '0.86rem', color: '#374151' }}>
-                  Official Kitchen UPI: <strong>{BRAND_INFO.whatsappNumber}@upi</strong>
-                </span>
-                <button
-                  type="button"
-                  onClick={handleCopyUpi}
-                  className="copy-upi-btn"
-                  title="Copy UPI ID"
-                >
-                  {isCopiedUpi ? <Check size={14} color="#15803D" /> : <Copy size={14} />}
-                  <span>{isCopiedUpi ? 'Copied to Clipboard!' : 'Copy UPI ID'}</span>
-                </button>
-              </div>
-
-              {/* Quick Mobile UPI Launch Buttons */}
-              <div className="mobile-upi-launch-row">
-                <span className="launch-hint">📱 Tap to open UPI App on your phone:</span>
-                <div className="launch-buttons-flex">
+                {/* Quick 1-Tap UPI Launch Buttons */}
+                <div className="launch-buttons-flex" style={{ marginTop: '12px' }}>
                   <a
                     href={`upi://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
                     className="upi-app-btn gpay"
