@@ -11,14 +11,77 @@ import {
 } from 'lucide-react';
 
 export default function AdminDashboard({ user, onLogout, onBackToStore }) {
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'products'
+  // Read initial tab from URL hash (#products or #orders) or localStorage
+  const getInitialTab = () => {
+    try {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      if (hash === 'products' || hash === 'orders') return hash;
+      const saved = localStorage.getItem('bramarambika_admin_active_tab');
+      if (saved === 'products' || saved === 'orders') return saved;
+    } catch (e) {}
+    return 'orders';
+  };
+
+  const [activeTab, setActiveTab] = useState(getInitialTab);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+
+  // Persist status filter across page refresh
+  const [statusFilter, setStatusFilter] = useState(() => {
+    try {
+      return sessionStorage.getItem('bramarambika_admin_status_filter') || 'All';
+    } catch (e) {
+      return 'All';
+    }
+  });
+
+  // Persist search query across page refresh
+  const [searchQuery, setSearchQuery] = useState(() => {
+    try {
+      return sessionStorage.getItem('bramarambika_admin_search_query') || '';
+    } catch (e) {
+      return '';
+    }
+  });
+
   const [copiedOrderId, setCopiedOrderId] = useState(null);
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
+
+  // 1. Sync activeTab with URL hash and localStorage so refresh never loses the active tab!
+  useEffect(() => {
+    try {
+      localStorage.setItem('bramarambika_admin_active_tab', activeTab);
+      if (window.location.hash !== `#${activeTab}`) {
+        window.history.replaceState(null, '', `#${activeTab}`);
+      }
+    } catch (e) {}
+  }, [activeTab]);
+
+  // 2. Listen to browser back/forward and hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      if (hash === 'products' || hash === 'orders') {
+        setActiveTab(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // 3. Persist status filter & search query in sessionStorage
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('bramarambika_admin_status_filter', statusFilter);
+    } catch (e) {}
+  }, [statusFilter]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('bramarambika_admin_search_query', searchQuery);
+    } catch (e) {}
+  }, [searchQuery]);
 
   // Load orders from API
   const loadOrders = useCallback(async () => {

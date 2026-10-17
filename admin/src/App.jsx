@@ -6,11 +6,28 @@ import AdminDashboard from './components/AdminDashboard';
 import './admin.css';
 
 export default function App() {
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState(() => {
+    try {
+      const storedUser = getStoredAdminUser();
+      const storedToken = getAdminToken();
+      if (storedUser && storedToken) {
+        return { user: storedUser };
+      }
+    } catch (e) {}
+    return null;
+  });
+
+  const [loading, setLoading] = useState(() => {
+    try {
+      const storedUser = getStoredAdminUser();
+      const storedToken = getAdminToken();
+      return !(storedUser && storedToken);
+    } catch (e) {}
+    return true;
+  });
 
   useEffect(() => {
-    // 1. Check local backend admin session token
+    // 1. Verify or refresh local backend admin session
     const storedUser = getStoredAdminUser();
     const storedToken = getAdminToken();
 

@@ -19,9 +19,46 @@ export default function ProductManagement() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [stockFilter, setStockFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState(() => {
+    try {
+      return sessionStorage.getItem('bramarambika_pm_search_query') || '';
+    } catch (e) {
+      return '';
+    }
+  });
+  const [categoryFilter, setCategoryFilter] = useState(() => {
+    try {
+      return sessionStorage.getItem('bramarambika_pm_category_filter') || 'all';
+    } catch (e) {
+      return 'all';
+    }
+  });
+  const [stockFilter, setStockFilter] = useState(() => {
+    try {
+      return sessionStorage.getItem('bramarambika_pm_stock_filter') || 'all';
+    } catch (e) {
+      return 'all';
+    }
+  });
+
+  // Persist filter selections across refresh
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('bramarambika_pm_search_query', searchQuery);
+    } catch (e) {}
+  }, [searchQuery]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('bramarambika_pm_category_filter', categoryFilter);
+    } catch (e) {}
+  }, [categoryFilter]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('bramarambika_pm_stock_filter', stockFilter);
+    } catch (e) {}
+  }, [stockFilter]);
 
   // Edit / Add modal state
   const [editingProduct, setEditingProduct] = useState(null);
