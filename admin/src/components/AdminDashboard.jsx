@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { fetchOrdersApi, updateOrderApi } from '../lib/api';
+import { fetchOrdersApi, updateOrderApi, createShipmentApi } from '../lib/api';
 import { BRAND_INFO } from '../constants/brand';
 import ProductManagement from './ProductManagement';
 import {
@@ -122,6 +122,29 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
     setTimeout(() => setCopiedOrderId(null), 2000);
   };
 
+  // 1-Click Shiprocket Courier Shipment Booking
+  const handleBookShiprocket = async (order) => {
+    setUpdatingOrderId(order.id);
+    try {
+      const res = await createShipmentApi(order);
+      const awb = res.data?.awbCode || res.data?.shipment?.awbCode || res.awbCode || res.data?.awb_code;
+      const courier = res.data?.courierName || res.data?.shipment?.courierName || 'Delhivery Surface';
+
+      setOrders(prev => prev.map(o => o.id === order.id ? {
+        ...o,
+        status: 'Shipped',
+        tracking_number: awb || o.tracking_number,
+        courier_name: courier
+      } : o));
+
+      alert(`🎉 Shiprocket Courier Scheduled Successfully!\n\nCourier: ${courier}\nAWB Tracking Code: ${awb || 'Assigned'}\nOrder status updated to 'Shipped'.`);
+    } catch (err) {
+      alert('Failed to book with Shiprocket: ' + err.message);
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
+
   // Generate WhatsApp message to notify customer
   const handleSendWhatsAppNotification = (order) => {
     const cleanPhone = (order.phone || '').replace(/\D/g, '');
@@ -129,19 +152,23 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
     let text = `Hello ${order.customer_name},\n\nGreetings from ${BRAND_INFO.name}! 🪔\n\n`;
 
     if (order.status === 'Shipped') {
-      text += `Your order has been DISPATCHED via ${order.courier_name || 'Courier'}.\n`;
+      text += `Your parcel has been DISPATCHED from our Andhra kitchen via ${order.courier_name || 'Express Courier'}.\n`;
       if (order.tracking_number) {
         text += `Tracking Number / AWB: ${order.tracking_number}\n`;
       }
-      text += `You will receive your village fresh delicacies within 2–4 business days!\n\nThank you for choosing Bramarambika Home Foods! ❤️`;
+      text += `Estimated doorstep arrival: 2–3 business days.\n\nThank you for choosing Bramarambika Home Foods! ❤️`;
+    } else if (order.status === 'Preparing in Kitchen') {
+      text += `Your delicacies are now being prepared fresh in our kitchen with cold-pressed oils and traditional recipes. We will seal and dispatch within 24–48 hours!\n\nDhanyavadalu! 🙏`;
+    } else if (order.status === 'Ready for Pickup') {
+      text += `Your order has been freshly packed with 5-layer leak-proof seal and is ready for courier pickup. It will be dispatched today!\n\nThank you! ❤️`;
     } else if (order.payment_status === 'Paid') {
-      text += `We have received your payment of ₹${order.grand_total}. Your order is now being packed fresh with 5-layer leak-proof seal.\n\nThank you!`;
+      text += `We have received your payment of ₹${order.grand_total}. Our kitchen has scheduled your fresh batch preparation.\n\nThank you! 🙏`;
     } else {
       text += `We have received your order request for:\n`;
       (order.items || []).forEach(i => {
         text += `• ${i.name} (${i.variant}) x${i.quantity}\n`;
       });
-      text += `\nTotal: ₹${order.grand_total}\n\nPlease share your payment confirmation (UPI screenshot) so we can pack your parcel!`;
+      text += `\nTotal: ₹${order.grand_total}\n\nPlease share your UPI payment screenshot to +91 ${BRAND_INFO.whatsappNumber} so we can start fresh preparation!`;
     }
 
     window.open(`https://wa.me/${intlPhone}?text=${encodeURIComponent(text)}`, '_blank');
@@ -297,7 +324,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
               </div>
 
               <div className="admin-filter-pills">
-                {['All', 'New', 'Payment Verified', 'Packed', 'Shipped', 'Delivered', 'Cancelled'].map(status => (
+                {['All', 'New', 'Payment Verified', 'Preparing in Kitchen', 'Ready for Pickup', 'Shipped', 'Delivered', 'Cancelled'].map(status => (
                   <button
                     key={status}
                     type="button"
@@ -354,6 +381,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
                       onSaveTracking={handleSaveTracking}
                       onCopyAddress={handleCopyShiprocketAddress}
                       onWhatsAppNotify={handleSendWhatsAppNotification}
+                      onBookShiprocket={handleBookShiprocket}
                     />
                   ))}
                 </div>
@@ -375,7 +403,8 @@ function OrderCard({
   onPaymentToggle,
   onSaveTracking,
   onCopyAddress,
-  onWhatsAppNotify
+  onWhatsAppNotify,
+  onBookShiprocket
 }) {
   const [courierInput, setCourierInput] = useState(order.courier_name || 'Delhivery');
   const [awbInput, setAwbInput] = useState(order.tracking_number || '');
@@ -396,6 +425,8 @@ function OrderCard({
     switch (order.status) {
       case 'New': return 'status-badge new';
       case 'Payment Verified': return 'status-badge verified';
+      case 'Preparing in Kitchen': return 'status-badge preparing';
+      case 'Ready for Pickup': return 'status-badge packed';
       case 'Packed': return 'status-badge packed';
       case 'Shipped': return 'status-badge shipped';
       case 'Delivered': return 'status-badge delivered';
@@ -485,6 +516,26 @@ function OrderCard({
               {copied ? <Check size={13} /> : <Copy size={13} />}
               <span>{copied ? 'Copied for Shiprocket!' : 'Copy for Shiprocket'}</span>
             </button>
+
+            <button
+              type="button"
+              onClick={() => onBookShiprocket(order)}
+              disabled={updating}
+              className="action-pill-btn shiprocket-book"
+              style={{
+                background: order.tracking_number ? '#ECFDF5' : '#7C3AED',
+                color: order.tracking_number ? '#065F46' : '#FFFFFF',
+                border: order.tracking_number ? '1px solid #A7F3D0' : 'none',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+              title={order.tracking_number ? `AWB: ${order.tracking_number}` : '1-Click Schedule Courier & Generate AWB via Shiprocket'}
+            >
+              <Truck size={13} />
+              <span>{order.tracking_number ? `AWB: ${order.tracking_number}` : (updating ? 'Booking...' : '🚀 Book Shiprocket')}</span>
+            </button>
           </div>
         </div>
 
@@ -546,10 +597,11 @@ function OrderCard({
           >
             <option value="New">New (Unprocessed)</option>
             <option value="Payment Verified">Payment Verified</option>
-            <option value="Packed">Packed</option>
-            <option value="Shipped">Shipped</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Cancelled">Cancelled</option>
+            <option value="Preparing in Kitchen">🥣 Preparing in Kitchen (Cooking)</option>
+            <option value="Ready for Pickup">📦 Ready for Pickup (Packed & Sealed)</option>
+            <option value="Shipped">🚚 Shipped (Courier In Transit)</option>
+            <option value="Delivered">✅ Delivered</option>
+            <option value="Cancelled">❌ Cancelled</option>
           </select>
         </div>
 

@@ -48,12 +48,12 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
   message += `Namaste! I have placed an order on your website.\n\n`;
   message += `🧾 *Order ID:* ${orderId}\n`;
   message += `📅 *Date:* ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}\n\n`;
-  message += `🛒 *ORDERED ITEMS:*\n${itemsList}\n\n`;
+  message += `🛒 *ORDERED DELICACIES:*\n${itemsList}\n\n`;
   message += `──────────────────────────\n`;
   message += `💰 *Items Subtotal:* ₹${itemsSubtotal.toLocaleString('en-IN')}\n`;
   message += `🚚 *Courier Partner:* ${courierInfo}\n`;
   message += `📦 *Delivery Fee:* ${deliveryText}\n`;
-  message += `💳 *Payment Mode:* ${paymentMode}\n`;
+  message += `💳 *Payment Mode:* Direct UPI on WhatsApp\n`;
   message += `🔥 *Grand Total Payable:* ₹${grandTotal.toLocaleString('en-IN')}\n`;
   message += `──────────────────────────\n\n`;
 
@@ -69,7 +69,8 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
     message += `\n📝 *Kitchen Request:* ${notes.trim()}\n`;
   }
 
-  message += `\nPlease confirm order acceptance and share kitchen dispatch date. Dhanyavadalu! 🙏`;
+  message += `\n⏳ *Kitchen Timeline:* 1–2 days fresh cooking & leak-proof packing + 2–3 days express courier transit.\n`;
+  message += `\nPlease share your verified UPI QR code or GPay/PhonePe number so I can complete payment and you can start preparing. Dhanyavadalu! 🙏`;
 
   return message;
 }

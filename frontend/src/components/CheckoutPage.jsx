@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  ArrowLeft, ShieldCheck, MapPin, Phone, User, Mail,
+  ArrowLeft, ShieldCheck, MapPin, Phone, User,
   Truck, CheckCircle2, AlertCircle, Loader2, Copy, Check,
   Sparkles, CreditCard, ShoppingBag, Clock, FileText, ChevronRight
 } from 'lucide-react';
@@ -73,8 +73,8 @@ export default function CheckoutPage({
   const [selectedCourier, setSelectedCourier] = useState(null);
   const [shippingError, setShippingError] = useState('');
 
-  // Payment method: 'upi' | 'cod' | 'whatsapp'
-  const [paymentMethod, setPaymentMethod] = useState('upi');
+  // Payment method: strictly WhatsApp
+  const [paymentMethod, setPaymentMethod] = useState('whatsapp');
   const [isCopiedUpi, setIsCopiedUpi] = useState(false);
 
   // Form errors & submission
@@ -215,9 +215,9 @@ export default function CheckoutPage({
       delivery_fee: deliveryFee,
       grand_total: grandTotal,
       courier_name: selectedCourier ? selectedCourier.name : 'Standard Express Delivery',
-      estimated_delivery: selectedCourier ? selectedCourier.estimatedDays : '2-4 Days',
-      payment_method: paymentMethod.toUpperCase(),
-      payment_status: paymentMethod === 'upi' ? 'Verification Pending' : 'Pending'
+      estimated_delivery: '3-5 Days (1-2d fresh prep + 2-3d transit)',
+      payment_method: 'WHATSAPP_UPI',
+      payment_status: 'Verification Pending'
     };
 
     try {
@@ -564,28 +564,15 @@ export default function CheckoutPage({
                 </div>
                 {errors.phone && <span className="form-error-text">{errors.phone}</span>}
               </div>
-
-              <div className="form-field form-full">
-                <label>Email Address (Optional)</label>
-                <div className="form-input-wrap">
-                  <Mail size={16} className="input-icon-left" />
-                  <input
-                    type="email"
-                    placeholder="e.g. sravanthi@gmail.com (for order receipt)"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                  />
-                </div>
-              </div>
             </div>
           </div>
 
-          {/* Card 2: Delivery Address & Shiprocket Pincode Engine */}
+          {/* Card 2: Delivery Address */}
           <div className="checkout-card">
             <div className="checkout-card-header">
               <div className="card-header-icon"><MapPin size={20} /></div>
               <div>
-                <h3>2. Delivery Address & Courier Partner</h3>
+                <h3>2. Delivery Address</h3>
                 <p>All items are freshly packed in food-grade sealed containers from our Andhra kitchen.</p>
               </div>
             </div>
@@ -635,66 +622,6 @@ export default function CheckoutPage({
               </div>
             </div>
 
-            {/* Live Shiprocket Serviceability Box */}
-            <div className="pincode-checker-box">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1F2937', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Truck size={16} color="#8C2F1C" />
-                  <span>Shiprocket Courier Integration</span>
-                </span>
-                {checkingShipping && (
-                  <span style={{ fontSize: '0.78rem', color: '#92400E', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Loader2 size={13} className="spin-icon" />
-                    <span>Checking live rates...</span>
-                  </span>
-                )}
-              </div>
-
-              {/* Dynamic Auto-Assigned Best Courier Partner */}
-              {selectedCourier && (
-                <div className="dynamic-courier-card">
-                  <div className="dynamic-courier-top">
-                    <div className="dynamic-courier-main">
-                      <div className="dynamic-courier-icon">🚚</div>
-                      <div>
-                        <div className="dynamic-courier-title">
-                          <span>{selectedCourier.name}</span>
-                          <span className="dynamic-courier-badge">⚡ Auto-Assigned Best & Fastest</span>
-                        </div>
-                        <div className="dynamic-courier-meta">
-                          Estimated Delivery: <strong>{selectedCourier.estimatedDays || '1-2 Days'}</strong> to pincode <strong>{formData.pincode}</strong>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="dynamic-courier-perks">
-                    <span className="perk-item">✓ Leakproof Sealed Jars</span>
-                    <span className="perk-dot">•</span>
-                    <span className="perk-item">✓ Priority Kitchen Dispatch</span>
-                    {selectedCourier.isCodAvailable && (
-                      <>
-                        <span className="perk-dot">•</span>
-                        <span className="perk-item">✓ COD Available</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {!shippingData && !checkingShipping && formData.pincode.length === 6 && (
-                <div className="pincode-status-banner success">
-                  <CheckCircle2 size={16} />
-                  <span>Standard Express Delivery available to pincode {formData.pincode} (2–4 business days).</span>
-                </div>
-              )}
-
-              {formData.pincode.length < 6 && (
-                <p style={{ fontSize: '0.78rem', color: '#6B7280', margin: '8px 0 0' }}>
-                  💡 Enter your 6-digit delivery pincode to check real-time courier partners (Delhivery, BlueDart, DTDC).
-                </p>
-              )}
-            </div>
-
             {/* Special Instructions */}
             <div className="form-field" style={{ marginTop: '1rem' }}>
               <label>Special Instructions / Kitchen Request (Optional)</label>
@@ -705,93 +632,100 @@ export default function CheckoutPage({
                 onChange={(e) => handleInputChange('notes', e.target.value)}
               />
             </div>
+
+            {/* Fresh Kitchen Preparation & Delivery Timeline */}
+            <div className="kitchen-timeline-box">
+              <div className="timeline-header">
+                <span className="timeline-diya">🪔</span>
+                <div>
+                  <h4>Cooked Fresh on Order — Authentic Telugu Kitchen</h4>
+                  <p>We do not stock pre-made warehouse items. Delicacies are prepared fresh upon your order.</p>
+                </div>
+              </div>
+
+              <div className="timeline-stages">
+                <div className="stage-item">
+                  <div className="stage-num">1</div>
+                  <div className="stage-content">
+                    <span className="stage-label">Fresh Cooking & Packaging</span>
+                    <span className="stage-time">1 – 2 Business Days</span>
+                  </div>
+                </div>
+
+                <div className="stage-arrow">→</div>
+
+                <div className="stage-item">
+                  <div className="stage-num">2</div>
+                  <div className="stage-content">
+                    <span className="stage-label">Kitchen Pickup & Dispatch</span>
+                    <span className="stage-time">Delhivery / Blue Dart Express</span>
+                  </div>
+                </div>
+
+                <div className="stage-arrow">→</div>
+
+                <div className="stage-item">
+                  <div className="stage-num">3</div>
+                  <div className="stage-content">
+                    <span className="stage-label">Doorstep Arrival</span>
+                    <span className="stage-time">3 – 5 Days Total</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Card 3: Payment Method */}
+          {/* Card 3: Payment via WhatsApp */}
           <div className="checkout-card">
             <div className="checkout-card-header">
-              <div className="card-header-icon"><CreditCard size={20} /></div>
+              <div className="card-header-icon" style={{ background: '#DCFCE7', color: '#15803D' }}>
+                <CheckCircle2 size={20} />
+              </div>
               <div>
-                <h3>3. Select Payment Method</h3>
-                <p>Choose your preferred payment method. Direct UPI receives priority dispatch.</p>
+                <h3>3. Payment via WhatsApp (UPI)</h3>
+                <p>Direct kitchen confirmation with zero payment gateway surcharge.</p>
               </div>
             </div>
 
-            <div className="payment-methods-grid">
-              {/* Option 1: Cash on Delivery */}
-              <div
-                className={`payment-option ${paymentMethod === 'cod' ? 'active' : ''}`}
-                onClick={() => setPaymentMethod('cod')}
-              >
-                <input
-                  type="radio"
-                  name="payment_choice"
-                  checked={paymentMethod === 'cod'}
-                  onChange={() => setPaymentMethod('cod')}
-                  className="payment-radio"
-                />
-                <div className="payment-info">
-                  <h4>📦 Cash on Delivery (COD) / Pay on Delivery</h4>
-                  <p>Pay cash or scan UPI directly to the courier executive upon doorstep parcel arrival.</p>
-                </div>
-              </div>
-
-              {/* Option 2: Direct UPI */}
-              <div
-                className={`payment-option ${paymentMethod === 'upi' ? 'active' : ''}`}
-                onClick={() => setPaymentMethod('upi')}
-              >
-                <input
-                  type="radio"
-                  name="payment_choice"
-                  checked={paymentMethod === 'upi'}
-                  onChange={() => setPaymentMethod('upi')}
-                  className="payment-radio"
-                />
-                <div className="payment-info" style={{ width: '100%' }}>
-                  <h4>
-                    <span>⚡ Instant UPI Transfer (GPay, PhonePe, Paytm, BHIM)</span>
-                    <span className="payment-badge">Recommended</span>
+            <div className="whatsapp-payment-banner">
+              <div className="wa-banner-top">
+                <div className="wa-brand-icon">💬</div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '1rem', color: '#166534', fontWeight: 700 }}>
+                    Official Kitchen WhatsApp: +91 {BRAND_INFO.whatsappNumber}
                   </h4>
-                  <p>Pay directly to our verified kitchen UPI ID. Quick dispatch upon WhatsApp confirmation.</p>
-
-                  {paymentMethod === 'upi' && (
-                    <div className="upi-pay-card-clean">
-                      <div className="upi-id-badge">
-                        <span>Official UPI ID: <strong>{BRAND_INFO.whatsappNumber}@upi</strong></span>
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); handleCopyUpi(); }}
-                          className="copy-upi-btn"
-                          title="Copy UPI ID"
-                        >
-                          {isCopiedUpi ? <Check size={16} color="#15803D" /> : <Copy size={16} />}
-                        </button>
-                      </div>
-                      <div style={{ fontSize: '0.74rem', color: '#15803D', marginTop: '6px', fontWeight: 600 }}>
-                        {isCopiedUpi ? '✅ Copied to clipboard! Open your UPI app to transfer.' : '💡 Tap copy button to paste into Google Pay / PhonePe / Paytm / BHIM.'}
-                      </div>
-                    </div>
-                  )}
+                  <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: '#15803D' }}>
+                    When you click place order, WhatsApp will open with your exact order summary pre-filled.
+                  </p>
                 </div>
               </div>
 
-              {/* Option 3: WhatsApp Order */}
-              <div
-                className={`payment-option ${paymentMethod === 'whatsapp' ? 'active' : ''}`}
-                onClick={() => setPaymentMethod('whatsapp')}
-              >
-                <input
-                  type="radio"
-                  name="payment_choice"
-                  checked={paymentMethod === 'whatsapp'}
-                  onChange={() => setPaymentMethod('whatsapp')}
-                  className="payment-radio"
-                />
-                <div className="payment-info">
-                  <h4>💬 Pay on WhatsApp Confirmation</h4>
-                  <p>Our kitchen head will share an official payment link or bank details directly in your WhatsApp order chat.</p>
+              <div className="wa-steps-list">
+                <div className="wa-step-point">
+                  <span className="point-badge">Step 1</span>
+                  <span>Tap <strong>Place Order & Pay via WhatsApp</strong> below.</span>
                 </div>
+                <div className="wa-step-point">
+                  <span className="point-badge">Step 2</span>
+                  <span>Our kitchen team verifies your order and shares the official UPI ID & QR code (GPay, PhonePe, Paytm).</span>
+                </div>
+                <div className="wa-step-point">
+                  <span className="point-badge">Step 3</span>
+                  <span>Share your UPI payment screenshot in the chat. Fresh preparation begins immediately!</span>
+                </div>
+              </div>
+
+              <div className="wa-upi-quick-info">
+                <span>Direct Kitchen UPI ID: <strong>{BRAND_INFO.whatsappNumber}@upi</strong></span>
+                <button
+                  type="button"
+                  onClick={handleCopyUpi}
+                  className="copy-upi-btn"
+                  title="Copy UPI ID"
+                >
+                  {isCopiedUpi ? <Check size={14} color="#15803D" /> : <Copy size={14} />}
+                  <span>{isCopiedUpi ? 'Copied!' : 'Copy UPI'}</span>
+                </button>
               </div>
             </div>
           </div>
@@ -891,22 +825,23 @@ export default function CheckoutPage({
               onClick={handlePlaceOrder}
               disabled={submitting}
               className="btn-place-order"
+              style={{ background: '#15803D' }}
             >
               {submitting ? (
                 <>
                   <Loader2 size={18} className="spin-icon" />
-                  <span>Confirming Order...</span>
+                  <span>Placing Order & Opening WhatsApp...</span>
                 </>
               ) : (
                 <>
-                  <span>Confirm & Place Order</span>
+                  <span>Place Order & Pay via WhatsApp</span>
                   <span>(₹{grandTotal.toLocaleString('en-IN')})</span>
                 </>
               )}
             </button>
 
-            <div style={{ textAlign: 'center', marginTop: '10px', fontSize: '0.74rem', color: '#6B7280' }}>
-              🔒 Guaranteed Authentic Telugu Homemade Delicacies
+            <div style={{ textAlign: 'center', marginTop: '10px', fontSize: '0.74rem', color: '#166534', fontWeight: 600 }}>
+              💬 Direct kitchen confirmation on +91 {BRAND_INFO.whatsappNumber}
             </div>
           </div>
         </aside>

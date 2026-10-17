@@ -581,6 +581,7 @@
 
 .status-badge.new { background: #FEF3C7; color: #B45309; }
 .status-badge.verified { background: #DBEAFE; color: #1E40AF; }
+.status-badge.preparing { background: #FEF9C3; color: #854D0E; border: 1px solid #FEF08A; }
 .status-badge.packed { background: #F3E8FF; color: #6B21A8; }
 .status-badge.shipped { background: #FFEDD5; color: #C2410C; }
 .status-badge.delivered { background: #DCFCE7; color: #15803D; }

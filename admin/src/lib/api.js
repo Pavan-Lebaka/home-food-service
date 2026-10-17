@@ -259,17 +259,23 @@ export async function seedProductsApi() {
 /**
  * Shiprocket Courier Operations
  */
-export async function createShipmentApi(orderId) {
+export async function createShipmentApi(order) {
   const token = getAdminToken();
+  const payload = typeof order === 'object' ? order : { orderId: order };
   try {
-    const response = await fetch(`${BACKEND_URL}/shipping/create-order/${orderId}`, {
+    const response = await fetch(`${BACKEND_URL}/shipping/shipment`, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
-      }
+      },
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to book shipment');
+    }
     return data;
   } catch (err) {
     console.error('[API] Shiprocket create shipment error:', err);

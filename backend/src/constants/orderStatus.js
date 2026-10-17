@@ -1,7 +1,9 @@
 export const ORDER_STATUS = {
   NEW: 'New',
-  PREPARING: 'Preparing',
-  DISPATCHED: 'Dispatched',
+  PAYMENT_VERIFIED: 'Payment Verified',
+  PREPARING: 'Preparing in Kitchen',
+  READY_FOR_PICKUP: 'Ready for Pickup',
+  DISPATCHED: 'Shipped',
   DELIVERED: 'Delivered',
   CANCELLED: 'Cancelled'
 };
