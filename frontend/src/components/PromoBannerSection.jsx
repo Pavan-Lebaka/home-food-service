@@ -241,6 +241,10 @@ export default function PromoBannerSection({
                       alt={product.name}
                       className="delicacy-img"
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = product.category === 'pindi-vantalu' ? '/images/arisalu.jpg' : '/images/avakaya.jpg';
+                      }}
                     />
                     <span className="delicacy-badge">{product.badge || 'Banner Special'}</span>
                   </div>

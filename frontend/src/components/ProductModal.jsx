@@ -66,7 +66,15 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
         <div className="modal-grid-layout">
           {/* Left: Product Image */}
           <div className="modal-image-col">
-            <img src={product.image} alt={product.name} className="modal-product-img" />
+            <img
+              src={product.image}
+              alt={product.name}
+              className="modal-product-img"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = product.category === 'pindi-vantalu' ? '/images/arisalu.jpg' : '/images/avakaya.jpg';
+              }}
+            />
             {product.badge && (
               <div className="modal-badge-tag">
                 <Sparkles size={12} />

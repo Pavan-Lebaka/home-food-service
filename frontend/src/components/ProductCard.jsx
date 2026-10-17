@@ -52,6 +52,10 @@ export default function ProductCard({ product, onAddToCart, onOpenDetails }) {
           alt={`${product.name} - ${product.tagline}`}
           className="compact-card-img"
           loading="lazy"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = product.category === 'pindi-vantalu' ? '/images/arisalu.jpg' : '/images/avakaya.jpg';
+          }}
         />
 
         {/* Top Badges */}

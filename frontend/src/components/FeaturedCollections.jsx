@@ -58,6 +58,10 @@ export default function FeaturedCollections({ onSelectCategory }) {
                     alt={cardTitle}
                     className="collection-img"
                     loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/hero.jpg';
+                    }}
                   />
                   <div className="collection-tag-badge">
                     {cardTag}

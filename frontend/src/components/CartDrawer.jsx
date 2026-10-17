@@ -119,7 +119,15 @@ export default function CartDrawer({
                 <div className="quickpicks-grid">
                   {quickPickItems.map(item => (
                     <div key={item.id} className="quickpick-item-card">
-                      <img src={item.image} alt={item.name} className="quickpick-img" />
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="quickpick-img"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = item.category === 'pindi-vantalu' ? '/images/arisalu.jpg' : '/images/avakaya.jpg';
+                        }}
+                      />
                       <div className="quickpick-info">
                         <div className="quickpick-name">{item.name}</div>
                         <div className="quickpick-price">₹{item.pricePerKg} / kg</div>

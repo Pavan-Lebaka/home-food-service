@@ -85,7 +85,15 @@ export default function SearchModal({ isOpen, onClose, onSelectProduct }) {
                   role="button"
                   tabIndex={0}
                 >
-                  <img src={product.image} alt={product.name} className="result-thumb" />
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="result-thumb"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = product.category === 'pindi-vantalu' ? '/images/arisalu.jpg' : '/images/avakaya.jpg';
+                    }}
+                  />
                   <div className="result-info">
                     <div className="result-name">{product.name}</div>
                     <div className="result-telugu">{product.teluguName}</div>

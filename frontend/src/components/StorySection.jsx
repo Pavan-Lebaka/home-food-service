@@ -41,6 +41,10 @@ export default function StorySection() {
               src="/images/story.jpg"
               alt="Traditional Telugu village home kitchen with grandmother cooking with brass cookware and stone grinding"
               loading="lazy"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/images/hero.jpg';
+              }}
             />
             <div style={{
               position: 'absolute',
