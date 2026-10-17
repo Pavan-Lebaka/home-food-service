@@ -79,6 +79,7 @@ export default function CheckoutPage({
   const [isCopiedUpi, setIsCopiedUpi] = useState(false);
   const [paymentScreenshot, setPaymentScreenshot] = useState(null);
   const [showMobileSummary, setShowMobileSummary] = useState(false);
+  const [formWarning, setFormWarning] = useState('');
 
   const handleScreenshotUpload = (e) => {
     const file = e.target.files?.[0];
@@ -208,6 +209,7 @@ export default function CheckoutPage({
       }
       return updated;
     });
+    if (formWarning) setFormWarning('');
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
@@ -219,7 +221,7 @@ export default function CheckoutPage({
     setTimeout(() => setIsCopiedUpi(false), 2000);
   };
 
-  // Validate form
+  // Validate form with auto-scroll to first invalid input
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = 'Please enter your full name';
@@ -230,12 +232,25 @@ export default function CheckoutPage({
     if (!cleanPin || cleanPin.length !== 6) newErrors.pincode = 'Please enter a valid 6-digit Indian PIN code';
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const errorKeys = Object.keys(newErrors);
+    if (errorKeys.length > 0) {
+      const firstField = errorKeys[0];
+      const targetEl = document.getElementById(`field-${firstField}`);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => targetEl.focus(), 300);
+      }
+      setFormWarning('⚠️ Please fill in your delivery details above (Name, Phone & Address) to place order.');
+      return false;
+    }
+
+    setFormWarning('');
+    return true;
   };
 
   // Submit Order to Backend
   const handlePlaceOrder = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!validateForm()) return;
     if (cartItems.length === 0) return;
 
@@ -279,7 +294,7 @@ export default function CheckoutPage({
       setCreatedOrder(placedOrder);
       onClearCart && onClearCart();
 
-      // Automatically open pre-filled WhatsApp confirmation in a new tab
+      // Automatically open pre-filled WhatsApp confirmation
       const waUrl = getWhatsAppOrderUrl(placedOrder.items || orderPayload.items || [], {
         orderId: placedOrder.id,
         name: placedOrder.customer_name,
@@ -294,8 +309,14 @@ export default function CheckoutPage({
       });
 
       try {
-        window.open(waUrl, '_blank', 'noopener,noreferrer');
-      } catch (err) { }
+        const opened = window.open(waUrl, '_blank', 'noopener,noreferrer');
+        if (!opened || opened.closed || typeof opened.closed === 'undefined') {
+          // If browser popup blocker intercepts, redirect directly in tab
+          window.location.href = waUrl;
+        }
+      } catch (err) {
+        window.location.href = waUrl;
+      }
 
       // Trigger festive celebration confetti
       try {
@@ -639,11 +660,12 @@ export default function CheckoutPage({
             </div>
 
             <div className="checkout-form-grid">
-              <div className="form-field">
+              <div className={`form-field ${errors.name ? 'has-error' : ''}`}>
                 <label>Full Name <span className="required">*</span></label>
                 <div className="form-input-wrap">
                   <User size={16} className="input-icon-left" />
                   <input
+                    id="field-name"
                     type="text"
                     required
                     placeholder="e.g. Sravanthi Reddy"
@@ -654,11 +676,12 @@ export default function CheckoutPage({
                 {errors.name && <span className="form-error-text">{errors.name}</span>}
               </div>
 
-              <div className="form-field">
+              <div className={`form-field ${errors.phone ? 'has-error' : ''}`}>
                 <label>Mobile Number (WhatsApp Preferred) <span className="required">*</span></label>
                 <div className="form-input-wrap">
                   <Phone size={16} className="input-icon-left" />
                   <input
+                    id="field-phone"
                     type="tel"
                     required
                     maxLength={10}
@@ -683,11 +706,12 @@ export default function CheckoutPage({
             </div>
 
             <div className="checkout-form-grid">
-              <div className="form-field form-full">
+              <div className={`form-field form-full ${errors.address ? 'has-error' : ''}`}>
                 <label>Flat / House No. & Street Address <span className="required">*</span></label>
                 <div className="form-input-wrap">
                   <MapPin size={16} className="input-icon-left" />
                   <input
+                    id="field-address"
                     type="text"
                     required
                     placeholder="e.g. Flat 302, Sri Lakshmi Nilayam, 5th Cross"
@@ -701,6 +725,7 @@ export default function CheckoutPage({
               <div className="form-field">
                 <label>City / Town <span className="required">*</span></label>
                 <input
+                  id="field-city"
                   type="text"
                   required
                   placeholder="e.g. Hyderabad, Vijayawada, Bangalore"
@@ -710,10 +735,11 @@ export default function CheckoutPage({
                 />
               </div>
 
-              <div className="form-field">
+              <div className={`form-field ${errors.pincode ? 'has-error' : ''}`}>
                 <label>Pincode (6 Digits) <span className="required">*</span></label>
                 <div className="form-input-wrap">
                   <input
+                    id="field-pincode"
                     type="text"
                     required
                     maxLength={6}
@@ -899,33 +925,14 @@ export default function CheckoutPage({
                 </label>
               </div>
 
-              {/* Part C: Confirmation CTA Button inside Card */}
+              {/* Kitchen Guarantee Info */}
               <div className="pay-flow-section pay-cta-section">
-                <div className="kitchen-guarantee-note">
+                <div className="kitchen-guarantee-note" style={{ margin: 0 }}>
                   <span className="note-emoji">💬</span>
                   <p>
-                    Your order details, address, and screenshot will be shared directly with our kitchen head on WhatsApp for instant confirmation.
+                    Your order details, delivery address, and payment screenshot will be shared directly with our kitchen head on WhatsApp for prompt preparation & dispatch.
                   </p>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={handlePlaceOrder}
-                  disabled={submitting}
-                  className="btn-pay-card-order"
-                >
-                  {submitting ? (
-                    <>
-                      <Loader2 size={18} className="spin-icon" />
-                      <span>Placing Order & Opening WhatsApp...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Confirm & Place Order on WhatsApp</span>
-                      <span className="btn-pay-price">₹{grandTotal.toLocaleString('en-IN')}</span>
-                    </>
-                  )}
-                </button>
               </div>
             </div>
           </div>
@@ -1019,7 +1026,15 @@ export default function CheckoutPage({
               </div>
             </div>
 
-            {/* Submit Button */}
+            {/* Validation Warning Notice if user clicks without filling address */}
+            {formWarning && (
+              <div className="checkout-form-warning-banner">
+                <AlertCircle size={18} className="warning-icon-shake" />
+                <span>{formWarning}</span>
+              </div>
+            )}
+
+            {/* Single Primary Submit Button */}
             <button
               type="button"
               onClick={handlePlaceOrder}
@@ -1046,22 +1061,6 @@ export default function CheckoutPage({
           </div>
         </aside>
       </main>
-
-      {/* Mobile Sticky Bottom Place Order Bar */}
-      <div className="checkout-mobile-sticky-bar">
-        <div className="mobile-sticky-left">
-          <span className="sticky-total-label">Grand Total</span>
-          <span className="sticky-total-amount">₹{grandTotal.toLocaleString('en-IN')}</span>
-        </div>
-        <button
-          type="button"
-          onClick={handlePlaceOrder}
-          disabled={submitting}
-          className="btn-sticky-place-order"
-        >
-          {submitting ? 'Placing Order...' : 'Confirm on WhatsApp →'}
-        </button>
-      </div>
     </div>
   );
 }

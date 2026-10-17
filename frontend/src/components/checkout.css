@@ -1681,74 +1681,40 @@
 }
 
 /* ==========================================================================
-   STICKY BOTTOM MOBILE BAR ON CHECKOUT
+   FORM VALIDATION WARNING BANNER & ERROR STYLES
    ========================================================================== */
-.checkout-mobile-sticky-bar {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 99;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 10px 16px;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-@media (max-width: 768px) {
-  .checkout-mobile-sticky-bar {
-    display: flex;
-  }
-
-  .checkout-container {
-    padding-bottom: 85px;
-  }
-}
-
-.mobile-sticky-left {
+.checkout-form-warning-banner {
   display: flex;
-  flex-direction: column;
-}
-
-.sticky-total-label {
-  font-size: 0.72rem;
-  color: #6B7280;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.sticky-total-amount {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #8C2F1C;
-  line-height: 1.1;
-}
-
-.btn-sticky-place-order {
-  flex: 1;
-  max-width: 220px;
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  background: #15803D;
-  color: #FFFFFF;
-  font-size: 0.9rem;
+  gap: 10px;
+  background: #FEF2F2;
+  border: 1.5px solid #F87171;
+  border-radius: 12px;
+  padding: 11px 14px;
+  color: #B91C1C;
+  font-size: 0.84rem;
   font-weight: 700;
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.3);
-  transition: all 0.2s ease;
+  margin-bottom: 14px;
+  line-height: 1.4;
+  animation: shakeWarning 0.4s ease-in-out;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.08);
 }
 
-.btn-sticky-place-order:hover {
-  background: #166534;
+.warning-icon-shake {
+  color: #DC2626;
+  flex-shrink: 0;
+}
+
+@keyframes shakeWarning {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.form-field.has-error input {
+  border-color: #DC2626 !important;
+  background-color: #FFF5F5 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
 }
 
 /* Mobile responsive padding adjustments for cards */
