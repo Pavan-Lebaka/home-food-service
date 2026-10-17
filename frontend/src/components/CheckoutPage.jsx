@@ -78,7 +78,6 @@ export default function CheckoutPage({
   const [paymentMethod, setPaymentMethod] = useState('whatsapp');
   const [isCopiedUpi, setIsCopiedUpi] = useState(false);
   const [paymentScreenshot, setPaymentScreenshot] = useState(null);
-  const [showMobileSummary, setShowMobileSummary] = useState(false);
   const [formWarning, setFormWarning] = useState('');
 
   const handleScreenshotUpload = (e) => {
@@ -589,61 +588,7 @@ export default function CheckoutPage({
         </div>
       </div>
 
-      {/* Mobile-Only Collapsible Order Summary Bar */}
-      <div className="mobile-order-summary-accordion">
-        <button
-          type="button"
-          onClick={() => setShowMobileSummary(!showMobileSummary)}
-          className="mobile-summary-toggle"
-        >
-          <div className="summary-toggle-left">
-            <ShoppingBag size={18} color="#8C2F1C" />
-            <span style={{ fontWeight: 700 }}>
-              {showMobileSummary ? 'Hide Order Summary' : 'Show Order Summary'}
-            </span>
-            <span className="summary-item-count">
-              ({cartItems.reduce((acc, i) => acc + i.quantity, 0)} items)
-            </span>
-            <ChevronDown size={16} className={`chevron-rotate ${showMobileSummary ? 'open' : ''}`} />
-          </div>
-          <span className="mobile-summary-price">₹{grandTotal.toLocaleString('en-IN')}</span>
-        </button>
 
-        {showMobileSummary && (
-          <div className="mobile-summary-drawer-content">
-            <div className="mobile-summary-items">
-              {cartItems.map((item, idx) => {
-                const itemPrice = item.price || item.unitPrice || item.pricePerKg || 0;
-                return (
-                  <div key={idx} className="mobile-item-row">
-                    <img src={item.image || '/images/avakaya.jpg'} alt={item.name} className="mobile-item-thumb" />
-                    <div className="mobile-item-info">
-                      <span className="mobile-item-title">{item.name}</span>
-                      <span className="mobile-item-var">{item.variantLabel || '1/2 kg'} × {item.quantity}</span>
-                    </div>
-                    <span className="mobile-item-price">₹{(itemPrice * item.quantity).toLocaleString('en-IN')}</span>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mobile-calc-strip">
-              <div className="calc-row">
-                <span>Items Subtotal:</span>
-                <span>₹{itemsSubtotal.toLocaleString('en-IN')}</span>
-              </div>
-              <div className="calc-row">
-                <span>Express Delivery:</span>
-                <span>{deliveryFee === 0 ? 'FREE 🎉' : `₹${deliveryFee}`}</span>
-              </div>
-              <div className="calc-row grand">
-                <span>Grand Total:</span>
-                <span>₹{grandTotal.toLocaleString('en-IN')}</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
 
       {/* 3. Main Form Grid */}
       <main className="checkout-container">
