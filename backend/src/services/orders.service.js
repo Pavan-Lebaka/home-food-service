@@ -1,5 +1,6 @@
 import { supabase } from '../config/supabase.js';
 import { db } from '../db/database.js';
+import cloudinary, { isCloudinaryConfigured } from '../config/cloudinary.js';
 import { ApiError } from '../utils/ApiError.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
 import { ORDER_STATUS, PAYMENT_STATUS } from '../constants/orderStatus.js';
@@ -10,6 +11,25 @@ class OrdersService {
    */
   async createOrder(orderData) {
     const orderId = orderData.id || 'ORD-' + Date.now().toString(36).toUpperCase();
+
+    let paymentScreenshot = orderData.payment_screenshot || null;
+
+    // If payment_screenshot is base64, auto-upload to Cloudinary so we store a clean permanent HTTPS link
+    if (paymentScreenshot && typeof paymentScreenshot === 'string' && paymentScreenshot.startsWith('data:image/')) {
+      try {
+        if (isCloudinaryConfigured()) {
+          const uploadRes = await cloudinary.uploader.upload(paymentScreenshot, {
+            folder: 'bramarambika_foods/receipts',
+            public_id: `receipt_${orderId}`,
+            resource_type: 'image'
+          });
+          paymentScreenshot = uploadRes.secure_url;
+          console.log(`[OrdersService] Payment receipt uploaded to Cloudinary: ${paymentScreenshot}`);
+        }
+      } catch (uploadErr) {
+        console.warn('[OrdersService] Cloudinary receipt upload failed:', uploadErr.message);
+      }
+    }
 
     const newOrderPayload = {
       id: orderId,
@@ -23,12 +43,12 @@ class OrdersService {
       delivery_fee: Number(orderData.delivery_fee ?? orderData.deliveryFee ?? 0),
       grand_total: Number(orderData.grand_total ?? orderData.grandTotal ?? 0),
       status: ORDER_STATUS.NEW,
-      payment_status: orderData.payment_status || PAYMENT_STATUS.PENDING,
+      payment_status: paymentScreenshot ? PAYMENT_STATUS.PAID : (orderData.payment_status || PAYMENT_STATUS.PENDING),
       payment_method: orderData.payment_method || orderData.paymentMethod || 'UPI',
       courier_name: orderData.courier_name || orderData.courierName || null,
       estimated_delivery: orderData.estimated_delivery || orderData.estimatedDelivery || null,
       tracking_number: null,
-      payment_screenshot: orderData.payment_screenshot || null,
+      payment_screenshot: paymentScreenshot,
       created_at: new Date().toISOString()
     };
 

@@ -67,3 +67,24 @@ export async function checkShiprocketRates(pincode) {
   }
   return null;
 }
+
+/**
+ * Upload image (e.g. payment screenshot) to Cloudinary via Backend API
+ */
+export async function uploadImageApi(dataUrl, name = 'receipt') {
+  try {
+    const response = await fetch(`${BACKEND_URL}/upload`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: dataUrl, name })
+    });
+    if (response.ok) {
+      const result = await response.json();
+      return result?.data?.url || null;
+    }
+  } catch (err) {
+    console.warn('[API] Receipt upload error:', err);
+  }
+  return null;
+}
+

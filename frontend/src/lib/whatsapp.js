@@ -43,21 +43,21 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
     ? 'FREE (Order above ₹2,000 🎉)' 
     : `₹${deliveryFee}`;
 
-  // Clean, professional, structured WhatsApp template
-  let message = `🌟 *BRAMARAMBIKA HOME FOODS — ORDER CONFIRMATION* 🌟\n\n`;
-  message += `Namaste! I have placed an order on your website.\n\n`;
-  message += `🧾 *Order ID:* ${orderId}\n`;
+  // Clean, professional, structured WhatsApp template (Universal UTF-8 safe emojis)
+  let message = `✨ *BRAMARAMBIKA HOME FOODS — ORDER CONFIRMATION* ✨\n\n`;
+  message += `Namaste! I have placed an order on your kitchen website.\n\n`;
+  message += `📋 *Order ID:* ${orderId}\n`;
   message += `📅 *Date:* ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}\n\n`;
   message += `🛒 *ORDERED DELICACIES:*\n${itemsList}\n\n`;
-  message += `──────────────────────────\n`;
+  message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   message += `💰 *Items Subtotal:* ₹${itemsSubtotal.toLocaleString('en-IN')}\n`;
   message += `🚚 *Courier Partner:* ${courierInfo}\n`;
   message += `📦 *Delivery Fee:* ${deliveryText}\n`;
   message += `💳 *Payment Mode:* Direct UPI on WhatsApp\n`;
   message += `🔥 *Grand Total Payable:* ₹${grandTotal.toLocaleString('en-IN')}\n`;
-  message += `──────────────────────────\n\n`;
+  message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
-  const { name, phone, address, pincode, notes } = customerDetails;
+  const { name, phone, address, pincode, notes, paymentScreenshot } = customerDetails;
   message += `📍 *DELIVERY DESTINATION:*\n`;
   if (name && name.trim()) message += `• *Customer:* ${name.trim()}\n`;
   if (phone && phone.trim()) message += `• *Mobile:* ${phone.trim()}\n`;
@@ -69,8 +69,22 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
     message += `\n📝 *Kitchen Request:* ${notes.trim()}\n`;
   }
 
-  message += `\n⏳ *Kitchen Timeline:* 1–2 days fresh cooking & leak-proof packing + 2–3 days express courier transit.\n`;
-  message += `\nPlease share your verified UPI QR code or GPay/PhonePe number so I can complete payment and you can start preparing. Dhanyavadalu! 🙏`;
+  // Payment proof screenshot handling
+  if (paymentScreenshot && typeof paymentScreenshot === 'string') {
+    if (paymentScreenshot.startsWith('http')) {
+      message += `\n📸 *Payment Proof Receipt:* ${paymentScreenshot}\n`;
+    } else {
+      message += `\n📸 *Payment Proof:* (Attached screenshot in this chat)\n`;
+    }
+  }
+
+  message += `\n⏳ *Kitchen Timeline:* 1–2 days fresh cooking & leak-proof packaging + 2–3 days express courier transit.\n\n`;
+
+  if (paymentScreenshot) {
+    message += `I have attached my payment receipt for instant verification. Please confirm my order preparation & dispatch timeline. Dhanyavadalu! 🙏`;
+  } else {
+    message += `Please share your verified UPI QR code or GPay/PhonePe number so I can complete payment and you can start preparing. Dhanyavadalu! 🙏`;
+  }
 
   return message;
 }

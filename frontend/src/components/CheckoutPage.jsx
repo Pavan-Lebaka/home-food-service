@@ -6,7 +6,7 @@ import {
   Smartphone, UploadCloud, Camera
 } from 'lucide-react';
 import { BRAND_INFO } from '../data/products.js';
-import { checkShiprocketRates, createOrderApi } from '../lib/api.js';
+import { checkShiprocketRates, createOrderApi, uploadImageApi } from '../lib/api.js';
 import { getWhatsAppOrderUrl } from '../lib/whatsapp.js';
 import confetti from 'canvas-confetti';
 import './checkout.css';
@@ -257,6 +257,19 @@ export default function CheckoutPage({
 
     const fullAddress = `${formData.address.trim()}${formData.city ? `, ${formData.city.trim()}` : ''}${formData.state ? `, ${formData.state.trim()}` : ''}`;
 
+    // 1. Upload screenshot to Cloudinary CDN if attached as base64
+    let finalReceiptUrl = paymentScreenshot;
+    if (paymentScreenshot && typeof paymentScreenshot === 'string' && paymentScreenshot.startsWith('data:image/')) {
+      try {
+        const uploaded = await uploadImageApi(paymentScreenshot, `receipt_${Date.now()}`);
+        if (uploaded) {
+          finalReceiptUrl = uploaded;
+        }
+      } catch (err) {
+        console.warn('Screenshot upload skipped, backend will handle:', err);
+      }
+    }
+
     const orderPayload = {
       customer_name: formData.name.trim(),
       phone: formData.phone.trim(),
@@ -279,8 +292,8 @@ export default function CheckoutPage({
       courier_name: selectedCourier ? selectedCourier.name : 'Standard Express Delivery',
       estimated_delivery: '3-5 Days (1-2d fresh prep + 2-3d transit)',
       payment_method: 'WHATSAPP_UPI',
-      payment_status: paymentScreenshot ? 'Screenshot Submitted' : 'Verification Pending',
-      payment_screenshot: paymentScreenshot
+      payment_status: finalReceiptUrl ? 'Screenshot Submitted' : 'Verification Pending',
+      payment_screenshot: finalReceiptUrl
     };
 
     try {
@@ -293,7 +306,7 @@ export default function CheckoutPage({
       setCreatedOrder(placedOrder);
       onClearCart && onClearCart();
 
-      // Automatically open pre-filled WhatsApp confirmation
+      // Automatically open pre-filled WhatsApp confirmation with screenshot link
       const waUrl = getWhatsAppOrderUrl(placedOrder.items || orderPayload.items || [], {
         orderId: placedOrder.id,
         name: placedOrder.customer_name,
@@ -304,7 +317,8 @@ export default function CheckoutPage({
         estimatedDelivery: placedOrder.estimated_delivery,
         deliveryFee: placedOrder.delivery_fee,
         paymentMethod: placedOrder.payment_method,
-        notes: placedOrder.notes
+        notes: placedOrder.notes,
+        paymentScreenshot: placedOrder.payment_screenshot || finalReceiptUrl
       });
 
       try {
@@ -485,6 +499,21 @@ export default function CheckoutPage({
                 <span style={{ color: '#6B7280' }}>Payment Mode:</span>
                 <strong style={{ color: '#15803D' }}>{createdOrder.payment_method}</strong>
               </div>
+
+              {createdOrder.payment_screenshot && (
+                <div style={{ margin: '10px 0 6px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '8px', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.8rem', color: '#166534', fontWeight: 600 }}>📸 Payment Proof Attached</span>
+                  <a
+                    href={createdOrder.payment_screenshot}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontSize: '0.75rem', color: '#15803D', fontWeight: 700, textDecoration: 'underline' }}
+                  >
+                    View Receipt
+                  </a>
+                </div>
+              )}
+
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #E5E7EB', fontSize: '1.05rem' }}>
                 <span style={{ fontWeight: 700 }}>Total Amount:</span>
                 <strong style={{ color: '#8C2F1C' }}>₹{createdOrder.grand_total?.toLocaleString('en-IN')}</strong>
@@ -492,13 +521,18 @@ export default function CheckoutPage({
             </div>
 
             {/* WhatsApp Confirmation Box */}
-            <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '10px', padding: '12px 16px', marginBottom: '1.5rem', textAlign: 'left' }}>
+            <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '10px', padding: '12px 16px', marginBottom: '1.25rem', textAlign: 'left' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#166534', fontWeight: 700, fontSize: '0.9rem', marginBottom: '4px' }}>
                 <span>💬 WhatsApp Order Confirmation</span>
               </div>
               <p style={{ margin: 0, fontSize: '0.82rem', color: '#166534', lineHeight: 1.45 }}>
                 Click below to send your structured order confirmation to our WhatsApp kitchen number (<strong>{BRAND_INFO.whatsappNumber}</strong>). Our team will confirm the dispatch date!
               </p>
+              {createdOrder.payment_screenshot && (
+                <p style={{ margin: '6px 0 0', fontSize: '0.78rem', color: '#15803D', fontWeight: 600 }}>
+                  ✓ Your payment receipt link is included in the message. You can also send the photo file directly in the chat!
+                </p>
+              )}
             </div>
 
             {/* Actions */}
