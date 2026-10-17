@@ -38,12 +38,12 @@ export default function StorySection() {
           {/* Story Visual */}
           <div className="story-image-wrap reveal-on-scroll">
             <img
-              src="/images/story.jpg"
+              src="https://res.cloudinary.com/z2iepqai/image/upload/v1792220657/bramarambika_foods/story.jpg"
               alt="Traditional Telugu village home kitchen with grandmother cooking with brass cookware and stone grinding"
               loading="lazy"
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = '/images/hero.jpg';
+                e.currentTarget.src = 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220644/bramarambika_foods/hero.jpg';
               }}
             />
             <div style={{

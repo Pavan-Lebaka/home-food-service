@@ -184,7 +184,7 @@ export async function clearAllOrdersApi() {
 
 /**
  * Dish Photo Upload API
- * Takes base64 data URL and uploads to server, returning clean /images/...jpg path
+ * Takes base64 data URL and uploads to Cloudinary CDN, returning permanent HTTPS image URL
  */
 export async function uploadDishImageApi(dataUrl, dishName = 'dish') {
   try {

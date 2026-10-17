@@ -77,7 +77,7 @@ export default function ProductManagement() {
     tagline: '',
     description: '',
     badge: 'Fresh Special',
-    image: '/images/avakaya.jpg',
+    image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg',
     inStock: true
   });
 
@@ -217,7 +217,7 @@ export default function ProductManagement() {
     try {
       const created = await createProductApi({
         ...newForm,
-        image: newForm.image || '/images/avakaya.jpg',
+        image: newForm.image || 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg',
         pricePerKg: Number(newForm.pricePerKg)
       });
       setProducts(prev => [created, ...prev]);
@@ -230,7 +230,7 @@ export default function ProductManagement() {
         tagline: '',
         description: '',
         badge: 'Fresh Special',
-        image: '/images/avakaya.jpg',
+        image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg',
         inStock: true
       });
       showToast(`Added new product: ${created.name}`);
@@ -403,9 +403,9 @@ export default function ProductManagement() {
                     <div className="pm-item-cell">
                       <div className="pm-item-img-wrap">
                         <img
-                          src={p.image || '/images/avakaya.jpg'}
+                          src={p.image || 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'}
                           alt={p.name}
-                          onError={(e) => { e.target.src = '/images/avakaya.jpg'; }}
+                          onError={(e) => { e.target.src = 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'; }}
                         />
                       </div>
                       <div>
@@ -589,10 +589,10 @@ export default function ProductManagement() {
                 <div className="pm-image-picker-wrap">
                   <div className="pm-preview-container">
                     <img
-                      src={newForm.image || '/images/avakaya.jpg'}
+                      src={newForm.image || 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'}
                       alt="Preview"
                       className="pm-image-preview-thumb"
-                      onError={(e) => { e.target.src = '/images/avakaya.jpg'; }}
+                      onError={(e) => { e.target.src = 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'; }}
                     />
                   </div>
                   <div className="pm-image-upload-controls">
@@ -621,7 +621,7 @@ export default function ProductManagement() {
                         <button
                           type="button"
                           className="pm-btn-clear-photo"
-                          onClick={() => setNewForm({ ...newForm, image: '/images/avakaya.jpg' })}
+                          onClick={() => setNewForm({ ...newForm, image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg' })}
                           title="Reset to default dish photo"
                         >
                           <X size={13} />
@@ -633,7 +633,7 @@ export default function ProductManagement() {
                     <div className="pm-photo-meta-row">
                       <span className="pm-photo-active-badge">
                         <CheckCircle2 size={13} />
-                        <span>Active: {newForm.image?.startsWith('data:') ? 'Device Upload' : (newForm.image || '').replace('/images/', '')}</span>
+                        <span>Active: {newForm.image?.startsWith('data:') ? 'Device Upload' : (newForm.image?.includes('cloudinary.com') ? 'Cloudinary CDN' : (newForm.image || ''))}</span>
                       </span>
                       <button
                         type="button"
@@ -647,7 +647,7 @@ export default function ProductManagement() {
                     {showAddUrlInput && (
                       <input
                         type="text"
-                        placeholder="e.g. /images/chekkalu.jpg"
+                        placeholder="e.g. https://res.cloudinary.com/z2iepqai/image/upload/v1792220638/bramarambika_foods/chekkalu.jpg"
                         value={newForm.image}
                         onChange={(e) => setNewForm({ ...newForm, image: e.target.value })}
                         className="pm-image-url-input"
@@ -765,10 +765,10 @@ export default function ProductManagement() {
                 <div className="pm-image-picker-wrap">
                   <div className="pm-preview-container">
                     <img
-                      src={editingProduct.image || '/images/avakaya.jpg'}
+                      src={editingProduct.image || 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'}
                       alt="Preview"
                       className="pm-image-preview-thumb"
-                      onError={(e) => { e.target.src = '/images/avakaya.jpg'; }}
+                      onError={(e) => { e.target.src = 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'; }}
                     />
                   </div>
                   <div className="pm-image-upload-controls">
@@ -797,7 +797,7 @@ export default function ProductManagement() {
                         <button
                           type="button"
                           className="pm-btn-clear-photo"
-                          onClick={() => setEditingProduct({ ...editingProduct, image: '/images/avakaya.jpg' })}
+                          onClick={() => setEditingProduct({ ...editingProduct, image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg' })}
                           title="Reset to default dish photo"
                         >
                           <X size={13} />
@@ -809,7 +809,7 @@ export default function ProductManagement() {
                     <div className="pm-photo-meta-row">
                       <span className="pm-photo-active-badge">
                         <CheckCircle2 size={13} />
-                        <span>Active: {editingProduct.image?.startsWith('data:') ? 'Device Upload' : (editingProduct.image || '').replace('/images/', '')}</span>
+                        <span>Active: {editingProduct.image?.startsWith('data:') ? 'Device Upload' : (editingProduct.image?.includes('cloudinary.com') ? 'Cloudinary CDN' : (editingProduct.image || ''))}</span>
                       </span>
                       <button
                         type="button"
@@ -823,7 +823,7 @@ export default function ProductManagement() {
                     {showEditUrlInput && (
                       <input
                         type="text"
-                        placeholder="e.g. /images/chekkalu.jpg"
+                        placeholder="e.g. https://res.cloudinary.com/z2iepqai/image/upload/v1792220638/bramarambika_foods/chekkalu.jpg"
                         value={editingProduct.image || ''}
                         onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
                         className="pm-image-url-input"

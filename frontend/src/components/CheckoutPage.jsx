@@ -900,11 +900,11 @@ export default function CheckoutPage({
                 return (
                   <div key={`${item.id}-${item.variantId || idx}`} className="summary-item">
                     <img
-                      src={item.image || '/images/avakaya.jpg'}
+                      src={item.image || 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'}
                       alt={item.name}
                       className="summary-item-img"
                       onError={(e) => {
-                        e.target.src = '/images/avakaya.jpg';
+                        e.target.src = 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg';
                       }}
                     />
                     <div className="summary-item-info">

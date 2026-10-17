@@ -72,7 +72,7 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
               className="modal-product-img"
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = product.category === 'pindi-vantalu' ? '/images/arisalu.jpg' : '/images/avakaya.jpg';
+                e.currentTarget.src = product.category === 'pindi-vantalu' ? 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220634/bramarambika_foods/arisalu.jpg' : 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg';
               }}
             />
             {product.badge && (

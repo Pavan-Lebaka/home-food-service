@@ -57,21 +57,21 @@ export default function CartDrawer({
       name: 'Chicken Pickle',
       teluguName: 'నాటుకోడి తరహా చికెన్ పచ్చడి',
       pricePerKg: 999,
-      image: '/images/chicken-pickle.jpg'
+      image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220639/bramarambika_foods/chicken-pickle.jpg'
     },
     {
       id: 'avakaya-pickle',
       name: 'Andhra Avakaya (Cut Mango)',
       teluguName: 'ఆవకాయ పచ్చడి (Andhra Avakaya)',
       pricePerKg: 499,
-      image: '/images/avakaya.jpg'
+      image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'
     },
     {
       id: 'arisalu',
       name: 'Ghee Arisalu',
       teluguName: 'నేతి అరిసెలు (Ghee Arisalu)',
       pricePerKg: 599,
-      image: '/images/arisalu.jpg'
+      image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220634/bramarambika_foods/arisalu.jpg'
     }
   ];
 
@@ -167,7 +167,7 @@ export default function CartDrawer({
                           className="quickpick-thumb-img"
                           onError={(e) => {
                             e.currentTarget.onerror = null;
-                            e.currentTarget.src = item.category === 'pindi-vantalu' ? '/images/arisalu.jpg' : '/images/avakaya.jpg';
+                            e.currentTarget.src = item.category === 'pindi-vantalu' ? 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220634/bramarambika_foods/arisalu.jpg' : 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg';
                           }}
                         />
                       </div>
@@ -241,11 +241,11 @@ export default function CartDrawer({
                       <div key={itemCartKey} className="modern-cart-item-row">
                         <div className="modern-item-media">
                           <img
-                            src={item.image || '/images/avakaya.jpg'}
+                            src={item.image || 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'}
                             alt={item.name}
                             className="modern-item-thumbnail"
                             onError={(e) => {
-                              e.target.src = '/images/avakaya.jpg';
+                              e.target.src = 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg';
                             }}
                           />
                         </div>

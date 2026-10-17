@@ -63,7 +63,7 @@ export default function BannerModal({ isOpen, onClose, selectedGift, onSelectCat
         {/* Banner Graphic Viewport */}
         <div className="banner-modal-image-container">
           <img
-            src="/images/Banner.jpg"
+            src="https://res.cloudinary.com/z2iepqai/image/upload/v1792220630/bramarambika_foods/banner.jpg"
             alt="Bramarambika Home Foods - Traditional Telugu Taste, Homemade with Love. Surprise gift of village authentic food for first order: Junnu, Country Eggs, or Original Honey. Murukulu, Chekkalu, Ravva Laddu, Sunnundalu, Kajjikayalu."
             className="banner-modal-full-img"
           />
@@ -81,7 +81,7 @@ export default function BannerModal({ isOpen, onClose, selectedGift, onSelectCat
 
           <div className="banner-modal-actions">
             <a
-              href="/images/Banner.jpg"
+              href="https://res.cloudinary.com/z2iepqai/image/upload/v1792220630/bramarambika_foods/banner.jpg"
               download="Bramarambika_Home_Foods_Offer.jpg"
               className="banner-btn-secondary"
               title="Download Banner Poster"

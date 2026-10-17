@@ -19,10 +19,10 @@ RUN npm ci --only=production
 # Copy application source code with node user ownership
 COPY --chown=node:node . .
 
-# Ensure data and image directories exist with proper write permissions for node user
-RUN mkdir -p /usr/src/app/data /usr/src/app/public/images \
+# Ensure data directory exists with proper write permissions for node user
+RUN mkdir -p /usr/src/app/data \
   && chown -R node:node /usr/src/app \
-  && chmod -R 775 /usr/src/app/data /usr/src/app/public/images
+  && chmod -R 775 /usr/src/app/data
 
 # Set non-root user for security best practice
 USER node

@@ -100,7 +100,7 @@ export default function PromoBannerSection({
               }}
             >
               <img
-                src="/images/Banner.jpg"
+                src="https://res.cloudinary.com/z2iepqai/image/upload/v1792220630/bramarambika_foods/banner.jpg"
                 alt="Bramarambika Home Foods - Grand Festive Offer Banner: Traditional Telugu Taste with Murukulu, Chekkalu, Ravva Laddu, Sunnundalu, Kajjikayalu and First Order Surprise Gift (Junnu, Country Eggs, Original Honey)"
                 className="festive-banner-full-img"
                 loading="eager"
@@ -243,7 +243,7 @@ export default function PromoBannerSection({
                       loading="lazy"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = product.category === 'pindi-vantalu' ? '/images/arisalu.jpg' : '/images/avakaya.jpg';
+                        e.currentTarget.src = product.category === 'pindi-vantalu' ? 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220634/bramarambika_foods/arisalu.jpg' : 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg';
                       }}
                     />
                     <span className="delicacy-badge">{product.badge || 'Banner Special'}</span>

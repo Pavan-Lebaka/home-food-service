@@ -10,7 +10,7 @@ const SLIDES = [
     subKey: 'heroSlide1Sub',
     ctaKey: 'heroSlide1Cta',
     categoryTarget: 'all',
-    image: '/images/hero.jpg', // Authentic Diviseema Feast: Arisalu, Karapusa, Kajjikayalu, Boondhi, Avakaya jar
+    image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220644/bramarambika_foods/hero.jpg', // Authentic Diviseema Feast: Arisalu, Karapusa, Kajjikayalu, Boondhi, Avakaya jar
     accentColor: '#D99A17',
     icon: Sparkles
   },
@@ -21,7 +21,7 @@ const SLIDES = [
     subKey: 'heroSlide2Sub',
     ctaKey: 'heroSlide2Cta',
     categoryTarget: 'veg-pickles',
-    image: '/images/veg-pickles.jpg', // Authentic Ceramic Jaadi Jars with Avakaya, Gongura, Tomato, Allam
+    image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220662/bramarambika_foods/veg-pickles.jpg', // Authentic Ceramic Jaadi Jars with Avakaya, Gongura, Tomato, Allam
     accentColor: '#A83A24',
     icon: Flame
   },
@@ -32,7 +32,7 @@ const SLIDES = [
     subKey: 'heroSlide4Sub',
     ctaKey: 'heroSlide4Cta',
     categoryTarget: 'pindi-vantalu',
-    image: '/images/savouries.jpg', // Authentic Crispy Pindi Vantalu: Chekkalu, Murukku, Spices
+    image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220656/bramarambika_foods/savouries.jpg', // Authentic Crispy Pindi Vantalu: Chekkalu, Murukku, Spices
     accentColor: '#2F5D3A',
     icon: Leaf
   },
@@ -43,7 +43,7 @@ const SLIDES = [
     subKey: 'heroSlide3Sub',
     ctaKey: 'heroSlide3Cta',
     categoryTarget: 'pindi-vantalu',
-    image: '/images/sweets.jpg', // Pure Ghee Sweets: Sunnundalu, Kajjikayalu, Ravva Laddu on Banana Leaf
+    image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220660/bramarambika_foods/sweets.jpg', // Pure Ghee Sweets: Sunnundalu, Kajjikayalu, Ravva Laddu on Banana Leaf
     accentColor: '#D99A17',
     icon: Sparkles
   }
