@@ -238,7 +238,7 @@ export const TRANSLATIONS = {
     // Announcements
     ann1: '🚚 FREE Delivery Across India on Orders Above ₹2,000 • Flat ₹100 Below ₹2,000',
     ann2: '100% Homemade • Pure Cold Pressed Oils & Desi Ghee • No Preservatives',
-    ann3: 'Order on WhatsApp: 7702808886 | Call: 9705449968',
+    ann3: 'Order on WhatsApp: 7793910819 | Call: 9705449968',
     ann4: 'Fresh Batches Handcrafted Daily • Available in 250g, 1/2 kg & 1 kg packs',
   },
 
@@ -477,7 +477,7 @@ export const TRANSLATIONS = {
     // Announcements
     ann1: '🚚 ₹2,000 పైబడిన ఆర్డర్లపై ఉచిత డెలివరీ • ₹2,000 లోపు ₹100 మాత్రమే',
     ann2: '100% గృహ నిర్మిత • స్వచ్ఛమైన చల్లని నొక్కిన నూనెలు & దేశీ నెయ్యి • పరిరక్షకాలు లేవు',
-    ann3: 'వాట్సాప్‌లో ఆర్డర్ చేయండి: 7702808886 | కాల్: 9705449968',
+    ann3: 'వాట్సాప్‌లో ఆర్డర్ చేయండి: 7793910819 | కాల్: 9705449968',
     ann4: 'రోజువారీ తాజా బ్యాచ్‌లు • 250గ్రా, 1/2 కేజీ & 1 కేజీ ప్యాక్లలో అందుబాటులో',
   },
 
@@ -716,7 +716,7 @@ export const TRANSLATIONS = {
     // Announcements
     ann1: '🚚 ₹2,000 से अधिक पर मुफ़्त डिलीवरी • ₹2,000 से कम पर ₹100 डिलीवरी',
     ann2: '100% घर का बना • शुद्ध कोल्ड-प्रेस्ड तेल और देसी घी • कोई संरक्षक नहीं',
-    ann3: 'व्हाट्सएप पर ऑर्डर करें: 7702808886 | कॉल: 9705449968',
+    ann3: 'व्हाट्सएप पर ऑर्डर करें: 7793910819 | कॉल: 9705449968',
     ann4: 'रोज़ ताज़ा बैच • 250 ग्राम, 1/2 किग्रा और 1 किग्रा पैक में उपलब्ध',
   },
 };

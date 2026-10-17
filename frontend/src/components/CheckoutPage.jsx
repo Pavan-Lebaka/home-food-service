@@ -166,7 +166,7 @@ export default function CheckoutPage({
   };
 
   const handleCopyUpi = () => {
-    navigator.clipboard.writeText('7793910819@upi');
+    navigator.clipboard.writeText(`${BRAND_INFO.whatsappNumber}@upi`);
     setIsCopiedUpi(true);
     setTimeout(() => setIsCopiedUpi(false), 2000);
   };
@@ -428,7 +428,7 @@ export default function CheckoutPage({
                 <span>💬 WhatsApp Order Confirmation</span>
               </div>
               <p style={{ margin: 0, fontSize: '0.82rem', color: '#166534', lineHeight: 1.45 }}>
-                Click below to send your structured order confirmation to our WhatsApp kitchen number (<strong>7793910819</strong>). Our team will confirm the dispatch date!
+                Click below to send your structured order confirmation to our WhatsApp kitchen number (<strong>{BRAND_INFO.whatsappNumber}</strong>). Our team will confirm the dispatch date!
               </p>
             </div>
 
@@ -454,7 +454,7 @@ export default function CheckoutPage({
                   boxShadow: '0 4px 14px rgba(37, 211, 102, 0.35)'
                 }}
               >
-                <span>📲 Send Order Confirmation to Kitchen WhatsApp (7793910819)</span>
+                <span>📲 Send Order Confirmation to Kitchen WhatsApp ({BRAND_INFO.whatsappNumber})</span>
               </a>
 
               <button
@@ -758,7 +758,7 @@ export default function CheckoutPage({
                   {paymentMethod === 'upi' && (
                     <div className="upi-pay-card-clean">
                       <div className="upi-id-badge">
-                        <span>Official UPI ID: <strong>7793910819@upi</strong></span>
+                        <span>Official UPI ID: <strong>{BRAND_INFO.whatsappNumber}@upi</strong></span>
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); handleCopyUpi(); }}
