@@ -50,15 +50,46 @@ export default function CartDrawer({
   const amountNeededForFree = Math.max(0, FREE_DELIVERY_THRESHOLD - itemsSubtotal);
   const freeDeliveryProgress = Math.min(100, Math.round((itemsSubtotal / FREE_DELIVERY_THRESHOLD) * 100));
 
-  // Quick picks if cart is empty
-  const quickPickItems = (products || []).filter(p => ['arisalu', 'avakaya', 'chicken-pickle'].includes(p.id));
+  // Quick picks if cart is empty (Authentic classics: Chicken Pickle, Avakaya, Arisalu)
+  const fallbackQuickPicks = [
+    {
+      id: 'chicken-pickle',
+      name: 'Chicken Pickle',
+      teluguName: 'నాటుకోడి తరహా చికెన్ పచ్చడి',
+      pricePerKg: 999,
+      image: '/images/chicken-pickle.jpg'
+    },
+    {
+      id: 'avakaya-pickle',
+      name: 'Andhra Avakaya (Cut Mango)',
+      teluguName: 'ఆవకాయ పచ్చడి (Andhra Avakaya)',
+      pricePerKg: 499,
+      image: '/images/avakaya.jpg'
+    },
+    {
+      id: 'arisalu',
+      name: 'Ghee Arisalu',
+      teluguName: 'నేతి అరిసెలు (Ghee Arisalu)',
+      pricePerKg: 599,
+      image: '/images/arisalu.jpg'
+    }
+  ];
+
+  const candidateItems = (products || []).filter(p =>
+    ['chicken-pickle', 'avakaya-pickle', 'arisalu', 'sunnundalu', 'pappu-chekkalu'].includes(p.id)
+  );
+  const quickPickItems = candidateItems.length > 0 ? candidateItems.slice(0, 3) : fallbackQuickPicks;
 
   const handleBrowseMenu = () => {
     onClose();
-    const menuEl = document.getElementById('menu');
-    if (menuEl) {
-      menuEl.scrollIntoView({ behavior: 'smooth' });
-    }
+    setTimeout(() => {
+      const menuEl = document.getElementById('specials-menu') || document.getElementById('menu') || document.querySelector('.products-section');
+      if (menuEl) {
+        menuEl.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 600, behavior: 'smooth' });
+      }
+    }, 150);
   };
 
   const handleQuickWhatsApp = () => {
@@ -101,43 +132,63 @@ export default function CartDrawer({
         <div className="drawer-body">
           {cartItems.length === 0 ? (
             <div className="cart-empty-wrapper">
-              <div className="empty-cart-notice">
-                <MessageCircle size={22} className="notice-icon" />
-                <div>
-                  <div className="notice-heading">{t('addItemsToOrder') || 'Your Cart is Empty'}</div>
-                  <div className="notice-sub">
-                    {t('addItemsDesc') || 'Explore our homemade Andhra pickles, arisalu and pindi vantalu below!'}
-                  </div>
+              {/* 1. Warm, Heartfelt Empty State Hero Card */}
+              <div className="cart-empty-hero-card">
+                <div className="empty-cart-icon-halo">
+                  <ShoppingBag size={32} className="empty-cart-icon" />
                 </div>
+                <h3 className="empty-cart-title">{t('emptyCartTitle') || 'Your Cart is Empty'}</h3>
+                <p className="empty-cart-sub">
+                  {t('emptyCartSub') || 'Our village kitchen prepares fresh batches daily with pure cold-pressed oil and cow ghee. Choose your favorite Andhra delicacies to get started!'}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleBrowseMenu}
+                  className="empty-cart-browse-btn"
+                >
+                  <span>{t('exploreDelicacies') || 'Explore Kitchen Specials'}</span>
+                  <ArrowRight size={15} />
+                </button>
               </div>
 
-              {/* 3 Quick-add suggestions */}
+              {/* 2. Popular Kitchen Specialties (Compact, polished cards) */}
               <div className="empty-quickpicks-section">
-                <div className="quickpicks-title">
-                  <span>{t('popularGrandmaSpecials') || 'Popular Andhra Delicacies'}</span>
+                <div className="quickpicks-header-row">
+                  <span className="quickpicks-diya">🪔</span>
+                  <span className="quickpicks-title-text">{t('popularGrandmaSpecials') || 'Popular Andhra Delicacies'}</span>
                 </div>
-                <div className="quickpicks-grid">
+                <div className="quickpicks-compact-list">
                   {quickPickItems.map(item => (
-                    <div key={item.id} className="quickpick-item-card">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="quickpick-img"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = item.category === 'pindi-vantalu' ? '/images/arisalu.jpg' : '/images/avakaya.jpg';
-                        }}
-                      />
-                      <div className="quickpick-info">
+                    <div key={item.id} className="quickpick-compact-card">
+                      <div className="quickpick-thumb-box">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="quickpick-thumb-img"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = item.category === 'pindi-vantalu' ? '/images/arisalu.jpg' : '/images/avakaya.jpg';
+                          }}
+                        />
+                      </div>
+                      <div className="quickpick-details">
                         <div className="quickpick-name">{item.name}</div>
-                        <div className="quickpick-price">₹{item.pricePerKg} / kg</div>
+                        {item.teluguName && (
+                          <div className="quickpick-telugu">{item.teluguName}</div>
+                        )}
+                        <div className="quickpick-price-row">
+                          <span className="quickpick-price">₹{item.pricePerKg}</span>
+                          <span className="quickpick-unit">/ 1 kg</span>
+                        </div>
                       </div>
                       <button
                         type="button"
                         onClick={() => onAddToCart && onAddToCart(item, '1kg', '1 kg (Default)', item.pricePerKg, 1)}
                         className="quickpick-add-btn"
+                        title={`Add 1kg ${item.name} to cart`}
                       >
-                        + Add 1kg
+                        <Plus size={14} />
+                        <span>Add</span>
                       </button>
                     </div>
                   ))}

@@ -97,6 +97,10 @@ export const TRANSLATIONS = {
 
     // Cart
     yourOrderCart: 'Your Order Cart',
+    emptyCartTitle: 'Your Cart is Empty',
+    emptyCartSub: 'Our village kitchen prepares fresh batches daily with pure cold-pressed oil and cow ghee. Choose your favorite Andhra delicacies to get started!',
+    exploreDelicacies: 'Explore Kitchen Specials',
+    popularGrandmaSpecials: 'Popular Andhra Delicacies',
     addItemsToOrder: 'Add items to place your order',
     addItemsDesc: 'Select your favorite homemade pickles, sweets, or savouries along with weight preferences (250g, 1/2 kg, 1 kg).',
     popularTeluguFavorites: 'Popular Telugu Favorites:',
@@ -336,6 +340,10 @@ export const TRANSLATIONS = {
 
     // Cart
     yourOrderCart: 'మీ ఆర్డర్ కార్ట్',
+    emptyCartTitle: 'మీ కార్ట్ ఖాళీగా ఉంది',
+    emptyCartSub: 'మా కిచెన్‌లో ప్రతిరోజూ స్వచ్ఛమైన గానుగ నూనె మరియు ఆవు నెయ్యితో తాజా బ్యాచ్‌లు సిద్ధం చేస్తాము. మీ అభిమాన వంటకాలను ఎంచుకోండి!',
+    exploreDelicacies: 'వంటకాలను చూడండి',
+    popularGrandmaSpecials: 'అత్యంత ప్రజాదరణ పొందిన వంటకాలు',
     addItemsToOrder: 'ఆర్డర్ ఇవ్వడానికి అంశాలు జోడించండి',
     addItemsDesc: 'మీకు ఇష్టమైన గృహ నిర్మిత పచ్చళ్ళు, మిఠాయిలు, లేదా స్నాక్లు మరియు బరువు ప్రాధాన్యతలతో ఎంచుకోండి (250గ్రా, 1/2 కేజీ, 1 కేజీ).',
     popularTeluguFavorites: 'ప్రసిద్ధ తెలుగు ఇష్టమైనవి:',
@@ -575,6 +583,10 @@ export const TRANSLATIONS = {
 
     // Cart
     yourOrderCart: 'आपकी ऑर्डर कार्ट',
+    emptyCartTitle: 'आपकी कार्ट खाली है',
+    emptyCartSub: 'हमारी रसोई में रोज़ाना शुद्ध तेल और देसी घी से ताज़ा व्यंजन तैयार किए जाते हैं। अपने पसंदीदा व्यंजन चुनें!',
+    exploreDelicacies: 'स्वादिष्ट व्यंजन देखें',
+    popularGrandmaSpecials: 'लोकप्रिय आंध्र व्यंजन',
     addItemsToOrder: 'ऑर्डर देने के लिए आइटम जोड़ें',
     addItemsDesc: 'अपने पसंदीदा घर के अचार, मिठाइयाँ या नमकीन वज़न के साथ चुनें (250 ग्राम, 1/2 किग्रा, 1 किग्रा)।',
     popularTeluguFavorites: 'प्रसिद्ध तेलुगु पसंदीदा:',
