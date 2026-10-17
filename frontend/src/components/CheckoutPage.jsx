@@ -277,15 +277,21 @@ export default function CheckoutPage({
       address: fullAddress,
       pincode: formData.pincode.trim(),
       notes: formData.notes.trim(),
-      items: cartItems.map(item => ({
-        id: item.id,
-        name: item.name,
-        teluguName: item.teluguName || '',
-        variant: item.variantLabel || '1kg',
-        quantity: item.quantity,
-        price: item.price || item.unitPrice || item.pricePerKg,
-        image: item.image
-      })),
+      items: cartItems.map(item => {
+        const itemPrice = Number(item.price ?? item.unitPrice ?? item.pricePerKg ?? 0);
+        const qty = Number(item.quantity ?? 1);
+        return {
+          id: item.id,
+          name: item.name,
+          teluguName: item.teluguName || '',
+          variant: item.variantLabel || item.variant || '1kg',
+          quantity: qty,
+          price: itemPrice,
+          unitPrice: itemPrice,
+          itemTotal: itemPrice * qty,
+          image: item.image
+        };
+      }),
       subtotal: itemsSubtotal,
       delivery_fee: deliveryFee,
       grand_total: grandTotal,

@@ -687,18 +687,25 @@ function OrderCard({
           </div>
 
           <div className={`items-list-container ${showDetails ? 'expanded' : ''}`}>
-            {(order.items || []).map((item, idx) => (
-              <div key={idx} className="order-item-row">
-                <div className="item-name-info">
-                  <span className="item-title">{item.name}</span>
-                  {item.variant && <span className="item-variant-tag">{item.variant}</span>}
+            {(order.items || []).map((item, idx) => {
+              const unitPrice = Number(item.price ?? item.unitPrice ?? item.pricePerKg ?? 0);
+              const qty = Number(item.quantity ?? 1);
+              const total = Number(item.itemTotal ?? (unitPrice * qty));
+              const displayTotal = isNaN(total) ? 0 : total;
+
+              return (
+                <div key={idx} className="order-item-row">
+                  <div className="item-name-info">
+                    <span className="item-title">{item.name}</span>
+                    {item.variant && <span className="item-variant-tag">{item.variant}</span>}
+                  </div>
+                  <div className="item-calc">
+                    <span className="item-qty">x{qty}</span>
+                    <span className="item-total-price">₹{displayTotal.toLocaleString('en-IN')}</span>
+                  </div>
                 </div>
-                <div className="item-calc">
-                  <span className="item-qty">x{item.quantity}</span>
-                  <span className="item-total-price">₹{item.itemTotal || (item.unitPrice * item.quantity)}</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="order-financial-strip">
