@@ -1113,3 +1113,139 @@
   font-size: 0.85rem;
   color: #166534;
 }
+
+/* Payment & Screenshot Box */
+.pay-screenshot-card {
+  background: #FFFFFF;
+  border: 1.5px solid #86EFAC;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.05);
+}
+
+.pay-card-instruction-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 1.2rem 1.4rem;
+  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+  border-bottom: 1px dashed rgba(22, 163, 74, 0.25);
+}
+
+.pay-step-badge {
+  background: #15803D;
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pay-amount-label {
+  font-size: 0.95rem;
+  color: #166534;
+  font-weight: 700;
+}
+
+.upi-details-strip {
+  padding: 1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #F3F4F6;
+  flex-wrap: wrap;
+}
+
+.upi-app-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  color: #4B5563;
+  font-weight: 600;
+}
+
+.upi-app-tags span {
+  background: #F3F4F6;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #374151;
+}
+
+.screenshot-drop-zone {
+  padding: 1.25rem 1.4rem;
+  background: #FAFAFA;
+}
+
+.screenshot-file-label {
+  display: block;
+  cursor: pointer;
+  border: 2px dashed #CBD5E1;
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: all 0.2s ease;
+  background: #FFFFFF;
+}
+
+.screenshot-file-label:hover {
+  border-color: #15803D;
+  background: #F0FDF4;
+}
+
+.screenshot-preview-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.screenshot-thumb-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #86EFAC;
+}
+
+.screenshot-empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.camera-emoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.upload-main-text {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #15803D;
+}
+
+.upload-sub-text {
+  font-size: 0.76rem;
+  color: #6B7280;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.confirm-action-footer {
+  padding: 1rem 1.4rem;
+  background: #F8FAFC;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: #475569;
+  border-top: 1px solid #E2E8F0;
+}

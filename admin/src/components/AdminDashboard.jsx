@@ -486,6 +486,20 @@ function OrderCard({
             </div>
           )}
 
+          {order.payment_screenshot && (
+            <div style={{ marginTop: '10px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '8px', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '0.8rem', color: '#166534', fontWeight: 600 }}>📸 Payment Screenshot Attached</span>
+              <a
+                href={order.payment_screenshot}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ fontSize: '0.75rem', color: '#15803D', fontWeight: 700, textDecoration: 'underline' }}
+              >
+                View Screenshot
+              </a>
+            </div>
+          )}
+
           {/* Customer Action Pills */}
           <div className="customer-action-cluster">
             <a

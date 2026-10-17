@@ -76,6 +76,21 @@ export default function CheckoutPage({
   // Payment method: strictly WhatsApp
   const [paymentMethod, setPaymentMethod] = useState('whatsapp');
   const [isCopiedUpi, setIsCopiedUpi] = useState(false);
+  const [paymentScreenshot, setPaymentScreenshot] = useState(null);
+
+  const handleScreenshotUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file (PNG/JPG)');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPaymentScreenshot(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Form errors & submission
   const [errors, setErrors] = useState({});
@@ -217,7 +232,8 @@ export default function CheckoutPage({
       courier_name: selectedCourier ? selectedCourier.name : 'Standard Express Delivery',
       estimated_delivery: '3-5 Days (1-2d fresh prep + 2-3d transit)',
       payment_method: 'WHATSAPP_UPI',
-      payment_status: 'Verification Pending'
+      payment_status: paymentScreenshot ? 'Screenshot Submitted' : 'Verification Pending',
+      payment_screenshot: paymentScreenshot
     };
 
     try {
@@ -675,48 +691,35 @@ export default function CheckoutPage({
             </div>
           </div>
 
-          {/* Card 3: Payment via WhatsApp */}
+          {/* Card 3: Pay via UPI & Confirm Order */}
           <div className="checkout-card">
             <div className="checkout-card-header">
               <div className="card-header-icon" style={{ background: '#DCFCE7', color: '#15803D' }}>
                 <CheckCircle2 size={20} />
               </div>
               <div>
-                <h3>3. Payment via WhatsApp (UPI)</h3>
-                <p>Direct kitchen confirmation with zero payment gateway surcharge.</p>
+                <h3 style={{ color: '#166534' }}>3. Make Payment & Confirm Order</h3>
+                <p>Pay via UPI, attach screenshot, and confirm directly on WhatsApp.</p>
               </div>
             </div>
 
-            <div className="whatsapp-payment-banner">
-              <div className="wa-banner-top">
-                <div className="wa-brand-icon">💬</div>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '1rem', color: '#166534', fontWeight: 700 }}>
-                    Official Kitchen WhatsApp: +91 {BRAND_INFO.whatsappNumber}
-                  </h4>
-                  <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: '#15803D' }}>
-                    When you click place order, WhatsApp will open with your exact order summary pre-filled.
-                  </p>
+            <div className="pay-screenshot-card">
+              {/* Step 1: Transfer Amount */}
+              <div className="pay-card-instruction-row">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span className="pay-step-badge">Step 1</span>
+                  <span className="pay-amount-label">Pay ₹{grandTotal.toLocaleString('en-IN')} via any UPI App</span>
+                </div>
+                <div className="upi-app-tags">
+                  <span>Google Pay</span> • <span>PhonePe</span> • <span>Paytm</span> • <span>BHIM</span>
                 </div>
               </div>
 
-              <div className="wa-steps-list">
-                <div className="wa-step-point">
-                  <span className="point-badge">Step 1</span>
-                  <span>Tap <strong>Place Order & Pay via WhatsApp</strong> below.</span>
-                </div>
-                <div className="wa-step-point">
-                  <span className="point-badge">Step 2</span>
-                  <span>Our kitchen team verifies your order and shares the official UPI ID & QR code (GPay, PhonePe, Paytm).</span>
-                </div>
-                <div className="wa-step-point">
-                  <span className="point-badge">Step 3</span>
-                  <span>Share your UPI payment screenshot in the chat. Fresh preparation begins immediately!</span>
-                </div>
-              </div>
-
-              <div className="wa-upi-quick-info">
-                <span>Direct Kitchen UPI ID: <strong>{BRAND_INFO.whatsappNumber}@upi</strong></span>
+              {/* UPI Details */}
+              <div className="upi-details-strip">
+                <span style={{ fontSize: '0.86rem', color: '#374151' }}>
+                  Official Kitchen UPI: <strong>{BRAND_INFO.whatsappNumber}@upi</strong>
+                </span>
                 <button
                   type="button"
                   onClick={handleCopyUpi}
@@ -724,8 +727,56 @@ export default function CheckoutPage({
                   title="Copy UPI ID"
                 >
                   {isCopiedUpi ? <Check size={14} color="#15803D" /> : <Copy size={14} />}
-                  <span>{isCopiedUpi ? 'Copied!' : 'Copy UPI'}</span>
+                  <span>{isCopiedUpi ? 'Copied to Clipboard!' : 'Copy UPI ID'}</span>
                 </button>
+              </div>
+
+              {/* Step 2: Upload Screenshot */}
+              <div className="screenshot-drop-zone">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <span className="pay-step-badge" style={{ background: '#FEF3C7', color: '#92400E' }}>Step 2</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#374151' }}>
+                    Attach Payment Screenshot
+                  </span>
+                </div>
+
+                <label className="screenshot-file-label">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleScreenshotUpload}
+                    style={{ display: 'none' }}
+                  />
+                  {paymentScreenshot ? (
+                    <div className="screenshot-preview-flex">
+                      <img src={paymentScreenshot} alt="Payment Screenshot" className="screenshot-thumb-img" />
+                      <div style={{ textAlign: 'left' }}>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#15803D' }}>
+                          ✓ Payment Screenshot Attached!
+                        </div>
+                        <div style={{ fontSize: '0.74rem', color: '#6B7280', marginTop: '2px' }}>
+                          Tap here if you wish to change image
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="screenshot-empty-content">
+                      <span className="camera-emoji">📸</span>
+                      <span className="upload-main-text">Tap to attach payment screenshot</span>
+                      <span className="upload-sub-text">
+                        Select screenshot from your gallery, or you can also share it directly in WhatsApp chat after clicking below.
+                      </span>
+                    </div>
+                  )}
+                </label>
+              </div>
+
+              {/* Step 3: Confirmation Info */}
+              <div className="confirm-action-footer">
+                <span className="pay-step-badge" style={{ background: '#25D366', color: '#FFFFFF' }}>Step 3</span>
+                <span>
+                  Tap <strong>Confirm & Place Order on WhatsApp</strong> below. Your order details and screenshot will be confirmed by our kitchen head!
+                </span>
               </div>
             </div>
           </div>
@@ -834,7 +885,7 @@ export default function CheckoutPage({
                 </>
               ) : (
                 <>
-                  <span>Place Order & Pay via WhatsApp</span>
+                  <span>Confirm & Place Order on WhatsApp</span>
                   <span>(₹{grandTotal.toLocaleString('en-IN')})</span>
                 </>
               )}

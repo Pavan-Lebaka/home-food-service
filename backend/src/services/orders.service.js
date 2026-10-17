@@ -28,6 +28,7 @@ class OrdersService {
       courier_name: orderData.courier_name || orderData.courierName || null,
       estimated_delivery: orderData.estimated_delivery || orderData.estimatedDelivery || null,
       tracking_number: null,
+      payment_screenshot: orderData.payment_screenshot || null,
       created_at: new Date().toISOString()
     };
 
@@ -120,7 +121,7 @@ class OrdersService {
    * Update an order (status, payment_status, courier_name, tracking_number)
    */
   async updateOrder(orderId, updates) {
-    const allowedFields = ['status', 'payment_status', 'courier_name', 'tracking_number', 'notes'];
+    const allowedFields = ['status', 'payment_status', 'courier_name', 'tracking_number', 'notes', 'payment_screenshot'];
     const filteredUpdates = {};
     for (const key of allowedFields) {
       if (updates[key] !== undefined) {
