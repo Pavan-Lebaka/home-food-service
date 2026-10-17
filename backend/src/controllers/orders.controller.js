@@ -49,3 +49,20 @@ export const getOrderStats = asyncHandler(async (req, res) => {
     new ApiResponse(HTTP_STATUS.OK, stats, 'Order analytics computed successfully')
   );
 });
+
+export const deleteOrder = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const deleted = await ordersService.deleteOrder(id);
+
+  res.status(HTTP_STATUS.OK).json(
+    new ApiResponse(HTTP_STATUS.OK, deleted, 'Order deleted successfully')
+  );
+});
+
+export const clearOrders = asyncHandler(async (req, res) => {
+  await ordersService.clearOrders();
+
+  res.status(HTTP_STATUS.OK).json(
+    new ApiResponse(HTTP_STATUS.OK, null, 'All orders cleared successfully')
+  );
+});

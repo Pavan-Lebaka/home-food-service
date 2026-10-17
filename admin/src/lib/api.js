@@ -141,6 +141,75 @@ export async function updateOrderApi(orderId, updates) {
   return updateSupabaseOrder(orderId, updates);
 }
 
+export async function deleteOrderApi(orderId) {
+  const token = getAdminToken();
+  try {
+    const response = await fetch(`${BACKEND_URL}/orders/${orderId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      return result.success;
+    }
+  } catch (err) {
+    console.warn('[API] Backend deleteOrder error:', err);
+  }
+  return false;
+}
+
+export async function clearAllOrdersApi() {
+  const token = getAdminToken();
+  try {
+    const response = await fetch(`${BACKEND_URL}/orders/clear/all`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      return result.success;
+    }
+  } catch (err) {
+    console.warn('[API] Backend clearAllOrders error:', err);
+  }
+  return false;
+}
+
+/**
+ * Dish Photo Upload API
+ * Takes base64 data URL and uploads to server, returning clean /images/...jpg path
+ */
+export async function uploadDishImageApi(dataUrl, dishName = 'dish') {
+  try {
+    const response = await fetch(`${BACKEND_URL}/upload`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        image: dataUrl,
+        name: dishName
+      })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      if (result.success && result.data?.url) {
+        return result.data.url;
+      }
+    }
+  } catch (err) {
+    console.warn('[API] Image upload to server failed, using local format:', err);
+  }
+  return dataUrl;
+}
+
 /**
  * Product Catalog Management
  */

@@ -486,6 +486,46 @@
   color: #111827;
 }
 
+.clear-orders-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #FFF1F2;
+  border: 1px solid #FECDD3;
+  color: #E11D48;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-orders-btn:hover {
+  background: #FFE4E6;
+  color: #BE123C;
+}
+
+.order-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  color: #9CA3AF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.order-delete-btn:hover {
+  background: #FEE2E2;
+  color: #DC2626;
+  border-color: #FECACA;
+}
+
 /* Orders List */
 .admin-orders-list {
   display: flex;
@@ -1454,87 +1494,145 @@
   display: flex;
   gap: 16px;
   align-items: center;
-  background: #F9FAFB;
-  border: 1.5px dashed #D1D5DB;
+  background: #FDFBF7;
+  border: 1.5px dashed #E5D5C5;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.pm-image-picker-wrap:hover {
+  border-color: #D97706;
+  background: #FFFDF9;
+}
+
+.pm-preview-container {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
   border-radius: 10px;
-  padding: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1.5px solid #F3E8DC;
 }
 
 .pm-image-preview-thumb {
-  width: 72px;
-  height: 72px;
-  border-radius: 8px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  background: #E5E7EB;
-  border: 1px solid #D1D5DB;
-  flex-shrink: 0;
+  background: #F3F4F6;
+  display: block;
 }
 
 .pm-image-upload-controls {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+}
+
+.pm-upload-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .pm-btn-upload {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: #FFFFFF;
-  border: 1px solid #D1D5DB;
-  border-radius: 6px;
-  font-size: 0.82rem;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #800000;
+  border: 1px solid #6b0000;
+  border-radius: 8px;
+  font-size: 0.85rem;
   font-weight: 700;
-  color: #374151;
+  color: #FFFFFF;
   cursor: pointer;
-  width: fit-content;
+  box-shadow: 0 2px 6px rgba(128, 0, 0, 0.2);
   transition: all 0.2s ease;
 }
 
 .pm-btn-upload:hover {
-  background: #F3F4F6;
-  border-color: #9CA3AF;
+  background: #990000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(128, 0, 0, 0.28);
+}
+
+.pm-btn-clear-photo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 12px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pm-btn-clear-photo:hover {
+  background: #FEE2E2;
+  color: #DC2626;
+  border-color: #FECACA;
+}
+
+.pm-photo-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.78rem;
+}
+
+.pm-photo-active-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #047857;
+  font-weight: 600;
+  background: #ECFDF5;
+  padding: 3px 8px;
+  border-radius: 6px;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pm-link-toggle {
+  background: none;
+  border: none;
+  color: #B45309;
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.pm-link-toggle:hover {
+  color: #78350F;
 }
 
 .pm-image-url-input {
   width: 100%;
-  padding: 6px 10px;
-  font-size: 0.8rem;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  background: #FFFFFF;
   border: 1px solid #D1D5DB;
   border-radius: 6px;
   outline: none;
+  transition: border-color 0.2s ease;
 }
 
-.pm-preset-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.pm-preset-chip {
-  padding: 4px 9px;
-  border-radius: 12px;
-  background: #F3F4F6;
-  border: 1px solid #E5E7EB;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #4B5563;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.pm-preset-chip:hover {
-  background: #FEE2E2;
-  color: #991B1B;
-  border-color: #FECACA;
-}
-
-.pm-preset-chip.active {
-  background: #800000;
-  color: #FFFFFF;
+.pm-image-url-input:focus {
   border-color: #800000;
+  box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.1);
 }
 

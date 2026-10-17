@@ -3,9 +3,17 @@ import cors from 'cors';
 import { env } from './config/env.js';
 import { requestLogger } from './middlewares/logger.middleware.js';
 import { notFoundHandler, errorHandler } from './middlewares/error.middleware.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import apiRouter from './routes/index.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
+
+// Static images serving
+app.use('/images', express.static(path.resolve(__dirname, '../../frontend/public/images')));
 
 // 1. CORS setup (allows frontend Vite dev server & production client)
 const corsOptions = {

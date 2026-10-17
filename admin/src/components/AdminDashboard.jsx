@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { fetchOrdersApi, updateOrderApi, createShipmentApi } from '../lib/api';
+import { fetchOrdersApi, updateOrderApi, createShipmentApi, deleteOrderApi, clearAllOrdersApi } from '../lib/api';
 import { BRAND_INFO } from '../constants/brand';
 import ProductManagement from './ProductManagement';
 import {
   Package, ShoppingBag, Truck, CheckCircle2, Clock,
   Search, RefreshCw, LogOut, Phone, MessageCircle,
   Copy, ExternalLink, Calendar, MapPin, AlertCircle,
-  User, Check, ChevronDown, Sparkles, UtensilsCrossed
+  User, Check, ChevronDown, Sparkles, UtensilsCrossed, Trash2
 } from 'lucide-react';
 
 export default function AdminDashboard({ user, onLogout, onBackToStore }) {
@@ -94,6 +94,34 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
       alert('Failed to update payment status: ' + err.message);
     } finally {
       setUpdatingOrderId(null);
+    }
+  };
+
+  // Delete individual order
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm(`Are you sure you want to delete order #${orderId.slice(0, 8)}?`)) return;
+    setUpdatingOrderId(orderId);
+    try {
+      await deleteOrderApi(orderId);
+      setOrders(prev => prev.filter(o => o.id !== orderId));
+    } catch (err) {
+      alert('Failed to delete order: ' + err.message);
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
+
+  // Clear all test orders
+  const handleClearAllOrders = async () => {
+    if (!window.confirm('Are you sure you want to clear all orders? This will remove all test orders permanently.')) return;
+    setLoading(true);
+    try {
+      await clearAllOrdersApi();
+      setOrders([]);
+    } catch (err) {
+      alert('Failed to clear orders: ' + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -344,6 +372,18 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
                   <RefreshCw size={14} className={loading ? 'spin-icon' : ''} />
                   <span>Refresh</span>
                 </button>
+
+                {orders.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleClearAllOrders}
+                    className="clear-orders-btn"
+                    title="Clear all orders (removes test orders)"
+                  >
+                    <Trash2 size={13} />
+                    <span>Clear Orders</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -364,9 +404,13 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
                 </div>
               ) : filteredOrders.length === 0 ? (
                 <div className="admin-empty-state">
-                  <Package size={36} color="#9CA3AF" />
-                  <h3>No orders found</h3>
-                  <p>No orders match your search or selected filter.</p>
+                  <Package size={42} color="#D97706" />
+                  <h3>No Orders Right Now</h3>
+                  <p>
+                    {orders.length === 0
+                      ? 'Your orders list is clean. Orders placed by customers on your store will appear here in real time with 1-click WhatsApp messaging and Shiprocket courier dispatch.'
+                      : 'No orders match your active search or filter.'}
+                  </p>
                 </div>
               ) : (
                 <div className="admin-orders-list">
@@ -382,6 +426,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
                       onCopyAddress={handleCopyShiprocketAddress}
                       onWhatsAppNotify={handleSendWhatsAppNotification}
                       onBookShiprocket={handleBookShiprocket}
+                      onDeleteOrder={handleDeleteOrder}
                     />
                   ))}
                 </div>
@@ -404,7 +449,8 @@ function OrderCard({
   onSaveTracking,
   onCopyAddress,
   onWhatsAppNotify,
-  onBookShiprocket
+  onBookShiprocket,
+  onDeleteOrder
 }) {
   const [courierInput, setCourierInput] = useState(order.courier_name || 'Delhivery');
   const [awbInput, setAwbInput] = useState(order.tracking_number || '');
@@ -457,6 +503,17 @@ function OrderCard({
           >
             {order.payment_status === 'Paid' ? '✓ Paid' : '⏳ Payment Pending'}
           </button>
+          {onDeleteOrder && (
+            <button
+              type="button"
+              onClick={() => onDeleteOrder(order.id)}
+              className="order-delete-btn"
+              title="Delete this order"
+              disabled={updating}
+            >
+              <Trash2 size={13} />
+            </button>
+          )}
         </div>
       </div>
 

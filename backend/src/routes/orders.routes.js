@@ -4,7 +4,9 @@ import {
   getAllOrders,
   getOrderById,
   updateOrder,
-  getOrderStats
+  getOrderStats,
+  deleteOrder,
+  clearOrders
 } from '../controllers/orders.controller.js';
 import { requireAdmin } from '../middlewares/auth.middleware.js';
 import { validateBody } from '../middlewares/validate.middleware.js';
@@ -23,5 +25,7 @@ router.get('/stats', requireAdmin, getOrderStats);
 router.get('/', requireAdmin, getAllOrders);
 router.get('/:id', requireAdmin, getOrderById);
 router.patch('/:id', requireAdmin, updateOrder);
+router.delete('/clear/all', requireAdmin, clearOrders);
+router.delete('/:id', requireAdmin, deleteOrder);
 
 export default router;

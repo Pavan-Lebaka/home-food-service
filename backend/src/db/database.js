@@ -100,9 +100,19 @@ class LiveDatabase {
     return bcrypt.compareSync(password, admin.password_hash);
   }
 
+  reload() {
+    try {
+      if (fs.existsSync(DB_FILE)) {
+        const raw = fs.readFileSync(DB_FILE, 'utf-8');
+        this.data = JSON.parse(raw);
+      }
+    } catch (e) {}
+  }
+
   // --- PRODUCTS METHODS ---
   getProducts(filters = {}) {
-    let list = [...this.data.products];
+    this.reload();
+    let list = [...(this.data.products || [])];
     if (filters.category && filters.category !== 'all') {
       list = list.filter(p => p.category === filters.category);
     }
@@ -148,7 +158,8 @@ class LiveDatabase {
 
   // --- ORDERS METHODS ---
   getOrders(filters = {}) {
-    let list = [...this.data.orders];
+    this.reload();
+    let list = [...(this.data.orders || [])];
     if (filters.status && filters.status !== 'All') {
       list = list.filter(o => o.status === filters.status);
     }
@@ -172,6 +183,22 @@ class LiveDatabase {
     }
     this.save();
     return order;
+  }
+
+  deleteOrder(id) {
+    const idx = this.data.orders.findIndex(o => String(o.id) === String(id));
+    if (idx !== -1) {
+      const removed = this.data.orders.splice(idx, 1);
+      this.save();
+      return removed[0];
+    }
+    return null;
+  }
+
+  clearOrders() {
+    this.data.orders = [];
+    this.save();
+    return true;
   }
 }
 

@@ -171,6 +171,32 @@ class OrdersService {
 
     return stats;
   }
+
+  /**
+   * Delete single order by ID
+   */
+  async deleteOrder(orderId) {
+    if (supabase) {
+      try {
+        await supabase.from('orders').delete().eq('id', orderId);
+      } catch (err) {}
+    }
+    const removed = db.deleteOrder(orderId);
+    return removed;
+  }
+
+  /**
+   * Clear all orders (e.g. remove test orders)
+   */
+  async clearOrders() {
+    if (supabase) {
+      try {
+        await supabase.from('orders').delete().neq('id', 'NONE');
+      } catch (err) {}
+    }
+    db.clearOrders();
+    return true;
+  }
 }
 
 export const ordersService = new OrdersService();

@@ -4,28 +4,15 @@ import {
   updateProductApi,
   createProductApi,
   deleteProductApi,
-  seedProductsApi
+  seedProductsApi,
+  uploadDishImageApi
 } from '../lib/api';
 import {
   ShoppingBag, CheckCircle2, XCircle, Search, Plus,
   RefreshCw, Edit3, Trash2, Tag, AlertCircle, Loader2,
-  Sparkles, Save, X, Layers, Upload, Image as ImageIcon
+  Sparkles, Save, X, Layers, Upload, Image as ImageIcon,
+  Camera
 } from 'lucide-react';
-
-const KITCHEN_PHOTO_PRESETS = [
-  { label: 'Avakaya Pickle', path: '/images/avakaya.jpg' },
-  { label: 'Gongura Pickle', path: '/images/gongura.jpg' },
-  { label: 'Chicken Pickle', path: '/images/chicken-pickle.jpg' },
-  { label: 'Prawns Pickle', path: '/images/prawn-pickle.jpg' },
-  { label: 'Tomato Pickle', path: '/images/tomato.jpg' },
-  { label: 'Allam Pickle', path: '/images/allam.jpg' },
-  { label: 'Neethi Arisalu', path: '/images/arisalu.jpg' },
-  { label: 'Bellam Sunnundalu', path: '/images/sunnundalu.jpg' },
-  { label: 'Kajjikayalu', path: '/images/kajjikayalu.jpg' },
-  { label: 'Pappu Chekkalu', path: '/images/chekkalu.jpg' },
-  { label: 'Karapusa', path: '/images/karapusa.jpg' },
-  { label: 'Karam Boondhi', path: '/images/karam-boondhi.jpg' }
-];
 
 export default function ProductManagement() {
   const [products, setProducts] = useState([]);
@@ -40,6 +27,9 @@ export default function ProductManagement() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [savingId, setSavingId] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [showAddUrlInput, setShowAddUrlInput] = useState(false);
+  const [showEditUrlInput, setShowEditUrlInput] = useState(false);
 
   // New product form
   const [newForm, setNewForm] = useState({
@@ -54,23 +44,34 @@ export default function ProductManagement() {
     inStock: true
   });
 
-  // Handle local file upload (converts to base64 data URL)
-  const handleFileUpload = (e, isEdit = false) => {
+  // Handle high-resolution dish photo upload from device
+  const handleImageUpload = (e, isEdit = false) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Photo size exceeds 5MB limit. Please choose a smaller file.');
+    if (file.size > 8 * 1024 * 1024) {
+      alert('Photo size exceeds 8MB limit. Please choose a smaller file.');
       return;
     }
 
+    setUploadingImage(true);
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       const dataUrl = event.target.result;
-      if (isEdit) {
-        setEditingProduct(prev => ({ ...prev, image: dataUrl }));
-      } else {
-        setNewForm(prev => ({ ...prev, image: dataUrl }));
+      const targetName = isEdit ? editingProduct?.name : newForm.name;
+      try {
+        const publicUrl = await uploadDishImageApi(dataUrl, targetName || 'dish');
+        if (isEdit) {
+          setEditingProduct(prev => ({ ...prev, image: publicUrl }));
+        } else {
+          setNewForm(prev => ({ ...prev, image: publicUrl }));
+        }
+        setSuccessMsg('✓ Dish photo uploaded and updated successfully!');
+        setTimeout(() => setSuccessMsg(''), 4000);
+      } catch (err) {
+        alert('Photo upload failed: ' + err.message);
+      } finally {
+        setUploadingImage(false);
       }
     };
     reader.readAsDataURL(file);
@@ -545,46 +546,76 @@ export default function ProductManagement() {
                 />
               </div>
 
-              {/* Photo Upload & Presets */}
+              {/* Dish Photo Uploader */}
               <div className="pm-form-group">
-                <label>Dish Photo (Upload from Device or Select Kitchen Preset)</label>
+                <label className="pm-form-label">Dish Photo</label>
                 <div className="pm-image-picker-wrap">
-                  <img
-                    src={newForm.image || '/images/avakaya.jpg'}
-                    alt="Preview"
-                    className="pm-image-preview-thumb"
-                    onError={(e) => { e.target.src = '/images/avakaya.jpg'; }}
-                  />
-                  <div className="pm-image-upload-controls">
-                    <label className="pm-btn-upload">
-                      <Upload size={14} />
-                      <span>Upload Photo from Device</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={(e) => handleFileUpload(e, false)}
-                      />
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Or enter image URL (e.g. /images/avakaya.jpg)"
-                      value={newForm.image}
-                      onChange={(e) => setNewForm({ ...newForm, image: e.target.value })}
-                      className="pm-image-url-input"
+                  <div className="pm-preview-container">
+                    <img
+                      src={newForm.image || '/images/avakaya.jpg'}
+                      alt="Preview"
+                      className="pm-image-preview-thumb"
+                      onError={(e) => { e.target.src = '/images/avakaya.jpg'; }}
                     />
-                    <div className="pm-preset-chips">
-                      {KITCHEN_PHOTO_PRESETS.map((preset, idx) => (
+                  </div>
+                  <div className="pm-image-upload-controls">
+                    <div className="pm-upload-btn-row">
+                      <label className="pm-btn-upload">
+                        {uploadingImage ? (
+                          <>
+                            <Loader2 size={15} className="spin-icon" />
+                            <span>Uploading photo...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Camera size={15} />
+                            <span>{newForm.image ? 'Change Photo from Device' : 'Upload Photo from Device'}</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          style={{ display: 'none' }}
+                          disabled={uploadingImage}
+                          onChange={(e) => handleImageUpload(e, false)}
+                        />
+                      </label>
+                      {newForm.image && (
                         <button
-                          key={idx}
                           type="button"
-                          className={`pm-preset-chip ${newForm.image === preset.path ? 'active' : ''}`}
-                          onClick={() => setNewForm({ ...newForm, image: preset.path })}
+                          className="pm-btn-clear-photo"
+                          onClick={() => setNewForm({ ...newForm, image: '/images/avakaya.jpg' })}
+                          title="Reset to default dish photo"
                         >
-                          {preset.label}
+                          <X size={13} />
+                          <span>Reset</span>
                         </button>
-                      ))}
+                      )}
                     </div>
+
+                    <div className="pm-photo-meta-row">
+                      <span className="pm-photo-active-badge">
+                        <CheckCircle2 size={13} />
+                        <span>Active: {newForm.image?.startsWith('data:') ? 'Device Upload' : (newForm.image || '').replace('/images/', '')}</span>
+                      </span>
+                      <button
+                        type="button"
+                        className="pm-link-toggle"
+                        onClick={() => setShowAddUrlInput(!showAddUrlInput)}
+                      >
+                        {showAddUrlInput ? 'Hide URL' : 'Custom URL'}
+                      </button>
+                    </div>
+
+                    {showAddUrlInput && (
+                      <input
+                        type="text"
+                        placeholder="e.g. /images/chekkalu.jpg"
+                        value={newForm.image}
+                        onChange={(e) => setNewForm({ ...newForm, image: e.target.value })}
+                        className="pm-image-url-input"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -691,46 +722,76 @@ export default function ProductManagement() {
                 />
               </div>
 
-              {/* Photo Upload & Presets */}
+              {/* Dish Photo Uploader */}
               <div className="pm-form-group">
-                <label>Dish Photo (Upload from Device or Select Kitchen Preset)</label>
+                <label className="pm-form-label">Dish Photo</label>
                 <div className="pm-image-picker-wrap">
-                  <img
-                    src={editingProduct.image || '/images/avakaya.jpg'}
-                    alt="Preview"
-                    className="pm-image-preview-thumb"
-                    onError={(e) => { e.target.src = '/images/avakaya.jpg'; }}
-                  />
-                  <div className="pm-image-upload-controls">
-                    <label className="pm-btn-upload">
-                      <Upload size={14} />
-                      <span>Upload New Photo</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={(e) => handleFileUpload(e, true)}
-                      />
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Or enter image URL"
-                      value={editingProduct.image || ''}
-                      onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
-                      className="pm-image-url-input"
+                  <div className="pm-preview-container">
+                    <img
+                      src={editingProduct.image || '/images/avakaya.jpg'}
+                      alt="Preview"
+                      className="pm-image-preview-thumb"
+                      onError={(e) => { e.target.src = '/images/avakaya.jpg'; }}
                     />
-                    <div className="pm-preset-chips">
-                      {KITCHEN_PHOTO_PRESETS.map((preset, idx) => (
+                  </div>
+                  <div className="pm-image-upload-controls">
+                    <div className="pm-upload-btn-row">
+                      <label className="pm-btn-upload">
+                        {uploadingImage ? (
+                          <>
+                            <Loader2 size={15} className="spin-icon" />
+                            <span>Uploading photo...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Camera size={15} />
+                            <span>Change Photo from Device</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          style={{ display: 'none' }}
+                          disabled={uploadingImage}
+                          onChange={(e) => handleImageUpload(e, true)}
+                        />
+                      </label>
+                      {editingProduct.image && (
                         <button
-                          key={idx}
                           type="button"
-                          className={`pm-preset-chip ${editingProduct.image === preset.path ? 'active' : ''}`}
-                          onClick={() => setEditingProduct({ ...editingProduct, image: preset.path })}
+                          className="pm-btn-clear-photo"
+                          onClick={() => setEditingProduct({ ...editingProduct, image: '/images/avakaya.jpg' })}
+                          title="Reset to default dish photo"
                         >
-                          {preset.label}
+                          <X size={13} />
+                          <span>Reset</span>
                         </button>
-                      ))}
+                      )}
                     </div>
+
+                    <div className="pm-photo-meta-row">
+                      <span className="pm-photo-active-badge">
+                        <CheckCircle2 size={13} />
+                        <span>Active: {editingProduct.image?.startsWith('data:') ? 'Device Upload' : (editingProduct.image || '').replace('/images/', '')}</span>
+                      </span>
+                      <button
+                        type="button"
+                        className="pm-link-toggle"
+                        onClick={() => setShowEditUrlInput(!showEditUrlInput)}
+                      >
+                        {showEditUrlInput ? 'Hide URL' : 'Custom URL'}
+                      </button>
+                    </div>
+
+                    {showEditUrlInput && (
+                      <input
+                        type="text"
+                        placeholder="e.g. /images/chekkalu.jpg"
+                        value={editingProduct.image || ''}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
+                        className="pm-image-url-input"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
