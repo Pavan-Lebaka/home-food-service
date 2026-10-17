@@ -1,0 +1,378 @@
+import React, { useEffect } from 'react';
+import {
+  X, Plus, Minus, Trash2, MessageCircle, Sparkles, ShoppingCart,
+  ArrowRight, ShieldCheck, Truck, ShoppingBag, ArrowUpRight
+} from 'lucide-react';
+import { getWhatsAppOrderUrl } from '../lib/whatsapp.js';
+import { BRAND_INFO } from '../data/products.js';
+import { useLanguage } from '../context/LanguageContext';
+import { useProducts } from '../context/ProductsContext';
+
+const FREE_DELIVERY_THRESHOLD = 2000;
+const STANDARD_DELIVERY_FEE = 100;
+
+export default function CartDrawer({
+  isOpen,
+  onClose,
+  cartItems = [],
+  onUpdateQuantity,
+  onRemoveItem,
+  onAddToCart,
+  onProceedToCheckout
+}) {
+  const { t } = useLanguage();
+  const { products } = useProducts();
+
+  // Scroll lock when cart drawer is active
+  useEffect(() => {
+    if (!isOpen) return;
+    const origBody = document.body.style.overflow;
+    const origHtml = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = origBody;
+      document.documentElement.style.overflow = origHtml;
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  // Pricing calculations
+  const itemsSubtotal = cartItems.reduce((acc, item) => {
+    const price = item.unitPrice || item.price || item.pricePerKg || 0;
+    return acc + (price * item.quantity);
+  }, 0);
+
+  const isFreeDelivery = itemsSubtotal >= FREE_DELIVERY_THRESHOLD;
+  const deliveryFee = cartItems.length === 0 ? 0 : (isFreeDelivery ? 0 : STANDARD_DELIVERY_FEE);
+  const grandTotal = itemsSubtotal + deliveryFee;
+  const amountNeededForFree = Math.max(0, FREE_DELIVERY_THRESHOLD - itemsSubtotal);
+  const freeDeliveryProgress = Math.min(100, Math.round((itemsSubtotal / FREE_DELIVERY_THRESHOLD) * 100));
+
+  // Quick picks if cart is empty
+  const quickPickItems = (products || []).filter(p => ['arisalu', 'avakaya', 'chicken-pickle'].includes(p.id));
+
+  const handleBrowseMenu = () => {
+    onClose();
+    const menuEl = document.getElementById('menu');
+    if (menuEl) {
+      menuEl.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleQuickWhatsApp = () => {
+    const url = getWhatsAppOrderUrl(cartItems, {});
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <div className="cart-drawer-backdrop" onClick={onClose}>
+      <div className="cart-drawer" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true">
+        {/* Mobile Drag Indicator Handle */}
+        <div className="cart-drawer-handle" />
+
+        {/* Drawer Header */}
+        <div className="drawer-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className="drawer-header-icon-wrap">
+              <ShoppingCart size={20} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 className="drawer-title">{t('yourOrderCart') || 'Your Order Cart'}</h2>
+                {cartItems.length > 0 && (
+                  <span className="drawer-items-count-badge">
+                    {cartItems.reduce((acc, i) => acc + i.quantity, 0)} items
+                  </span>
+                )}
+              </div>
+              <div className="drawer-subtitle">
+                {BRAND_INFO.name}
+              </div>
+            </div>
+          </div>
+          <button onClick={onClose} className="drawer-close-btn" aria-label="Close cart drawer">
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Drawer Body */}
+        <div className="drawer-body">
+          {cartItems.length === 0 ? (
+            <div className="cart-empty-wrapper">
+              <div className="empty-cart-notice">
+                <MessageCircle size={22} className="notice-icon" />
+                <div>
+                  <div className="notice-heading">{t('addItemsToOrder') || 'Your Cart is Empty'}</div>
+                  <div className="notice-sub">
+                    {t('addItemsDesc') || 'Explore our homemade Andhra pickles, arisalu and pindi vantalu below!'}
+                  </div>
+                </div>
+              </div>
+
+              {/* 3 Quick-add suggestions */}
+              <div className="empty-quickpicks-section">
+                <div className="quickpicks-title">
+                  <span>{t('popularGrandmaSpecials') || 'Popular Andhra Delicacies'}</span>
+                </div>
+                <div className="quickpicks-grid">
+                  {quickPickItems.map(item => (
+                    <div key={item.id} className="quickpick-item-card">
+                      <img src={item.image} alt={item.name} className="quickpick-img" />
+                      <div className="quickpick-info">
+                        <div className="quickpick-name">{item.name}</div>
+                        <div className="quickpick-price">₹{item.pricePerKg} / kg</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => onAddToCart && onAddToCart(item, '1kg', '1 kg (Default)', item.pricePerKg, 1)}
+                        className="quickpick-add-btn"
+                      >
+                        + Add 1kg
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="cart-active-flow">
+              {/* 1. Free Delivery Progress Banner */}
+              <div className={`free-delivery-meter-card ${isFreeDelivery ? 'unlocked' : ''}`}>
+                <div className="meter-header">
+                  <div className="meter-header-left">
+                    <Truck size={17} className="meter-icon" />
+                    <span className="meter-text">
+                      {isFreeDelivery ? (
+                        <strong className="meter-highlight-green">
+                          🎉 You Unlocked FREE Express Delivery!
+                        </strong>
+                      ) : (
+                        <>
+                          Add <strong className="meter-highlight">₹{amountNeededForFree.toLocaleString('en-IN')}</strong> more for <strong className="free-tag">FREE Express Shipping</strong>
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <span className="meter-pct-badge">{freeDeliveryProgress}%</span>
+                </div>
+                <div className="meter-progress-track">
+                  <div
+                    className="meter-progress-fill"
+                    style={{ width: `${freeDeliveryProgress}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* 2. Cart Items List */}
+              <div className="modern-cart-items-section">
+                <div className="items-list-header">
+                  <span className="header-label">Selected Items ({cartItems.length})</span>
+                  <span className="header-sub">Fresh Batch Handcrafted</span>
+                </div>
+
+                <div className="cart-items-scroll-list">
+                  {cartItems.map((item, index) => {
+                    const itemUnitPrice = item.unitPrice || item.price || item.pricePerKg || 0;
+                    const lineTotal = itemUnitPrice * item.quantity;
+                    const itemCartKey = item.cartItemId || `${item.id}-${item.variantId || index}`;
+
+                    return (
+                      <div key={itemCartKey} className="modern-cart-item-row">
+                        <div className="modern-item-media">
+                          <img
+                            src={item.image || '/images/default-dish.jpg'}
+                            alt={item.name}
+                            className="modern-item-thumbnail"
+                            onError={(e) => {
+                              e.target.src = 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=100';
+                            }}
+                          />
+                        </div>
+
+                        <div className="modern-item-details">
+                          <div className="modern-item-top">
+                            <div>
+                              <h4 className="modern-item-name">{item.name}</h4>
+                              {item.teluguName && (
+                                <div className="modern-item-telugu">{item.teluguName}</div>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => onRemoveItem(itemCartKey)}
+                              className="modern-item-delete-btn"
+                              title="Remove item"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+
+                          <div className="modern-item-pack-pill">
+                            <span>Pack: {item.variantLabel || '1 kg'}</span>
+                            <span className="pill-dot">•</span>
+                            <span>₹{itemUnitPrice} / pack</span>
+                          </div>
+
+                          <div className="modern-item-bottom">
+                            <div className="modern-stepper-wrap">
+                              <button
+                                type="button"
+                                onClick={() => onUpdateQuantity(itemCartKey, item.quantity - 1)}
+                                className="modern-step-btn"
+                                aria-label="Decrease quantity"
+                              >
+                                <Minus size={13} />
+                              </button>
+                              <span className="modern-step-val">{item.quantity}</span>
+                              <button
+                                type="button"
+                                onClick={() => onUpdateQuantity(itemCartKey, item.quantity + 1)}
+                                className="modern-step-btn"
+                                aria-label="Increase quantity"
+                              >
+                                <Plus size={13} />
+                              </button>
+                            </div>
+
+                            <div className="modern-item-subtotal">
+                              ₹{lineTotal.toLocaleString('en-IN')}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleBrowseMenu}
+                  className="modern-add-more-link"
+                >
+                  <Plus size={14} />
+                  <span>{t('viewAllSpecials') || 'Add more authentic delicacies from menu'}</span>
+                </button>
+              </div>
+
+              {/* 3. Delivery & Bill Preview Card */}
+              <div className="modern-bill-card">
+                <div className="modern-bill-header">
+                  <span className="bill-title-text">Order Bill Details</span>
+                  <span className="bill-trust-tag">
+                    <ShieldCheck size={12} color="var(--color-leaf-green)" />
+                    <span>Pure & Authentic</span>
+                  </span>
+                </div>
+
+                <div className="modern-bill-table">
+                  <div className="bill-table-row">
+                    <span className="table-row-label">Items Subtotal</span>
+                    <span className="table-row-value">₹{itemsSubtotal.toLocaleString('en-IN')}</span>
+                  </div>
+
+                  <div className="bill-table-row">
+                    <span className="table-row-label">Courier Shipping</span>
+                    {isFreeDelivery ? (
+                      <div className="free-delivery-combo">
+                        <s className="strike-amount">₹100</s>
+                        <span className="free-badge-pill">FREE</span>
+                      </div>
+                    ) : (
+                      <span className="standard-deliv-badge">₹100</span>
+                    )}
+                  </div>
+
+                  {isFreeDelivery && (
+                    <div className="modern-savings-strip">
+                      <Sparkles size={13} color="#059669" />
+                      <span>You saved ₹100 on Express Delivery! 🎉</span>
+                    </div>
+                  )}
+
+                  <div className="bill-table-row grand-total-row">
+                    <div className="total-label-block">
+                      <span className="total-title">Total Amount</span>
+                      <span className="total-tax-note">All taxes included</span>
+                    </div>
+                    <span className="total-amount-display">₹{grandTotal.toLocaleString('en-IN')}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. Trust Badges */}
+              <div className="modern-cart-assurances">
+                <div className="assurance-item">
+                  <ShieldCheck size={14} className="assurance-icon" />
+                  <span>100% Traditional Telugu Taste • Pure Desi Ghee & Sesame Oil</span>
+                </div>
+                <div className="assurance-item">
+                  <Truck size={14} className="assurance-icon" />
+                  <span>All-India Shiprocket Courier Tracking (Delhivery, BlueDart, DTDC)</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Drawer Sticky Footer with Dual Checkout Options */}
+        {cartItems.length > 0 && (
+          <div className="drawer-footer modern-sticky-footer">
+            <div className="sticky-footer-summary-row">
+              <div className="sticky-total-info">
+                <span className="sticky-total-label">Grand Total</span>
+                <span className="sticky-total-val">₹{grandTotal.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="sticky-delivery-note">
+                {isFreeDelivery ? (
+                  <span className="tag-free-deliv">✓ Free Delivery</span>
+                ) : (
+                  <span className="tag-paid-deliv">Incl. ₹100 Delivery</span>
+                )}
+              </div>
+            </div>
+
+            {/* Primary Action: Go to Dedicated Checkout Page */}
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onProceedToCheckout && onProceedToCheckout();
+              }}
+              className="btn-whatsapp-checkout modern-checkout-btn"
+              style={{
+                background: 'linear-gradient(135deg, #8C2F1C 0%, #A83A24 100%)',
+                boxShadow: '0 8px 20px rgba(140, 47, 28, 0.28)'
+              }}
+              id="cart-proceed-checkout-btn"
+            >
+              <div className="btn-checkout-content">
+                <span className="btn-main-title">Proceed to Checkout</span>
+                <span className="btn-sub-amount">• ₹{grandTotal.toLocaleString('en-IN')}</span>
+              </div>
+              <ArrowRight size={18} />
+            </button>
+
+            {/* Secondary Action: Instant WhatsApp Checkout */}
+            <button
+              type="button"
+              onClick={handleQuickWhatsApp}
+              className="btn-whatsapp-checkout"
+              style={{
+                background: '#25D366',
+                marginTop: '8px',
+                padding: '10px 14px',
+                fontSize: '0.88rem'
+              }}
+            >
+              <MessageCircle size={17} />
+              <span>Direct WhatsApp Order</span>
+              <ArrowUpRight size={14} />
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

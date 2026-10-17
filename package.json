@@ -1,25 +1,17 @@
 {
-  "name": "foods",
+  "name": "bramarambika-home-foods-workspace",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "1.0.0",
+  "description": "Bramarambika Traditional Home Foods - Full Stack System (Storefront, Admin, Backend)",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "canvas-confetti": "^1.9.4",
-    "lucide-react": "^1.52.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
-  },
-  "devDependencies": {
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.7",
-    "@vitejs/plugin-react": "^6.1.1",
-    "oxlint": "^1.81.0",
-    "vite": "^8.3.0"
+    "dev": "npx --yes concurrently -n \"STORE,ADMIN,API\" -c \"cyan,blue,magenta\" \"npm run dev --prefix frontend\" \"npm run dev --prefix admin\" \"npm run dev --prefix backend\"",
+    "dev:store": "npm run dev --prefix frontend",
+    "dev:admin": "npm run dev --prefix admin",
+    "dev:backend": "npm run dev --prefix backend",
+    "build": "npm run build --prefix frontend && npm run build --prefix admin",
+    "build:store": "npm run build --prefix frontend",
+    "build:admin": "npm run build --prefix admin",
+    "seed": "npm run seed --prefix backend",
+    "start": "npm start --prefix backend"
   }
 }

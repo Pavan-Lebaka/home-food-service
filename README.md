@@ -1,16 +1,68 @@
-# React + Vite
+# 🪔 Bramarambika Traditional Home Foods
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Authentic, handcrafted Andhra pickles, sweets, and savouries delivered across India. Architected as a modern, secure, and decoupled 3-tier system.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📂 Architecture Overview
 
-## React Compiler
+The repository is organized into three completely isolated, single-responsibility applications:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```text
+home-food-service/
+├── frontend/                 # 🛍️ Customer Storefront (Vite + React 19)
+│   ├── src/                  # Customer-facing shopping experience & cart
+│   ├── .env.example          # Public frontend environment variables
+│   └── package.json          # Customer bundle (0 vulnerabilities, 0 admin leaks)
+│
+├── admin/                    # 🔐 Staff & Owner Management Portal (Vite + React 19)
+│   ├── src/                  # Orders dashboard, product management, Shiprocket
+│   ├── .env.example          # Admin environment template
+│   └── package.json          # Admin dependencies (0 vulnerabilities)
+│
+├── backend/                  # ⚡ Production REST API (Node.js + Express)
+│   ├── src/                  # Controllers, services, routes, Bcrypt auth
+│   ├── data/                 # Local database storage (gitignored)
+│   ├── .env.example          # Backend environment template
+│   └── package.json          # Backend dependencies (0 vulnerabilities)
+│
+├── .gitignore                # Global security isolation for credentials & builds
+├── package.json              # Workspace runner orchestrating all 3 apps
+└── README.md
+```
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## 🌐 Local Development Endpoints
+
+| Service | Local URL | Description |
+| :--- | :--- | :--- |
+| **Storefront** | `http://localhost:5173` | Customer-facing Telugu homemade food store & cart checkout |
+| **Admin Portal** | `http://localhost:5174` | Dedicated staff portal to manage orders, live catalog & dispatches |
+| **Backend API** | `http://localhost:5000` | REST API with Bcrypt auth, Supabase integration & Shiprocket |
+
+---
+
+## 🚀 Quick Start
+
+### Start All 3 Services Concurrently
+```bash
+npm run dev
+```
+
+### Or Run Services Individually
+```bash
+npm run dev:store    # Runs Storefront on http://localhost:5173
+npm run dev:admin    # Runs Admin Portal on http://localhost:5174
+npm run dev:backend  # Runs API Server on http://localhost:5000
+npm run seed         # Seeds admin credentials & 17 products into DB
+```
+
+---
+
+## 🔒 Security Best Practices
+
+- **Zero Admin Code in Storefront:** The customer bundle contains zero admin logic, staff routes, or management credentials.
+- **Dedicated Admin App:** Admin portal runs on its own isolated port (`5174`) and can be hosted on a separate private subdomain (e.g. `admin.bramarambika.com`) with IP restriction or Cloudflare Access.
+- **Strict `.gitignore` Protection:** Local database files (`backend/data/`), build artifacts (`*/dist/`), and all `.env` files are strictly gitignored.
+- **Zero Vulnerabilities:** Audited with `npm audit` — 0 vulnerabilities across all packages.
