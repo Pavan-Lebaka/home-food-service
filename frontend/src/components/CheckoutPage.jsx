@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   ArrowLeft, ShieldCheck, MapPin, Phone, User,
   Truck, CheckCircle2, AlertCircle, Loader2, Copy, Check,
-  Sparkles, CreditCard, ShoppingBag, Clock, FileText, ChevronRight
+  Sparkles, CreditCard, ShoppingBag, Clock, FileText, ChevronRight, ChevronDown
 } from 'lucide-react';
 import { BRAND_INFO } from '../data/products.js';
 import { checkShiprocketRates, createOrderApi } from '../lib/api.js';
