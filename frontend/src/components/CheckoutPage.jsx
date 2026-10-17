@@ -13,40 +13,59 @@ import './checkout.css';
 const FREE_DELIVERY_THRESHOLD = 2000;
 const STANDARD_DELIVERY_FEE = 100;
 
+// Smart scoring function to dynamically auto-select the best, cheapest, and fastest courier
+function findBestCourier(couriers = [], isCod = false) {
+  if (!couriers || couriers.length === 0) return null;
+
+  let pool = couriers;
+  if (isCod) {
+    const codEligible = couriers.filter(c => c.isCodAvailable);
+    if (codEligible.length > 0) pool = codEligible;
+  }
+
+  // Priority scoring:
+  // 1. Delivery speed (Next day / 1-2 days)
+  // 2. Cost / Reliability (lowest freight rate)
+  const sorted = [...pool].sort((a, b) => {
+    const getSpeedScore = (c) => {
+      const str = (c.estimatedDays || '').toLowerCase();
+      if (str.includes('next')) return 1;
+      if (str.includes('1-2') || str.includes('1')) return 2;
+      if (str.includes('2-3') || str.includes('2')) return 3;
+      return 4;
+    };
+    const speedDiff = getSpeedScore(a) - getSpeedScore(b);
+    if (speedDiff !== 0) return speedDiff;
+
+    return (a.rate || 0) - (b.rate || 0);
+  });
+
+  return sorted[0];
+}
+
 export default function CheckoutPage({
   cartItems = [],
   onBackToStore,
   onClearCart
 }) {
-  // Saved customer profile from localStorage
-  const [formData, setFormData] = useState(() => {
-    try {
-      const saved = localStorage.getItem('bramarambika_customer_details');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return {
-          name: parsed.name || '',
-          phone: parsed.phone || '',
-          email: parsed.email || '',
-          address: parsed.address || '',
-          city: parsed.city || '',
-          state: parsed.state || 'Andhra Pradesh',
-          pincode: parsed.pincode || '',
-          notes: parsed.notes || ''
-        };
-      }
-    } catch (e) {}
-    return {
-      name: '',
-      phone: '',
-      email: '',
-      address: '',
-      city: '',
-      state: 'Andhra Pradesh',
-      pincode: '',
-      notes: ''
-    };
+  // Start with clean empty customer details
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    city: '',
+    state: 'Andhra Pradesh',
+    pincode: '',
+    notes: ''
   });
+
+  // Clear any legacy cached details from browser on load
+  useEffect(() => {
+    try {
+      localStorage.removeItem('bramarambika_customer_details');
+    } catch (e) { }
+  }, []);
 
   // Shipping & Courier state
   const [checkingShipping, setCheckingShipping] = useState(false);
@@ -80,14 +99,26 @@ export default function CheckoutPage({
 
   const grandTotal = itemsSubtotal + deliveryFee;
 
-  // Save form data to localStorage
-  useEffect(() => {
+  // Clean navigation back to store
+  const handleBackToStore = () => {
+    setCreatedOrder(null);
+    setFormData({
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      city: '',
+      state: 'Andhra Pradesh',
+      pincode: '',
+      notes: ''
+    });
     try {
-      localStorage.setItem('bramarambika_customer_details', JSON.stringify(formData));
-    } catch (e) {}
-  }, [formData]);
+      localStorage.removeItem('bramarambika_customer_details');
+    } catch (e) { }
+    onBackToStore && onBackToStore();
+  };
 
-  // Live Shiprocket Pincode serviceability lookup
+  // Live Shiprocket Pincode serviceability lookup & dynamic best courier selection
   useEffect(() => {
     const cleanPin = formData.pincode.replace(/\D/g, '');
     if (cleanPin.length === 6) {
@@ -97,16 +128,25 @@ export default function CheckoutPage({
         .then((res) => {
           if (res && res.couriers && res.couriers.length > 0) {
             setShippingData(res);
-            setSelectedCourier(res.couriers[0]); // default to first available courier
+            // DYNAMIC AUTO-SELECTION of the cheapest, fastest, best courier
+            const best = findBestCourier(res.couriers, paymentMethod === 'cod');
+            setSelectedCourier(best);
           } else {
             setShippingData(null);
-            setSelectedCourier(null);
-            setShippingError('Courier service is available via standard India Post & Surface Express.');
+            setSelectedCourier({
+              name: 'Express Courier Network',
+              estimatedDays: '1-2 Days',
+              isCodAvailable: true
+            });
           }
         })
         .catch(() => {
           setShippingData(null);
-          setSelectedCourier(null);
+          setSelectedCourier({
+            name: 'Standard Express Courier',
+            estimatedDays: '2-3 Days',
+            isCodAvailable: true
+          });
         })
         .finally(() => {
           setCheckingShipping(false);
@@ -116,7 +156,7 @@ export default function CheckoutPage({
       setSelectedCourier(null);
       setShippingError('');
     }
-  }, [formData.pincode]);
+  }, [formData.pincode, paymentMethod]);
 
   const handleInputChange = (field, val) => {
     setFormData(prev => ({ ...prev, [field]: val }));
@@ -126,7 +166,7 @@ export default function CheckoutPage({
   };
 
   const handleCopyUpi = () => {
-    navigator.clipboard.writeText('7702808886@upi');
+    navigator.clipboard.writeText('7793910819@upi');
     setIsCopiedUpi(true);
     setTimeout(() => setIsCopiedUpi(false), 2000);
   };
@@ -206,7 +246,7 @@ export default function CheckoutPage({
 
       try {
         window.open(waUrl, '_blank', 'noopener,noreferrer');
-      } catch (err) {}
+      } catch (err) { }
 
       // Trigger festive celebration confetti
       try {
@@ -215,7 +255,7 @@ export default function CheckoutPage({
           spread: 70,
           origin: { y: 0.6 }
         });
-      } catch (err) {}
+      } catch (err) { }
     } catch (err) {
       alert('Order could not be saved to backend. Please check network connection: ' + err.message);
     } finally {
@@ -292,7 +332,7 @@ export default function CheckoutPage({
                 <div className="checkout-brand-sub">Order Acknowledgment</div>
               </div>
             </div>
-            <button type="button" onClick={onBackToStore} className="checkout-back-link">
+            <button type="button" onClick={handleBackToStore} className="checkout-back-link">
               <ArrowLeft size={16} />
               <span>Return to Store</span>
             </button>
@@ -388,7 +428,7 @@ export default function CheckoutPage({
                 <span>💬 WhatsApp Order Confirmation</span>
               </div>
               <p style={{ margin: 0, fontSize: '0.82rem', color: '#166534', lineHeight: 1.45 }}>
-                Click below to send your structured order confirmation to our WhatsApp kitchen number (<strong>7702808886</strong>). Our team will confirm the dispatch date!
+                Click below to send your structured order confirmation to our WhatsApp kitchen number (<strong>7793910819</strong>). Our team will confirm the dispatch date!
               </p>
             </div>
 
@@ -414,12 +454,12 @@ export default function CheckoutPage({
                   boxShadow: '0 4px 14px rgba(37, 211, 102, 0.35)'
                 }}
               >
-                <span>📲 Send Order Confirmation to Kitchen WhatsApp (7702808886)</span>
+                <span>📲 Send Order Confirmation to Kitchen WhatsApp (7793910819)</span>
               </a>
 
               <button
                 type="button"
-                onClick={onBackToStore}
+                onClick={handleBackToStore}
                 className="btn-return-home"
               >
                 <span>Continue Shopping at Bramarambika</span>
@@ -453,7 +493,7 @@ export default function CheckoutPage({
               <span>Verified Kitchen Order</span>
             </div>
 
-            <button type="button" onClick={onBackToStore} className="checkout-back-link">
+            <button type="button" onClick={handleBackToStore} className="checkout-back-link">
               <ArrowLeft size={16} />
               <span>Back to Store</span>
             </button>
@@ -610,40 +650,33 @@ export default function CheckoutPage({
                 )}
               </div>
 
-              {shippingData && shippingData.couriers && (
-                <div>
-                  <div className="pincode-status-banner success">
-                    <CheckCircle2 size={16} />
-                    <span>Available couriers to {formData.pincode} (Origin: Andhra Kitchen {shippingData.pickupPincode})</span>
-                  </div>
-
-                  <div className="couriers-selection-list">
-                    {shippingData.couriers.map((c) => {
-                      const isSelected = selectedCourier?.name === c.name;
-                      return (
-                        <div
-                          key={c.courierId || c.name}
-                          onClick={() => setSelectedCourier(c)}
-                          className={`courier-option-card ${isSelected ? 'selected' : ''}`}
-                        >
-                          <div className="courier-card-top">
-                            <span className="courier-name">{c.name}</span>
-                            <span className="courier-speed-badge">
-                              {c.name.toLowerCase().includes('air') || c.name.toLowerCase().includes('prime')
-                                ? '⚡ Express Air'
-                                : '🚚 Surface Express'}
-                            </span>
-                          </div>
-                          <div className="courier-etd">
-                            <Clock size={13} />
-                            <span>Estimated: <strong>{c.estimatedDays || '1-2 Days'}</strong></span>
-                          </div>
-                          {c.isCodAvailable && (
-                            <span className="courier-badge">COD Eligible</span>
-                          )}
+              {/* Dynamic Auto-Assigned Best Courier Partner */}
+              {selectedCourier && (
+                <div className="dynamic-courier-card">
+                  <div className="dynamic-courier-top">
+                    <div className="dynamic-courier-main">
+                      <div className="dynamic-courier-icon">🚚</div>
+                      <div>
+                        <div className="dynamic-courier-title">
+                          <span>{selectedCourier.name}</span>
+                          <span className="dynamic-courier-badge">⚡ Auto-Assigned Best & Fastest</span>
                         </div>
-                      );
-                    })}
+                        <div className="dynamic-courier-meta">
+                          Estimated Delivery: <strong>{selectedCourier.estimatedDays || '1-2 Days'}</strong> to pincode <strong>{formData.pincode}</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="dynamic-courier-perks">
+                    <span className="perk-item">✓ Leakproof Sealed Jars</span>
+                    <span className="perk-dot">•</span>
+                    <span className="perk-item">✓ Priority Kitchen Dispatch</span>
+                    {selectedCourier.isCodAvailable && (
+                      <>
+                        <span className="perk-dot">•</span>
+                        <span className="perk-item">✓ COD Available</span>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
@@ -725,7 +758,7 @@ export default function CheckoutPage({
                   {paymentMethod === 'upi' && (
                     <div className="upi-pay-card-clean">
                       <div className="upi-id-badge">
-                        <span>Official UPI ID: <strong>7702808886@upi</strong></span>
+                        <span>Official UPI ID: <strong>7793910819@upi</strong></span>
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); handleCopyUpi(); }}

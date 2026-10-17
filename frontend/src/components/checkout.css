@@ -417,6 +417,85 @@
   padding: 10px 14px;
 }
 
+/* Dynamic Auto-Assigned Courier Card */
+.dynamic-courier-card {
+  margin-top: 12px;
+  background: #FFFDF9;
+  border: 1.5px solid rgba(217, 154, 23, 0.35);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.dynamic-courier-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dynamic-courier-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dynamic-courier-icon {
+  font-size: 1.6rem;
+  background: #FAF4E8;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(217, 154, 23, 0.2);
+}
+
+.dynamic-courier-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #1F2937;
+  flex-wrap: wrap;
+}
+
+.dynamic-courier-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #15803D;
+  background: #DCFCE7;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.dynamic-courier-meta {
+  font-size: 0.8rem;
+  color: #6B7280;
+  margin-top: 2px;
+}
+
+.dynamic-courier-perks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  color: #8C2F1C;
+  font-weight: 600;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(217, 154, 23, 0.25);
+  flex-wrap: wrap;
+}
+
+.perk-dot {
+  color: #D1D5DB;
+}
+
 /* --- Payment Method Selector --- */
 .payment-methods-grid {
   display: grid;
