@@ -1114,119 +1114,357 @@
   color: #166534;
 }
 
-/* Payment & Screenshot Box */
-.pay-screenshot-card {
-  background: #FFFFFF;
+/* ==========================================================================
+   MODERN PAYMENT & WHATSAPP CONFIRMATION CARD (NO BADGES)
+   ========================================================================== */
+.checkout-pay-card {
   border: 1.5px solid #86EFAC;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.05);
+  box-shadow: 0 4px 20px rgba(22, 163, 74, 0.06);
 }
 
-.upi-step-one-container {
+.pay-card-body {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.pay-flow-section {
   padding: 1.25rem 1.4rem;
-  background: #FFFFFF;
   border-bottom: 1px solid #E2E8F0;
 }
 
-.upi-id-highlight-box {
-  background: #F0FDF4;
-  border: 1.5px solid #86EFAC;
-  border-radius: 10px;
-  padding: 12px 14px;
+.pay-flow-section:last-child {
+  border-bottom: none;
 }
 
-.upi-id-val-row {
+.pay-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.85rem;
+}
+
+.pay-section-icon {
+  color: #15803D;
+  flex-shrink: 0;
+}
+
+.pay-section-heading {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1E293B;
+  letter-spacing: -0.2px;
+}
+
+.optional-tag {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748B;
+  background: #F1F5F9;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* UPI Pay Card */
+.upi-pay-card {
+  background: linear-gradient(145deg, #F0FDF4 0%, #FFFFFF 100%);
+  border: 1.5px solid #86EFAC;
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.05);
+}
+
+.upi-amount-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed rgba(22, 163, 74, 0.3);
+  margin-bottom: 0.85rem;
 }
 
-.upi-id-text {
-  font-size: 1.1rem;
-  color: #166534;
-  letter-spacing: 0.3px;
-}
-
-.upi-amount-hint {
+.upi-amount-label {
   font-size: 0.82rem;
+  font-weight: 700;
+  color: #166534;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.upi-amount-value {
+  font-size: 1.4rem;
+  font-weight: 800;
   color: #15803D;
-  margin-top: 6px;
-  font-weight: 500;
+  letter-spacing: -0.5px;
 }
 
-.screenshot-drop-zone {
-  padding: 1.25rem 1.4rem;
-  background: #FAFAFA;
+/* UPI Address & Copy Row */
+.upi-address-box {
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 1rem;
 }
 
-.screenshot-file-label {
+.upi-address-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.upi-address-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.upi-address-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0F172A;
+  word-break: break-all;
+}
+
+.btn-copy-upi {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #15803D;
+  color: #FFFFFF;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-copy-upi:hover {
+  background: #166534;
+  transform: translateY(-1px);
+}
+
+.btn-copy-upi.copied {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #86EFAC;
+}
+
+/* Quick App Launchers Grid */
+.upi-apps-launch-label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.upi-apps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .upi-apps-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.upi-app-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 8px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.upi-app-link:hover {
+  border-color: #15803D;
+  background: #F8FAFC;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+}
+
+.upi-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Screenshot Upload Box */
+.screenshot-upload-box {
   display: block;
   cursor: pointer;
   border: 2px dashed #CBD5E1;
   border-radius: 12px;
-  padding: 1.25rem;
-  text-align: center;
+  padding: 1.15rem;
+  background: #F8FAFC;
   transition: all 0.2s ease;
-  background: #FFFFFF;
+  text-align: center;
 }
 
-.screenshot-file-label:hover {
+.screenshot-upload-box:hover {
   border-color: #15803D;
   background: #F0FDF4;
 }
 
-.screenshot-preview-flex {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-
-.screenshot-thumb-img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid #86EFAC;
-}
-
-.screenshot-empty-content {
+.screenshot-empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
 }
 
-.camera-emoji {
-  font-size: 2rem;
-  line-height: 1;
+.camera-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #DCFCE7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
 }
 
-.upload-main-text {
-  font-size: 0.9rem;
+.primary-prompt {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #15803D;
+  display: block;
+}
+
+.secondary-prompt {
+  font-size: 0.74rem;
+  color: #64748B;
+  display: block;
+}
+
+.screenshot-attached-state {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+}
+
+.screenshot-attached-thumb {
+  width: 58px;
+  height: 58px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #86EFAC;
+  flex-shrink: 0;
+}
+
+.screenshot-attached-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.screenshot-attached-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
   font-weight: 700;
   color: #15803D;
 }
 
-.upload-sub-text {
-  font-size: 0.76rem;
-  color: #6B7280;
-  max-width: 340px;
-  margin: 0 auto;
+.screenshot-change-text {
+  font-size: 0.74rem;
+  color: #64748B;
+  margin-top: 3px;
 }
 
-.confirm-action-footer {
-  padding: 1rem 1.4rem;
+/* CTA and Confirmation Section */
+.pay-cta-section {
   background: #F8FAFC;
+  border-top: 1px solid #E2E8F0;
+}
+
+.kitchen-guarantee-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.kitchen-guarantee-note .note-emoji {
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.kitchen-guarantee-note p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #166534;
+  line-height: 1.45;
+}
+
+.btn-pay-card-order {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 0.8rem;
-  color: #475569;
-  border-top: 1px solid #E2E8F0;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-pay-card-order:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+}
+
+.btn-pay-card-order:active {
+  transform: translateY(0);
+}
+
+.btn-pay-card-order:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-pay-price {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: -0.2px;
 }
 
 /* ==========================================================================

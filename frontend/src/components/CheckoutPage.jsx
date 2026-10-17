@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   ArrowLeft, ShieldCheck, MapPin, Phone, User,
   Truck, CheckCircle2, AlertCircle, Loader2, Copy, Check,
-  Sparkles, CreditCard, ShoppingBag, Clock, FileText, ChevronRight, ChevronDown
+  Sparkles, CreditCard, ShoppingBag, Clock, FileText, ChevronRight, ChevronDown,
+  Smartphone, UploadCloud, Camera
 } from 'lucide-react';
 import { BRAND_INFO } from '../data/products.js';
 import { checkShiprocketRates, createOrderApi } from '../lib/api.js';
@@ -780,86 +781,93 @@ export default function CheckoutPage({
           </div>
 
           {/* Card 3: Pay via UPI & Confirm Order */}
-          <div className="checkout-card">
+          <div className="checkout-card checkout-pay-card">
             <div className="checkout-card-header">
               <div className="card-header-icon" style={{ background: '#DCFCE7', color: '#15803D' }}>
                 <CheckCircle2 size={20} />
               </div>
               <div>
-                <h3 style={{ color: '#166534' }}>3. Make Payment & Confirm Order</h3>
-                <p>Pay via UPI, attach screenshot, and confirm directly on WhatsApp.</p>
+                <h3 style={{ color: '#166534' }}>3. Payment & Confirmation</h3>
+                <p>Pay securely via UPI and confirm instantly on WhatsApp.</p>
               </div>
             </div>
 
-            <div className="pay-screenshot-card">
-              {/* Step 1: Make payment in any UPI app */}
-              <div className="upi-step-one-container">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                  <span className="pay-step-badge">Step 1</span>
-                  <span style={{ fontSize: '0.92rem', fontWeight: 700, color: '#166534' }}>
-                    Make payment in any UPI app for this UPI ID:
-                  </span>
+            <div className="pay-card-body">
+              {/* Part A: UPI Payment Section */}
+              <div className="pay-flow-section">
+                <div className="pay-section-header">
+                  <Smartphone size={18} className="pay-section-icon" />
+                  <span className="pay-section-heading">Make payment in any UPI app for this UPI ID</span>
                 </div>
 
-                <div className="upi-id-highlight-box">
-                  <div className="upi-id-val-row">
-                    <span className="upi-id-text">
-                      <strong>{BRAND_INFO.whatsappNumber}@upi</strong>
-                    </span>
+                <div className="upi-pay-card">
+                  {/* Amount highlight row */}
+                  <div className="upi-amount-row">
+                    <span className="upi-amount-label">Payable Amount</span>
+                    <span className="upi-amount-value">₹{grandTotal.toLocaleString('en-IN')}</span>
+                  </div>
+
+                  {/* UPI ID display & copy row */}
+                  <div className="upi-address-box">
+                    <div className="upi-address-info">
+                      <span className="upi-address-label">Official Kitchen UPI ID</span>
+                      <span className="upi-address-text">{BRAND_INFO.whatsappNumber}@upi</span>
+                    </div>
                     <button
                       type="button"
                       onClick={handleCopyUpi}
-                      className="copy-upi-btn"
+                      className={`btn-copy-upi ${isCopiedUpi ? 'copied' : ''}`}
                       title="Copy UPI ID"
                     >
-                      {isCopiedUpi ? <Check size={14} color="#15803D" /> : <Copy size={14} />}
-                      <span>{isCopiedUpi ? 'Copied to Clipboard!' : 'Copy UPI ID'}</span>
+                      {isCopiedUpi ? <Check size={15} /> : <Copy size={15} />}
+                      <span>{isCopiedUpi ? 'Copied!' : 'Copy UPI ID'}</span>
                     </button>
                   </div>
-                  <div className="upi-amount-hint">
-                    Total Amount to Pay: <strong>₹{grandTotal.toLocaleString('en-IN')}</strong> (Google Pay, PhonePe, Paytm, BHIM)
-                  </div>
-                </div>
 
-                {/* Quick 1-Tap UPI Launch Buttons */}
-                <div className="launch-buttons-flex" style={{ marginTop: '12px' }}>
-                  <a
-                    href={`upi://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
-                    className="upi-app-btn gpay"
-                  >
-                    <span>Google Pay</span>
-                  </a>
-                  <a
-                    href={`phonepe://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
-                    className="upi-app-btn phonepe"
-                  >
-                    <span>PhonePe</span>
-                  </a>
-                  <a
-                    href={`paytmmp://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
-                    className="upi-app-btn paytm"
-                  >
-                    <span>Paytm</span>
-                  </a>
-                  <a
-                    href={`upi://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
-                    className="upi-app-btn upi-generic"
-                  >
-                    <span>Any UPI App</span>
-                  </a>
+                  {/* Quick 1-Tap UPI Launch Buttons */}
+                  <div className="upi-apps-launch-label">Tap to open UPI app on phone:</div>
+                  <div className="upi-apps-grid">
+                    <a
+                      href={`upi://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                      className="upi-app-link gpay-link"
+                    >
+                      <span className="upi-dot" style={{ background: '#4285F4' }} />
+                      <span>Google Pay</span>
+                    </a>
+                    <a
+                      href={`phonepe://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                      className="upi-app-link phonepe-link"
+                    >
+                      <span className="upi-dot" style={{ background: '#5f259f' }} />
+                      <span>PhonePe</span>
+                    </a>
+                    <a
+                      href={`paytmmp://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                      className="upi-app-link paytm-link"
+                    >
+                      <span className="upi-dot" style={{ background: '#00baf2' }} />
+                      <span>Paytm</span>
+                    </a>
+                    <a
+                      href={`upi://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                      className="upi-app-link anyupi-link"
+                    >
+                      <span className="upi-dot" style={{ background: '#15803D' }} />
+                      <span>Any UPI App</span>
+                    </a>
+                  </div>
                 </div>
               </div>
 
-              {/* Step 2: Upload Screenshot */}
-              <div className="screenshot-drop-zone">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                  <span className="pay-step-badge" style={{ background: '#FEF3C7', color: '#92400E' }}>Step 2</span>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#374151' }}>
-                    Attach Payment Screenshot
-                  </span>
+              {/* Part B: Attach Payment Screenshot */}
+              <div className="pay-flow-section">
+                <div className="pay-section-header">
+                  <Camera size={18} className="pay-section-icon" />
+                  <span className="pay-section-heading">Attach Payment Screenshot</span>
+                  <span className="optional-tag">Optional</span>
                 </div>
 
-                <label className="screenshot-file-label">
+                <label className="screenshot-upload-box">
                   <input
                     type="file"
                     accept="image/*"
@@ -867,35 +875,57 @@ export default function CheckoutPage({
                     style={{ display: 'none' }}
                   />
                   {paymentScreenshot ? (
-                    <div className="screenshot-preview-flex">
-                      <img src={paymentScreenshot} alt="Payment Screenshot" className="screenshot-thumb-img" />
-                      <div style={{ textAlign: 'left' }}>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#15803D' }}>
-                          ✓ Payment Screenshot Attached!
+                    <div className="screenshot-attached-state">
+                      <img src={paymentScreenshot} alt="Payment Proof" className="screenshot-attached-thumb" />
+                      <div className="screenshot-attached-details">
+                        <div className="screenshot-attached-title">
+                          <CheckCircle2 size={16} color="#15803D" />
+                          <span>Payment Screenshot Attached</span>
                         </div>
-                        <div style={{ fontSize: '0.74rem', color: '#6B7280', marginTop: '2px' }}>
-                          Tap here if you wish to change image
-                        </div>
+                        <span className="screenshot-change-text">Tap to choose a different image</span>
                       </div>
                     </div>
                   ) : (
-                    <div className="screenshot-empty-content">
-                      <span className="camera-emoji">📸</span>
-                      <span className="upload-main-text">Tap to attach payment screenshot</span>
-                      <span className="upload-sub-text">
-                        Select screenshot from your gallery, or you can also share it directly in WhatsApp chat after clicking below.
-                      </span>
+                    <div className="screenshot-empty-state">
+                      <div className="camera-icon-wrapper">
+                        <UploadCloud size={22} color="#15803D" />
+                      </div>
+                      <div className="screenshot-empty-text">
+                        <span className="primary-prompt">Tap to attach payment screenshot</span>
+                        <span className="secondary-prompt">Select photo from gallery (or send in WhatsApp later)</span>
+                      </div>
                     </div>
                   )}
                 </label>
               </div>
 
-              {/* Step 3: Confirmation Info */}
-              <div className="confirm-action-footer">
-                <span className="pay-step-badge" style={{ background: '#25D366', color: '#FFFFFF' }}>Step 3</span>
-                <span>
-                  Tap <strong>Confirm & Place Order on WhatsApp</strong> below. Your order details and screenshot will be confirmed by our kitchen head!
-                </span>
+              {/* Part C: Confirmation CTA Button inside Card */}
+              <div className="pay-flow-section pay-cta-section">
+                <div className="kitchen-guarantee-note">
+                  <span className="note-emoji">💬</span>
+                  <p>
+                    Your order details, address, and screenshot will be shared directly with our kitchen head on WhatsApp for instant confirmation.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handlePlaceOrder}
+                  disabled={submitting}
+                  className="btn-pay-card-order"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 size={18} className="spin-icon" />
+                      <span>Placing Order & Opening WhatsApp...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Confirm & Place Order on WhatsApp</span>
+                      <span className="btn-pay-price">₹{grandTotal.toLocaleString('en-IN')}</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>
