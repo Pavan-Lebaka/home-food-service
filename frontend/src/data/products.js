@@ -26,15 +26,15 @@ export const FEATURED_COLLECTIONS = [
     title: 'Veg Pickles',
     subtitle: 'Avakaya, Gongura, Cauliflower & Dondakaya',
     image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220662/bramarambika_foods/veg-pickles.jpg',
-    startingPrice: 'From ₹109',
+    startingPrice: 'From ₹129',
     tag: 'Diviseema Icons'
   },
   {
     id: 'pindi-vantalu',
     title: 'Traditional Sweets',
-    subtitle: 'Arisalu, Sunnundalu, Ravva Laddu & Kajjikayalu',
+    subtitle: 'Ariselu, Sunnundalu, Ravva Laddu & Kajjikayalu',
     image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220660/bramarambika_foods/sweets.jpg',
-    startingPrice: 'From ₹79',
+    startingPrice: 'From ₹109',
     tag: 'Pure Desi Ghee'
   },
   {
@@ -43,7 +43,7 @@ export const FEATURED_COLLECTIONS = [
     title: 'Crispy Savouries',
     subtitle: 'Pappu Chekkalu, Karapusa & Karam Boondhi',
     image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220656/bramarambika_foods/savouries.jpg',
-    startingPrice: 'From ₹79',
+    startingPrice: 'From ₹109',
     tag: 'Crunchy Snacks'
   }
 ];

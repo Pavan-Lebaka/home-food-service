@@ -68,9 +68,9 @@ export default function CartDrawer({
     },
     {
       id: 'arisalu',
-      name: 'Ghee Arisalu',
-      teluguName: 'నేతి అరిసెలు (Ghee Arisalu)',
-      pricePerKg: 599,
+      name: 'Ariselu',
+      teluguName: 'అరిసెలు (Ariselu)',
+      pricePerKg: 349,
       image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220634/bramarambika_foods/arisalu.jpg'
     }
   ];

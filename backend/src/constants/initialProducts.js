@@ -43,9 +43,9 @@ export const INITIAL_PRODUCTS = [
     ingredients: 'Fresh coastal prawns, Diviseema pickle masala, Garlic, Lemon, Fenugreek, Mustard, Pure oil',
     variantPrices: {
       '250g': 349,
-      '500g': 649,
+      '500g': 699,
       '1kg': 1299,
-      '2kg': 2549
+      '2kg': 2499
     }
   },
 
@@ -56,7 +56,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'ఆవకాయ పచ్చడి (Andhra Avakaya)',
     category: 'veg-pickles',
     categoryLabel: 'Veg Pickles',
-    pricePerKg: 499,
+    pricePerKg: 449,
     unit: 'kg',
     tagline: 'Authentic fiery cut mango with pungent mustard kick',
     description: 'The monarch of Andhra pickles. Hand-selected sour mango pieces marinated in freshly milled mustard powder, Guntur fiery chillies, garlic, and cold-pressed oil.',
@@ -70,8 +70,8 @@ export const INITIAL_PRODUCTS = [
     variantPrices: {
       '250g': 129,
       '500g': 249,
-      '1kg': 499,
-      '2kg': 969
+      '1kg': 449,
+      '2kg': 869
     }
   },
   {
@@ -92,8 +92,8 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Red Gongura leaves, Garlic, Red chilli, Coriander, Fenugreek, Mustard, Groundnut oil',
     variantPrices: {
-      '250g': 119,
-      '500g': 229,
+      '250g': 129,
+      '500g': 249,
       '1kg': 449,
       '2kg': 869
     }
@@ -104,7 +104,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'నాటు టమాటా పచ్చడి',
     category: 'veg-pickles',
     categoryLabel: 'Veg Pickles',
-    pricePerKg: 429,
+    pricePerKg: 449,
     unit: 'kg',
     tagline: 'Sun-dried country tomatoes with tamarind & garlic',
     description: 'Juicy, sun-ripened farm country tomatoes simmered with aged tamarind pulp, roasted fenugreek, red chillies, and aromatic mustard seeds.',
@@ -116,10 +116,34 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Farm tomatoes, Aged tamarind, Garlic, Fenugreek, Mustard, Red chilli, Groundnut oil',
     variantPrices: {
-      '250g': 109,
-      '500g': 219,
-      '1kg': 429,
-      '2kg': 829
+      '250g': 129,
+      '500g': 249,
+      '1kg': 449,
+      '2kg': 869
+    }
+  },
+  {
+    id: 'allam-pickle',
+    name: 'Allam Pachadi (Ginger Pickle)',
+    teluguName: 'అల్లం పచ్చడి (Allam Pachadi)',
+    category: 'veg-pickles',
+    categoryLabel: 'Veg Pickles',
+    pricePerKg: 449,
+    unit: 'kg',
+    tagline: 'Traditional stone-ground ginger with jaggery & tamarind',
+    description: 'Fresh farm ginger roots ground with aged tamarind and organic country Bellam, tempered in mustard seeds and curry leaves for authentic digestive zest.',
+    badge: 'Digestive Classic',
+    image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220662/bramarambika_foods/veg-pickles.jpg',
+    taste: 'Sweet, Tangy & Zesty',
+    rating: 4.9,
+    reviewCount: 35,
+    inStock: true,
+    ingredients: 'Fresh ginger root, Organic jaggery, Aged tamarind, Red chilli, Mustard, Salt, Cold-pressed oil',
+    variantPrices: {
+      '250g': 129,
+      '500g': 249,
+      '1kg': 449,
+      '2kg': 869
     }
   },
   {
@@ -128,7 +152,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'నిమ్మకాయ పచ్చడి (Nimmakaya)',
     category: 'veg-pickles',
     categoryLabel: 'Veg Pickles',
-    pricePerKg: 429,
+    pricePerKg: 449,
     unit: 'kg',
     tagline: 'Aged thin-skinned sour lemons steeped in chilli & mustard',
     description: 'Aged thin-skinned country lemons cured in salt, then blended with finely ground mustard, roasted fenugreek, and spicy chilli powder.',
@@ -140,10 +164,10 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Thin-skinned country lemons, Sea salt, Mustard, Fenugreek, Red chilli powder, Groundnut oil',
     variantPrices: {
-      '250g': 109,
-      '500g': 219,
-      '1kg': 429,
-      '2kg': 829
+      '250g': 129,
+      '500g': 249,
+      '1kg': 449,
+      '2kg': 869
     }
   },
   {
@@ -152,7 +176,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'కాలీఫ్లవర్ ఆవకాయ',
     category: 'veg-pickles',
     categoryLabel: 'Veg Pickles',
-    pricePerKg: 469,
+    pricePerKg: 449,
     unit: 'kg',
     tagline: 'Crunchy cauliflower florets in mustard-spiced gravy',
     description: 'Fresh crisp cauliflower florets sun-dried to lock crunchiness, tossed in pungent mustard paste, lemon juice, and aromatic tempering.',
@@ -164,10 +188,10 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Crisp cauliflower, Mustard powder, Guntur chilli, Lemon, Garlic, Cold-pressed oil',
     variantPrices: {
-      '250g': 119,
-      '500g': 239,
-      '1kg': 469,
-      '2kg': 909
+      '250g': 129,
+      '500g': 249,
+      '1kg': 449,
+      '2kg': 869
     }
   },
   {
@@ -176,7 +200,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'దొండకాయ పచ్చడి (Tindora Pickle)',
     category: 'veg-pickles',
     categoryLabel: 'Veg Pickles',
-    pricePerKg: 469,
+    pricePerKg: 449,
     unit: 'kg',
     tagline: 'Hand-sliced tindora cured in traditional Andhra spices',
     description: 'Crisp green ivy gourd sliced thin and sun-cured, marinated with garlic cloves, stone-ground mustard, fenugreek, and cold-pressed oil.',
@@ -188,36 +212,36 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Tender Ivy Gourd (Tindora), Mustard, Garlic, Lemon, Fenugreek, Red chilli, Pure oil',
     variantPrices: {
-      '250g': 119,
-      '500g': 239,
-      '1kg': 469,
-      '2kg': 909
+      '250g': 129,
+      '500g': 249,
+      '1kg': 449,
+      '2kg': 869
     }
   },
 
   // --- PINDI VANTALU (SWEETS & SNACKS) ---
   {
     id: 'arisalu',
-    name: 'Ghee Arisalu',
-    teluguName: 'నేతి అరిసెలు (Ghee Arisalu)',
+    name: 'Ariselu',
+    teluguName: 'అరిసెలు (Ariselu)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu (Sweets & Snacks)',
-    pricePerKg: 599,
+    pricePerKg: 349,
     unit: 'kg',
-    tagline: 'Melt-in-mouth rice flour & organic jaggery cooked in pure cow ghee',
-    description: 'Handmade with freshly harvested wet rice flour and organic jaggery syrup, gently fried in pure desi cow ghee and topped with crunchy white sesame.',
+    tagline: 'Traditional melt-in-mouth rice flour & organic jaggery festive sweet',
+    description: 'Handmade with freshly harvested wet rice flour and organic country jaggery syrup, gently pressed and fried to golden perfection, topped with crunchy white sesame.',
     badge: 'Festive Special',
     image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220634/bramarambika_foods/arisalu.jpg',
     taste: 'Rich & Sweet',
     rating: 5.0,
     reviewCount: 78,
     inStock: true,
-    ingredients: 'Fresh wet rice flour, Organic country jaggery, Pure desi cow ghee, White sesame seeds, Cardamom',
+    ingredients: 'Fresh wet rice flour, Organic country jaggery, White sesame seeds, Cardamom, Pure cooking oil',
     variantPrices: {
-      '250g': 149,
-      '500g': 299,
-      '1kg': 599,
-      '2kg': 1169
+      '250g': 109,
+      '500g': 199,
+      '1kg': 349,
+      '2kg': 679
     }
   },
   {
@@ -226,7 +250,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'బెల్లం సున్నుండలు (Bellam Sunnundalu)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu (Sweets & Snacks)',
-    pricePerKg: 649,
+    pricePerKg: 349,
     unit: 'kg',
     tagline: 'Slow-roasted black gram & country jaggery with fragrant desi ghee',
     description: 'Protein-packed whole black gram slow-roasted on a firewood flame, ground and hand-rolled with organic Bellam (jaggery) and generous streams of desi ghee.',
@@ -238,10 +262,10 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Whole Urad Dal, Organic Bellam (Jaggery), Pure Cow Ghee, Cardamom powder',
     variantPrices: {
-      '250g': 169,
-      '500g': 329,
-      '1kg': 649,
-      '2kg': 1269
+      '250g': 109,
+      '500g': 199,
+      '1kg': 349,
+      '2kg': 679
     }
   },
   {
@@ -250,7 +274,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'కజ్జికాయలు (Kajjikayalu)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu (Sweets & Snacks)',
-    pricePerKg: 549,
+    pricePerKg: 399,
     unit: 'kg',
     tagline: 'Crispy flaky pockets stuffed with dry roasted coconut & jaggery',
     description: 'Golden-brown crescent dumplings hand-pinched and stuffed with roasted grated coconut, roasted gram, cardamom, and pure jaggery.',
@@ -262,22 +286,22 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Fine wheat flour, Dry coconut, Roasted gram (putnala pappu), Jaggery, Cardamom, Pure ghee',
     variantPrices: {
-      '250g': 139,
-      '500g': 279,
-      '1kg': 549,
-      '2kg': 1069
+      '250g': 109,
+      '500g': 199,
+      '1kg': 399,
+      '2kg': 779
     }
   },
   {
     id: 'ravva-laddu',
-    name: 'Ghee Ravva Laddu',
-    teluguName: 'రవ్వ లడ్డూ (Ghee Ravva Laddu)',
+    name: 'Ravva Laddu',
+    teluguName: 'రవ్వ లడ్డూ (Ravva Laddu)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu (Sweets & Snacks)',
-    pricePerKg: 499,
+    pricePerKg: 349,
     unit: 'kg',
-    tagline: 'Ghee-roasted semolina with golden raisins, cashews & cardamom',
-    description: 'Fine Bombay rava roasted in rich cow ghee until fragrant, infused with fresh coconut, cardamom, crunchy cashews, and golden raisins.',
+    tagline: 'Roasted semolina with golden raisins, cashews & cardamom',
+    description: 'Fine Bombay rava roasted until fragrant, infused with fresh coconut, cardamom, crunchy cashews, and golden raisins.',
     badge: 'Celebration Delight',
     image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220655/bramarambika_foods/ravva-laddu.jpg',
     taste: 'Sweet & Aromatic',
@@ -286,10 +310,10 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Roasted Semolina (Rava), Fresh coconut, Sugar, Pure Cow Ghee, Cashews, Raisins, Green cardamom',
     variantPrices: {
-      '250g': 129,
-      '500g': 249,
-      '1kg': 499,
-      '2kg': 969
+      '250g': 109,
+      '500g': 199,
+      '1kg': 349,
+      '2kg': 679
     }
   },
   {
@@ -298,7 +322,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'నేతి మైసూర్ పాక్ (Desi Ghee Mysore Pak)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu (Sweets & Snacks)',
-    pricePerKg: 699,
+    pricePerKg: 399,
     unit: 'kg',
     tagline: 'Rich, aromatic gram flour fudge slow-cooked in pure melted ghee',
     description: 'Traditional melt-in-the-mouth sweet crafted from roasted besan, caramelized sugar syrup, and abundant hot pure cow ghee.',
@@ -310,10 +334,10 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Pure Cow Ghee, Besan (Gram flour), Sugar, Cardamom essence',
     variantPrices: {
-      '250g': 179,
-      '500g': 349,
-      '1kg': 699,
-      '2kg': 1369
+      '250g': 119,
+      '500g': 219,
+      '1kg': 399,
+      '2kg': 779
     }
   },
   {
@@ -322,7 +346,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'పప్పు చెక్కలు (Pappu Chekkalu)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu (Sweets & Snacks)',
-    pricePerKg: 449,
+    pricePerKg: 349,
     unit: 'kg',
     tagline: 'Ultra-crisp rice flour discs studded with chana dal & curry leaves',
     description: 'Hand-pressed discs of spiced rice dough embedded with soaked chana dal, crushed cumin, and fresh curry leaves, fried to golden crunchiness.',
@@ -334,10 +358,10 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Rice flour, Chana dal, Cumin seeds, Curry leaves, Green chilli, Butter, Salt, Refined oil',
     variantPrices: {
-      '250g': 119,
-      '500g': 229,
-      '1kg': 449,
-      '2kg': 869
+      '250g': 109,
+      '500g': 199,
+      '1kg': 349,
+      '2kg': 679
     }
   },
   {
@@ -346,7 +370,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'కారప్పూస / జంతికలు (Karapusa)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu (Sweets & Snacks)',
-    pricePerKg: 429,
+    pricePerKg: 349,
     unit: 'kg',
     tagline: 'Crunchy golden ribbons spiced with ajwain & red chilli',
     description: 'Crispy savoury strings pressed through traditional brass moulds, spiced with aromatic carom seeds (Vamu) and roasted chilli powder.',
@@ -359,9 +383,9 @@ export const INITIAL_PRODUCTS = [
     ingredients: 'Gram flour (Besan), Rice flour, Ajwain (Vamu), Red chilli, Butter, Salt, Oil',
     variantPrices: {
       '250g': 109,
-      '500g': 219,
-      '1kg': 429,
-      '2kg': 829
+      '500g': 199,
+      '1kg': 349,
+      '2kg': 679
     }
   },
   {
@@ -370,7 +394,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'కారం బూంది (Spicy Karam Boondhi)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu (Sweets & Snacks)',
-    pricePerKg: 449,
+    pricePerKg: 349,
     unit: 'kg',
     tagline: 'Crispy gram flour pearls with roasted peanuts, cashews & garlic',
     description: 'Tiny crisp golden pearls tossed with plenty of roasted crunchy peanuts, cashews, crushed garlic, and whole crispy curry leaves.',
@@ -382,10 +406,10 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Besan, Roasted peanuts, Cashews, Garlic cloves, Curry leaves, Red chilli, Salt',
     variantPrices: {
-      '250g': 119,
-      '500g': 229,
-      '1kg': 449,
-      '2kg': 869
+      '250g': 109,
+      '500g': 199,
+      '1kg': 349,
+      '2kg': 679
     }
   },
   {
@@ -394,7 +418,7 @@ export const INITIAL_PRODUCTS = [
     teluguName: 'బెల్లం గవ్వలు (Bellam Gavvalu)',
     category: 'pindi-vantalu',
     categoryLabel: 'Pindi Vantalu (Sweets & Snacks)',
-    pricePerKg: 499,
+    pricePerKg: 349,
     unit: 'kg',
     tagline: 'Crunchy shell-shaped bites glazed in rich organic jaggery syrup',
     description: 'Hand-rolled on traditional grooved wooden boards to form sea-shell patterns, fried crisp and coated in thick, cardamom-scented Bellam syrup.',
@@ -406,10 +430,10 @@ export const INITIAL_PRODUCTS = [
     inStock: true,
     ingredients: 'Wheat flour, Fine semolina, Organic jaggery, Ghee, Green cardamom, Oil',
     variantPrices: {
-      '250g': 129,
-      '500g': 249,
-      '1kg': 499,
-      '2kg': 969
+      '250g': 109,
+      '500g': 199,
+      '1kg': 349,
+      '2kg': 679
     }
   }
 ];
