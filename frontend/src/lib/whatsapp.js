@@ -83,7 +83,7 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
   if (paymentScreenshot) {
     message += `I have attached my payment receipt for instant verification. Please confirm my order preparation & dispatch timeline. Dhanyavadalu! 🙏`;
   } else {
-    message += `Please share your verified UPI QR code or GPay/PhonePe number so I can complete payment and you can start preparing. Dhanyavadalu! 🙏`;
+    message += `Please share your verified UPI QR code or confirm UPI ID (${BRAND_INFO.upiId || '7793910819@ybl'}) so I can complete payment and you can start preparing. Dhanyavadalu! 🙏`;
   }
 
   return message;

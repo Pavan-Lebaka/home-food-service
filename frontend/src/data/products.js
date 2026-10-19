@@ -58,6 +58,7 @@ export const BRAND_INFO = {
   announcement: `FREE Delivery on Orders Above ₹2,000 • Flat ₹100 Below ₹2,000 • WhatsApp: ${import.meta.env.VITE_WHATSAPP_NUMBER || '7793910819'}`,
   whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || '7793910819',
   whatsappDisplay: import.meta.env.VITE_WHATSAPP_NUMBER || '7793910819',
+  upiId: import.meta.env.VITE_UPI_ID || '7793910819@ybl',
   phoneNumber: '9705449968',
   phoneDisplay: '9705449968',
   location: 'Andhra Pradesh, India',

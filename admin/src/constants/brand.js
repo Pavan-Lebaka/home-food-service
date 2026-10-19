@@ -25,6 +25,7 @@ export const BRAND_INFO = {
   name: 'Bramarambika Home Foods',
   tagline: 'Traditional Telugu Taste • Homemade with Love',
   whatsappNumber: '7793910819',
+  upiId: '7793910819@ybl',
   get storefrontUrl() {
     return getStorefrontUrl();
   }

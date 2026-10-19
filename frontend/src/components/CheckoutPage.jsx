@@ -215,7 +215,7 @@ export default function CheckoutPage({
   };
 
   const handleCopyUpi = () => {
-    navigator.clipboard.writeText(`${BRAND_INFO.whatsappNumber}@upi`);
+    navigator.clipboard.writeText(BRAND_INFO.upiId || '7793910819@ybl');
     setIsCopiedUpi(true);
     setTimeout(() => setIsCopiedUpi(false), 2000);
   };
@@ -828,7 +828,7 @@ export default function CheckoutPage({
                   <div className="upi-address-box">
                     <div className="upi-address-info">
                       <span className="upi-address-label">Official Kitchen UPI ID</span>
-                      <span className="upi-address-text">{BRAND_INFO.whatsappNumber}@upi</span>
+                      <span className="upi-address-text">{BRAND_INFO.upiId || '7793910819@ybl'}</span>
                     </div>
                     <button
                       type="button"
@@ -845,28 +845,28 @@ export default function CheckoutPage({
                   <div className="upi-apps-launch-label">Tap to open UPI app on phone:</div>
                   <div className="upi-apps-grid">
                     <a
-                      href={`upi://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                      href={`upi://pay?pa=${BRAND_INFO.upiId || '7793910819@ybl'}&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
                       className="upi-app-link gpay-link"
                     >
                       <span className="upi-dot" style={{ background: '#4285F4' }} />
                       <span>Google Pay</span>
                     </a>
                     <a
-                      href={`phonepe://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                      href={`phonepe://pay?pa=${BRAND_INFO.upiId || '7793910819@ybl'}&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
                       className="upi-app-link phonepe-link"
                     >
                       <span className="upi-dot" style={{ background: '#5f259f' }} />
                       <span>PhonePe</span>
                     </a>
                     <a
-                      href={`paytmmp://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                      href={`paytmmp://pay?pa=${BRAND_INFO.upiId || '7793910819@ybl'}&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
                       className="upi-app-link paytm-link"
                     >
                       <span className="upi-dot" style={{ background: '#00baf2' }} />
                       <span>Paytm</span>
                     </a>
                     <a
-                      href={`upi://pay?pa=${BRAND_INFO.whatsappNumber}@upi&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
+                      href={`upi://pay?pa=${BRAND_INFO.upiId || '7793910819@ybl'}&pn=Bramarambika+Foods&am=${grandTotal}&cu=INR&tn=Order+Delicacies`}
                       className="upi-app-link anyupi-link"
                     >
                       <span className="upi-dot" style={{ background: '#15803D' }} />

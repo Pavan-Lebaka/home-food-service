@@ -270,7 +270,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
       (order.items || []).forEach(i => {
         text += `• ${i.name} (${i.variant}) x${i.quantity}\n`;
       });
-      text += `\nTotal: ₹${order.grand_total}\n\nCould you kindly share your UPI payment screenshot to this WhatsApp number so we can start fresh preparation right away? 🙏`;
+      text += `\nTotal: ₹${order.grand_total}\nUPI ID: ${BRAND_INFO.upiId || '7793910819@ybl'}\n\nCould you kindly share your UPI payment screenshot to this WhatsApp number so we can start fresh preparation right away? 🙏`;
     }
 
     window.open(`https://wa.me/${intlPhone}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
