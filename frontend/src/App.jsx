@@ -15,6 +15,8 @@ import FloatingCart from './components/FloatingCart';
 import CheckoutPage from './components/CheckoutPage';
 import { ProductsProvider } from './context/ProductsContext';
 
+const Delicacy3DShowcase = React.lazy(() => import('./components/Delicacy3DShowcase'));
+
 export default function App() {
   const [isCheckoutView, setIsCheckoutView] = useState(() => {
     return window.location.pathname === '/checkout' || window.location.hash === '#checkout';
@@ -184,7 +186,16 @@ export default function App() {
             onSelectCategory={handleSelectCategoryFromCollections}
           />
 
-          {/* 4. Menu & Specials with Annapurna Style Product Cards & 250g, 1/2 kg, 1 kg Selectors */}
+          {/* 4. Interactive 3D Delicacy Showcase (Pickles, Sweets & Spices) */}
+          <React.Suspense fallback={null}>
+            <Delicacy3DShowcase
+              onAddToCart={handleAddToCart}
+              onOpenDetails={(p) => setModalProduct(p)}
+              onWhatsAppOrder={() => setIsCartOpen(true)}
+            />
+          </React.Suspense>
+
+          {/* 5. Menu & Specials with Annapurna Style Product Cards & 250g, 1/2 kg, 1 kg Selectors */}
           <MenuSection
             onAddToCart={handleAddToCart}
             onOpenDetails={(p) => setModalProduct(p)}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Sparkles, Leaf, ShieldCheck, Heart, PackageCheck, Flame, Gift, ArrowRight, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import Hero3DScene from './3d/Hero3DScene';
 
 const SLIDES = [
   {
@@ -145,8 +146,9 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
         })}
       </div>
 
-      {/* Hero Content Area */}
+      {/* Hero Content Area with 3D Flagship Experience */}
       <div className="container hero-content-container">
+        {/* Left Side: Brand Heading, Badges, Weight Prompts & Ordering Buttons */}
         <div className="hero-slide-caption-wrap">
           {/* Pill Badge */}
           <div className="hero-slide-tag-pill reveal-on-scroll is-revealed">
@@ -212,6 +214,11 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
               />
             ))}
           </div>
+        </div>
+
+        {/* Right Side (Desktop) / Centered (Mobile): Interactive 3D Pickle Jar Hero */}
+        <div className="hero-3d-scene-wrap" aria-label="3D Interactive Delicacy Jar">
+          <Hero3DScene />
         </div>
       </div>
 

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Minus, ShoppingCart, Check, MessageCircle, Star, Sparkles, ShieldCheck } from 'lucide-react';
+import { X, Plus, Minus, ShoppingCart, Check, MessageCircle, Star, Sparkles, ShieldCheck, Box, Image as ImageIcon } from 'lucide-react';
 import { WEIGHT_VARIANTS, getProductVariantPrice } from '../data/products';
 import { formatCurrency, getWhatsAppOrderUrl } from '../lib/whatsapp';
+
+const Product3DViewer = React.lazy(() => import('./3d/Product3DViewer'));
 
 export default function ProductModal({ product, onClose, onAddToCart }) {
   const [selectedVariantId, setSelectedVariantId] = useState('500g');
   const [packQuantity, setPackQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
+  const [viewMode, setViewMode] = useState('3d'); // '3d' or 'photo'
 
   // Strict scroll lock when product modal is active
   useEffect(() => {
@@ -64,17 +67,82 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
         </button>
 
         <div className="modal-grid-layout">
-          {/* Left: Product Image */}
+          {/* Left: Product Media with 3D / Photo Mode Switcher */}
           <div className="modal-image-col">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="modal-product-img"
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = product.category === 'pindi-vantalu' ? 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220634/bramarambika_foods/arisalu.jpg' : 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg';
-              }}
-            />
+            {/* View Mode Switcher Pill */}
+            <div className="modal-view-mode-bar" style={{
+              display: 'flex',
+              gap: '6px',
+              position: 'absolute',
+              top: '12px',
+              left: '12px',
+              zIndex: 10,
+              background: 'rgba(20, 10, 5, 0.75)',
+              backdropFilter: 'blur(8px)',
+              padding: '4px',
+              borderRadius: '20px',
+              border: '1px solid rgba(217, 154, 23, 0.3)'
+            }}>
+              <button
+                type="button"
+                onClick={() => setViewMode('3d')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '4px 10px',
+                  borderRadius: '16px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: viewMode === '3d' ? '#D99A17' : 'transparent',
+                  color: viewMode === '3d' ? '#211005' : '#f5e1c4',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <Box size={13} />
+                <span>3D View</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('photo')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '4px 10px',
+                  borderRadius: '16px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: viewMode === 'photo' ? '#D99A17' : 'transparent',
+                  color: viewMode === 'photo' ? '#211005' : '#f5e1c4',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <ImageIcon size={13} />
+                <span>Photo</span>
+              </button>
+            </div>
+
+            {viewMode === '3d' ? (
+              <React.Suspense fallback={<div style={{ height: '360px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f8d7aa' }}>Loading 3D Experience...</div>}>
+                <Product3DViewer product={product} />
+              </React.Suspense>
+            ) : (
+              <img
+                src={product.image}
+                alt={product.name}
+                className="modal-product-img"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = product.category === 'pindi-vantalu' ? 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220634/bramarambika_foods/arisalu.jpg' : 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg';
+                }}
+              />
+            )}
+
             {product.badge && (
               <div className="modal-badge-tag">
                 <Sparkles size={12} />

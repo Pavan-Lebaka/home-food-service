@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Check, Star, Sparkles, Info } from 'lucide-react';
+import { Plus, Check, Star, Sparkles, Info, Box } from 'lucide-react';
 import { WEIGHT_VARIANTS, getProductVariantPrice } from '../data/products';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -69,9 +69,30 @@ export default function ProductCard({ product, onAddToCart, onOpenDetails }) {
             </span>
           ) : <span />}
 
-          <div className="compact-rating-pill">
-            <Star size={11} fill="#E67E22" color="#E67E22" />
-            <span>{product.rating || '4.9'}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span
+              className="compact-3d-pill"
+              title="Interactive 3D Available"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '3px',
+                background: 'rgba(217, 154, 23, 0.25)',
+                color: '#ffe2a4',
+                border: '1px solid rgba(217, 154, 23, 0.45)',
+                padding: '2px 6px',
+                borderRadius: '8px',
+                fontSize: '0.65rem',
+                fontWeight: 700,
+                backdropFilter: 'blur(4px)'
+              }}
+            >
+              <Box size={9} /> 3D
+            </span>
+            <div className="compact-rating-pill">
+              <Star size={11} fill="#E67E22" color="#E67E22" />
+              <span>{product.rating || '4.9'}</span>
+            </div>
           </div>
         </div>
 
