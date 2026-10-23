@@ -124,26 +124,10 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
       onTouchEnd={handleTouchEnd}
       aria-label="Hero Highlights Carousel"
     >
-      {/* Background Slides Track */}
-      <div className="hero-slides-viewport">
-        {SLIDES.map((slide, index) => {
-          const isActive = index === currentSlide;
-          return (
-            <div
-              key={slide.id}
-              className={`hero-carousel-slide ${isActive ? 'active' : ''}`}
-              aria-hidden={!isActive}
-            >
-              <div
-                className="hero-slide-bg"
-                style={{
-                  backgroundImage: `url(${slide.image})`
-                }}
-              />
-              <div className="hero-slide-overlay" />
-            </div>
-          );
-        })}
+      {/* Unified 3D Kitchen Studio Atmosphere (eliminating conflicting 2D food photos) */}
+      <div className="hero-3d-stage-backdrop">
+        <div className="hero-ambient-glow" style={{ background: `radial-gradient(circle at 75% 45%, ${activeSlideData.accentColor}26 0%, transparent 65%)` }} />
+        <div className="hero-traditional-pattern" />
       </div>
 
       {/* Hero Content Area with 3D Flagship Experience */}
@@ -216,9 +200,9 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
           </div>
         </div>
 
-        {/* Right Side (Desktop) / Centered (Mobile): Interactive 3D Pickle Jar Hero */}
-        <div className="hero-3d-scene-wrap" aria-label="3D Interactive Delicacy Jar">
-          <Hero3DScene />
+        {/* Right Side (Desktop) / Centered (Mobile): Interactive 3D Model synchronized with slide */}
+        <div className="hero-3d-scene-wrap" aria-label="3D Interactive Delicacy Showcase">
+          <Hero3DScene currentSlide={currentSlide} />
         </div>
       </div>
 

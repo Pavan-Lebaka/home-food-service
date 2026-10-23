@@ -1,23 +1,23 @@
 import * as THREE from 'three';
 
 /**
- * Reusable Traditional Materials & Procedural Textures
+ * Reusable Traditional Food Materials & Procedural Textures
  * High visual fidelity without external bandwidth or paid assets.
  */
 
-// Generate a procedural noise bump canvas for mango / snack roughness
-function createNoiseTexture(color1 = '#ffffff', color2 = '#888888', size = 256) {
+// Procedural noise bump texture for food grain
+function createNoiseTexture(size = 256) {
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = color1;
+  ctx.fillStyle = '#808080';
   ctx.fillRect(0, 0, size, size);
 
   const imgData = ctx.getImageData(0, 0, size, size);
   const data = imgData.data;
   for (let i = 0; i < data.length; i += 4) {
-    const val = (Math.random() * 0.4 + 0.6) * 255;
+    const val = 128 + (Math.random() - 0.5) * 80;
     data[i] = val;
     data[i + 1] = val;
     data[i + 2] = val;
@@ -30,26 +30,32 @@ function createNoiseTexture(color1 = '#ffffff', color2 = '#888888', size = 256) 
   return texture;
 }
 
-// Generate sesame seed pattern
+// Procedural sesame seed texture for Ariselu
 function createSesameTexture() {
   const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 256;
+  canvas.width = 512;
+  canvas.height = 512;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#b35d1e'; // Ariselu jaggery golden base
-  ctx.fillRect(0, 0, 256, 256);
 
-  // Draw tiny white sesame seeds
-  ctx.fillStyle = '#fff9e8';
-  for (let i = 0; i < 90; i++) {
-    const x = Math.random() * 256;
-    const y = Math.random() * 256;
+  // Deep caramelized jaggery golden-brown base
+  const grad = ctx.createRadialGradient(256, 256, 50, 256, 256, 256);
+  grad.addColorStop(0, '#a84c13');
+  grad.addColorStop(0.7, '#8f3c09');
+  grad.addColorStop(1, '#662804');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 512, 512);
+
+  // Scattered roasted white sesame seeds
+  ctx.fillStyle = '#fff9e6';
+  for (let i = 0; i < 160; i++) {
+    const x = Math.random() * 512;
+    const y = Math.random() * 512;
     const angle = Math.random() * Math.PI;
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(angle);
     ctx.beginPath();
-    ctx.ellipse(0, 0, 4, 2, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 0, 6, 3, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }
@@ -58,26 +64,25 @@ function createSesameTexture() {
   return texture;
 }
 
-// Generate wooden platform ring grain
+// Procedural Teakwood platter grain
 function createWoodTexture() {
   const canvas = document.createElement('canvas');
   canvas.width = 512;
   canvas.height = 512;
   const ctx = canvas.getContext('2d');
 
-  // Radial wood grain
+  // Warm rich mahogany/teakwood radial gradient
   const grad = ctx.createRadialGradient(256, 256, 20, 256, 256, 256);
   grad.addColorStop(0, '#5a351d');
-  grad.addColorStop(0.3, '#432512');
-  grad.addColorStop(0.6, '#532f17');
-  grad.addColorStop(0.85, '#391d0d');
-  grad.addColorStop(1, '#2c1508');
+  grad.addColorStop(0.4, '#472813');
+  grad.addColorStop(0.75, '#3b1f0c');
+  grad.addColorStop(1, '#2c1507');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 512, 512);
 
-  // Subtle concentric wood rings
-  ctx.strokeStyle = 'rgba(20, 8, 3, 0.25)';
-  for (let r = 25; r < 256; r += 14 + Math.random() * 6) {
+  // Concentric tree growth rings
+  ctx.strokeStyle = 'rgba(20, 8, 3, 0.22)';
+  for (let r = 20; r < 256; r += 12 + Math.random() * 8) {
     ctx.lineWidth = 1.5 + Math.random() * 2;
     ctx.beginPath();
     ctx.arc(256, 256, r, 0, Math.PI * 2);
@@ -88,54 +93,55 @@ function createWoodTexture() {
   return texture;
 }
 
-// Generate jar label texture with authentic Telugu brand aesthetics
+// Procedural parchment label
 function createPickleLabelTexture() {
   const canvas = document.createElement('canvas');
   canvas.width = 512;
   canvas.height = 256;
   const ctx = canvas.getContext('2d');
 
-  // Parchment cream background with subtle gold border
-  ctx.fillStyle = '#fef8ea';
+  // Cream parchment
+  ctx.fillStyle = '#fffbf2';
   ctx.fillRect(0, 0, 512, 256);
 
+  // Double gold & crimson border
   ctx.strokeStyle = '#c68417';
-  ctx.lineWidth = 5;
-  ctx.strokeRect(12, 12, 488, 232);
+  ctx.lineWidth = 6;
+  ctx.strokeRect(10, 10, 492, 236);
 
-  ctx.strokeStyle = '#a83218';
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#93220e';
+  ctx.lineWidth = 2.5;
   ctx.strokeRect(18, 18, 476, 220);
 
-  // Red header banner
-  ctx.fillStyle = '#9b2813';
-  ctx.fillRect(20, 20, 472, 56);
+  // Deep crimson header bar
+  ctx.fillStyle = '#93220e';
+  ctx.fillRect(20, 20, 472, 60);
 
   ctx.fillStyle = '#ffffff';
   ctx.font = 'bold 22px serif';
   ctx.textAlign = 'center';
   ctx.fillText('BRAMARAMBIKA', 256, 46);
-  ctx.font = '13px sans-serif';
-  ctx.fillText('TRADITIONAL HOME FOODS', 256, 65);
+  ctx.font = '600 12px sans-serif';
+  ctx.fillText('TRADITIONAL TELUGU HOME FOODS', 256, 66);
 
-  // Telugu title
-  ctx.fillStyle = '#8b200b';
-  ctx.font = 'bold 28px serif';
-  ctx.fillText('ఆవకాయ పచ్చడి', 256, 122);
+  // Telugu Title
+  ctx.fillStyle = '#831b08';
+  ctx.font = 'bold 30px serif';
+  ctx.fillText('ఆవకాయ పచ్చడి', 256, 126);
 
-  // English title
-  ctx.fillStyle = '#222222';
+  // English Title
+  ctx.fillStyle = '#221108';
   ctx.font = 'bold 20px sans-serif';
-  ctx.fillText('ANDHRA AVAKAYA', 256, 154);
+  ctx.fillText('ANDHRA AVAKAYA', 256, 156);
 
-  // Trust badges
-  ctx.fillStyle = '#2b5f36';
+  // Trust pill
+  ctx.fillStyle = '#23592d';
   ctx.font = 'bold 13px sans-serif';
-  ctx.fillText('100% Homemade • Cold-Pressed Oil • Diviseema', 256, 192);
+  ctx.fillText('100% Traditional Recipe • Cold-Pressed Mustard Oil', 256, 194);
 
-  ctx.fillStyle = '#a83218';
+  ctx.fillStyle = '#93220e';
   ctx.font = 'italic 12px serif';
-  ctx.fillText('Generational Family Recipe', 256, 218);
+  ctx.fillText('Diviseema Generations', 256, 220);
 
   const texture = new THREE.CanvasTexture(canvas);
   return texture;
@@ -154,128 +160,135 @@ export function getFoodTextures() {
 }
 
 /**
- * Shared PBR material definitions
+ * PBR Material configurations
  */
 export const Materials = {
-  // Ultra-realistic clear glass jar
+  // Ultra-realistic clear glass
   glass: {
     color: '#ffffff',
-    roughness: 0.05,
-    metalness: 0.02,
-    transmission: 0.92,
-    thickness: 0.8,
+    roughness: 0.04,
+    metalness: 0.05,
+    transmission: 0.94,
+    thickness: 1.0,
     ior: 1.52,
     transparent: true,
-    opacity: 0.95
+    opacity: 0.92,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.05
   },
 
-  // Deep spiced cold-pressed mustard oil with red chilli sheen
+  // Deep spiced cold-pressed mustard oil with fiery red chilli sheen
   pickleOil: {
-    color: '#ba2904',
+    color: '#c22802',
     roughness: 0.12,
-    metalness: 0.08,
-    transmission: 0.72,
-    thickness: 1.2,
-    ior: 1.47,
+    metalness: 0.06,
+    transmission: 0.76,
+    thickness: 1.4,
+    ior: 1.48,
     transparent: true,
-    opacity: 0.88
+    opacity: 0.90
   },
 
-  // Pickled cut raw mango chunk
+  // Pickled cut raw mango chunk coated in Guntur chilli masala
   mangoChunk: {
-    color: '#d46508',
-    roughness: 0.55,
-    metalness: 0.05
+    color: '#c94206',
+    roughness: 0.32,
+    metalness: 0.04
   },
 
-  // Fresh green mango rind/slice
+  // Fresh green mango skin
   mangoSkin: {
-    color: '#5b8529',
-    roughness: 0.4,
-    metalness: 0.05
+    color: '#49731d',
+    roughness: 0.35,
+    metalness: 0.04
   },
 
-  // Rich yellow interior mango flesh
+  // Raw sour mango inner pulp
   mangoFlesh: {
-    color: '#f9a825',
-    roughness: 0.5,
+    color: '#faa01b',
+    roughness: 0.42,
     metalness: 0.02
   },
 
-  // Authentic Guntur dried red chilli
+  // Guntur dried red chilli
   redChilli: {
-    color: '#8f1503',
-    roughness: 0.32,
-    metalness: 0.1
+    color: '#8c1102',
+    roughness: 0.28,
+    metalness: 0.12,
+    clearcoat: 0.6,
+    clearcoatRoughness: 0.2
   },
 
-  // Aromatic fresh glossy curry leaves
+  // Glossy fresh curry leaves
   curryLeaf: {
     color: '#1a5423',
-    roughness: 0.35,
-    metalness: 0.05
+    roughness: 0.25,
+    metalness: 0.05,
+    clearcoat: 0.5
   },
 
-  // Traditional golden brass metal (thali, lids, bowls)
+  // Traditional golden polished brass (thali, lids, bowls)
   brass: {
-    color: '#dca33c',
-    roughness: 0.3,
-    metalness: 0.88
+    color: '#e2a73d',
+    roughness: 0.28,
+    metalness: 0.9,
+    clearcoat: 0.3
   },
 
   // Traditional wooden cutting board/pedestal
   wood: {
-    color: '#4e2f18',
-    roughness: 0.65,
+    color: '#4a2b15',
+    roughness: 0.6,
     metalness: 0.02
   },
 
   // Fried golden savoury snack crust (Chekkalu, Murukku)
   goldenSavoury: {
-    color: '#d69232',
-    roughness: 0.6,
-    metalness: 0.02
+    color: '#dc942c',
+    roughness: 0.45,
+    metalness: 0.03
   },
 
   // Bellam / Jaggery sweet glaze (Ariselu, Gavvalu)
   jaggerySweet: {
-    color: '#a44e13',
-    roughness: 0.35,
-    metalness: 0.05
+    color: '#9e460e',
+    roughness: 0.28,
+    metalness: 0.05,
+    clearcoat: 0.4
   },
 
   // Ghee roasted Urad dal laddu / Sunnundalu
   sunnundaluLaddu: {
-    color: '#ba7f3b',
-    roughness: 0.82,
-    metalness: 0.01
+    color: '#b67a36',
+    roughness: 0.75,
+    metalness: 0.02
   },
 
   // Ravva laddu semolina cream
   ravvaLaddu: {
-    color: '#ebd6b3',
-    roughness: 0.78,
+    color: '#ecdcba',
+    roughness: 0.72,
     metalness: 0.01
   },
 
   // Mysore pak ghee honeycomb fudge
   mysorePak: {
     color: '#e5ab37',
-    roughness: 0.55,
+    roughness: 0.48,
     metalness: 0.03
   },
 
   // Fresh banana leaf
   bananaLeaf: {
     color: '#347a28',
-    roughness: 0.42,
+    roughness: 0.38,
     metalness: 0.04
   },
 
   // Fine textured Podi / spice powder
   spicePowder: {
     color: '#bf360c',
-    roughness: 0.88,
+    roughness: 0.85,
     metalness: 0.0
   }
 };

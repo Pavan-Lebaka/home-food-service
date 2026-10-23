@@ -7424,6 +7424,57 @@ body.modal-open-scroll-locked {
   animation: pulseSlow 3s infinite ease-in-out;
 }
 
+/* Unified 3D Stage Backdrop */
+.hero-3d-stage-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 45%, #2a1005 0%, #150602 55%, #0a0301 100%);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.hero-ambient-glow {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  width: 650px;
+  height: 650px;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-traditional-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: radial-gradient(#dca33c 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* 3D Depth Card Animations across the site */
+.collection-card {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease !important;
+  transform-style: preserve-3d;
+}
+
+.collection-card:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  box-shadow: 0 22px 45px rgba(28, 12, 5, 0.28) !important;
+}
+
+.compact-product-card {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.25s ease !important;
+}
+
+.compact-product-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 16px 36px rgba(45, 18, 7, 0.16) !important;
+  border-color: rgba(217, 154, 23, 0.5) !important;
+}
+
 
 
 
