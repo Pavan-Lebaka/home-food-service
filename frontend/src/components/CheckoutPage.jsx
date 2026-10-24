@@ -1,18 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  ArrowLeft, ShieldCheck, MapPin, Phone, User,
+  ArrowLeft, MapPin, Phone, User,
   Truck, CheckCircle2, AlertCircle, Loader2, Copy, Check,
   Sparkles, CreditCard, ShoppingBag, Clock, FileText, ChevronRight, ChevronDown,
-  Smartphone, UploadCloud, Camera
+  Smartphone, UploadCloud, Camera, MessageCircle, PackageCheck, ShieldCheck, ShoppingCart
 } from 'lucide-react';
 import { BRAND_INFO } from '../data/products.js';
 import { checkShiprocketRates, createOrderApi, uploadImageApi } from '../lib/api.js';
 import { getWhatsAppOrderUrl } from '../lib/whatsapp.js';
 import confetti from 'canvas-confetti';
 import './checkout.css';
-
-const FREE_DELIVERY_THRESHOLD = 2000;
-const STANDARD_DELIVERY_FEE = 100;
 
 // Smart scoring function to dynamically auto-select the best, cheapest, and fastest courier
 function findBestCourier(couriers = [], isCod = false) {
@@ -68,6 +65,8 @@ export default function CheckoutPage({
     } catch (e) { }
   }, []);
 
+
+
   // Shipping & Courier state
   const [checkingShipping, setCheckingShipping] = useState(false);
   const [shippingData, setShippingData] = useState(null);
@@ -107,14 +106,11 @@ export default function CheckoutPage({
     }, 0);
   }, [cartItems]);
 
-  const isFreeDelivery = itemsSubtotal >= FREE_DELIVERY_THRESHOLD;
-
-  // Flat standard delivery fee: Free above ₹2,000, flat ₹100 below ₹2,000
-  const deliveryFee = useMemo(() => {
-    return isFreeDelivery ? 0 : STANDARD_DELIVERY_FEE;
-  }, [isFreeDelivery]);
-
-  const grandTotal = itemsSubtotal + deliveryFee;
+  const courierRate = selectedCourier?.rate;
+  const deliveryFee = courierRate !== null && courierRate !== undefined && Number.isFinite(Number(courierRate))
+    ? Number(courierRate)
+    : null;
+  const grandTotal = itemsSubtotal + (deliveryFee || 0);
 
   // Clean navigation back to store
   const handleBackToStore = () => {
@@ -150,20 +146,12 @@ export default function CheckoutPage({
             setSelectedCourier(best);
           } else {
             setShippingData(null);
-            setSelectedCourier({
-              name: 'Express Courier Network',
-              estimatedDays: '1-2 Days',
-              isCodAvailable: true
-            });
+            setSelectedCourier(null);
           }
         })
         .catch(() => {
           setShippingData(null);
-          setSelectedCourier({
-            name: 'Standard Express Courier',
-            estimatedDays: '2-3 Days',
-            isCodAvailable: true
-          });
+          setSelectedCourier(null);
         })
         .finally(() => {
           setCheckingShipping(false);
@@ -227,6 +215,7 @@ export default function CheckoutPage({
     const cleanPhone = formData.phone.replace(/\D/g, '');
     if (!cleanPhone || cleanPhone.length < 10) newErrors.phone = 'Please enter a valid 10-digit mobile number';
     if (!formData.address.trim()) newErrors.address = 'Please enter your delivery street address';
+    if (!formData.city.trim()) newErrors.city = 'Please enter your city or town';
     const cleanPin = formData.pincode.replace(/\D/g, '');
     if (!cleanPin || cleanPin.length !== 6) newErrors.pincode = 'Please enter a valid 6-digit Indian PIN code';
 
@@ -239,7 +228,7 @@ export default function CheckoutPage({
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setTimeout(() => targetEl.focus(), 300);
       }
-      setFormWarning('⚠️ Please fill in your delivery details above (Name, Phone & Address) to place order.');
+      setFormWarning('Please complete the required contact and delivery details above to continue.');
       return false;
     }
 
@@ -250,6 +239,7 @@ export default function CheckoutPage({
   // Submit Order to Backend
   const handlePlaceOrder = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
+    if (submitting) return;
     if (!validateForm()) return;
     if (cartItems.length === 0) return;
 
@@ -293,10 +283,10 @@ export default function CheckoutPage({
         };
       }),
       subtotal: itemsSubtotal,
-      delivery_fee: deliveryFee,
+      delivery_fee: deliveryFee ?? 0,
       grand_total: grandTotal,
-      courier_name: selectedCourier ? selectedCourier.name : 'Standard Express Delivery',
-      estimated_delivery: '3-5 Days (1-2d fresh prep + 2-3d transit)',
+      courier_name: selectedCourier?.name || null,
+      estimated_delivery: selectedCourier?.estimatedDays || null,
       payment_method: 'WHATSAPP_UPI',
       payment_status: finalReceiptUrl ? 'Screenshot Submitted' : 'Verification Pending',
       payment_screenshot: finalReceiptUrl
@@ -304,10 +294,7 @@ export default function CheckoutPage({
 
     try {
       const result = await createOrderApi(orderPayload);
-      const placedOrder = result?.order || {
-        ...orderPayload,
-        id: 'ORD-' + Date.now().toString(36).toUpperCase()
-      };
+      const placedOrder = result?.order || orderPayload;
 
       setCreatedOrder(placedOrder);
       onClearCart && onClearCart();
@@ -321,7 +308,7 @@ export default function CheckoutPage({
         pincode: placedOrder.pincode,
         courierName: placedOrder.courier_name,
         estimatedDelivery: placedOrder.estimated_delivery,
-        deliveryFee: placedOrder.delivery_fee,
+        deliveryFee: selectedCourier ? placedOrder.delivery_fee : undefined,
         paymentMethod: placedOrder.payment_method,
         notes: placedOrder.notes,
         paymentScreenshot: placedOrder.payment_screenshot || finalReceiptUrl
@@ -370,7 +357,7 @@ export default function CheckoutPage({
               <span className="checkout-brand-diya">🪔</span>
               <div>
                 <div className="checkout-brand-title">Bramarambika Home Foods</div>
-                <div className="checkout-brand-sub">Secure Kitchen Checkout</div>
+                <div className="checkout-brand-sub">Order request</div>
               </div>
             </div>
             <button type="button" onClick={onBackToStore} className="checkout-back-link">
@@ -411,7 +398,7 @@ export default function CheckoutPage({
       pincode: createdOrder.pincode,
       courierName: createdOrder.courier_name,
       estimatedDelivery: createdOrder.estimated_delivery,
-      deliveryFee: createdOrder.delivery_fee,
+      deliveryFee: createdOrder.courier_name ? createdOrder.delivery_fee : undefined,
       paymentMethod: createdOrder.payment_method,
       notes: createdOrder.notes
     });
@@ -439,38 +426,19 @@ export default function CheckoutPage({
             <div className="success-icon-wrap" style={{ background: '#DCFCE7', color: '#15803D' }}>
               <CheckCircle2 size={44} />
             </div>
-            <h2 className="success-title">Order Received & Acknowledged!</h2>
+            <h2 className="success-title">Order request saved</h2>
             <p style={{ color: '#4B5563', fontSize: '1rem', marginBottom: '1rem' }}>
-              Thank you, <strong>{createdOrder.customer_name}</strong>! Your order has been registered in our kitchen management system.
+              Thank you, <strong>{createdOrder.customer_name}</strong>. Your website request has been saved. Send it to the kitchen on WhatsApp to continue; the kitchen still needs to confirm your order.
             </p>
 
-            <div className="order-id-chip" style={{ background: '#FFF9F6', border: '1.5px dashed #8C2F1C', padding: '8px 16px', borderRadius: '10px', display: 'inline-block', marginBottom: '1.25rem' }}>
-              <span style={{ color: '#6B7280', fontSize: '0.85rem' }}>Official Kitchen Order ID: </span>
+            {createdOrder.id && <div className="order-id-chip" style={{ background: '#FFF9F6', border: '1.5px dashed #8C2F1C', padding: '8px 16px', borderRadius: '10px', display: 'inline-block', marginBottom: '1.25rem' }}>
+              <span style={{ color: '#6B7280', fontSize: '0.85rem' }}>Website reference: </span>
               <strong style={{ color: '#8C2F1C', fontSize: '1.05rem', letterSpacing: '0.5px' }}>#{createdOrder.id}</strong>
-            </div>
+            </div>}
 
-            {/* Delivery Tracking Step Progress */}
-            <div className="tracking-timeline">
-              <div className="timeline-step completed">
-                <div className="timeline-dot"><Check size={18} /></div>
-                <div className="timeline-label">Registered</div>
-                <div className="timeline-sub">Kitchen Database</div>
-              </div>
-              <div className="timeline-step active">
-                <div className="timeline-dot"><Clock size={18} /></div>
-                <div className="timeline-label">WhatsApp Notice</div>
-                <div className="timeline-sub">Confirmation Sent</div>
-              </div>
-              <div className="timeline-step">
-                <div className="timeline-dot"><Truck size={18} /></div>
-                <div className="timeline-label">{createdOrder.courier_name || 'Courier'}</div>
-                <div className="timeline-sub">{createdOrder.estimated_delivery || '1-3 Days'}</div>
-              </div>
-              <div className="timeline-step">
-                <div className="timeline-dot"><MapPin size={18} /></div>
-                <div className="timeline-label">Delivered</div>
-                <div className="timeline-sub">Doorstep Delivery</div>
-              </div>
+            <div className="tracking-timeline request-next-steps">
+              <div className="timeline-step completed"><div className="timeline-dot"><Check size={18} /></div><div className="timeline-label">Request saved</div><div className="timeline-sub">Website reference only</div></div>
+              <div className="timeline-step active"><div className="timeline-dot"><MessageCircle size={18} /></div><div className="timeline-label">Send on WhatsApp</div><div className="timeline-sub">Kitchen confirmation is still needed</div></div>
             </div>
 
             {/* Order Receipt Card */}
@@ -503,10 +471,10 @@ export default function CheckoutPage({
                   {createdOrder.address} - {createdOrder.pincode}
                 </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.88rem' }}>
+              {createdOrder.courier_name && <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.88rem' }}>
                 <span style={{ color: '#6B7280' }}>Courier Partner:</span>
                 <strong>{createdOrder.courier_name} ({createdOrder.estimated_delivery})</strong>
-              </div>
+              </div>}
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.88rem' }}>
                 <span style={{ color: '#6B7280' }}>Payment Mode:</span>
                 <strong style={{ color: '#15803D' }}>{createdOrder.payment_method}</strong>
@@ -527,7 +495,7 @@ export default function CheckoutPage({
               )}
 
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #E5E7EB', fontSize: '1.05rem' }}>
-                <span style={{ fontWeight: 700 }}>Total Amount:</span>
+                <span style={{ fontWeight: 700 }}>{createdOrder.courier_name ? 'Total including delivery:' : 'Items subtotal:'}</span>
                 <strong style={{ color: '#8C2F1C' }}>₹{createdOrder.grand_total?.toLocaleString('en-IN')}</strong>
               </div>
             </div>
@@ -535,10 +503,10 @@ export default function CheckoutPage({
             {/* WhatsApp Confirmation Box */}
             <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '10px', padding: '12px 16px', marginBottom: '1.25rem', textAlign: 'left' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#166534', fontWeight: 700, fontSize: '0.9rem', marginBottom: '4px' }}>
-                <span>💬 WhatsApp Order Confirmation</span>
+                <span>💬 Continue your order on WhatsApp</span>
               </div>
               <p style={{ margin: 0, fontSize: '0.82rem', color: '#166534', lineHeight: 1.45 }}>
-                Click below to send your structured order confirmation to our WhatsApp kitchen number (<strong>{BRAND_INFO.whatsappNumber}</strong>). Our team will confirm the dispatch date!
+                Click below, then send the prepared order request to <strong>{BRAND_INFO.whatsappNumber}</strong>. Opening WhatsApp alone does not place or confirm the order. The kitchen will confirm availability, payment and delivery details with you.
               </p>
               {createdOrder.payment_screenshot && (
                 <p style={{ margin: '6px 0 0', fontSize: '0.78rem', color: '#15803D', fontWeight: 600 }}>
@@ -569,7 +537,7 @@ export default function CheckoutPage({
                   boxShadow: '0 4px 14px rgba(37, 211, 102, 0.35)'
                 }}
               >
-                <span>📲 Send Order Confirmation to Kitchen WhatsApp ({BRAND_INFO.whatsappNumber})</span>
+                <span>📲 Send Order Request to WhatsApp ({BRAND_INFO.whatsappNumber})</span>
               </a>
 
               <button
@@ -598,14 +566,14 @@ export default function CheckoutPage({
             <span className="checkout-brand-diya">🪔</span>
             <div className="checkout-brand-info">
               <div className="checkout-brand-title">Bramarambika Home Foods</div>
-              <div className="checkout-brand-sub">Express Kitchen Checkout</div>
+              <div className="checkout-brand-sub">Review & send by WhatsApp</div>
             </div>
           </div>
 
           <div className="checkout-header-right">
-            <div className="checkout-security-badge" title="Verified Kitchen Order">
-              <ShieldCheck size={15} />
-              <span>Verified Order</span>
+            <div className="checkout-security-badge" title="Continue your order on WhatsApp">
+              <MessageCircle size={15} />
+              <span>Order request</span>
             </div>
 
             <button type="button" onClick={handleBackToStore} className="checkout-back-link" title="Return to store">
@@ -646,7 +614,7 @@ export default function CheckoutPage({
               <div className="card-header-icon"><User size={20} /></div>
               <div>
                 <h3>1. Customer Details</h3>
-                <p>We need your contact information to send tracking updates & invoice.</p>
+                <p>The kitchen can use these details to follow up about your request.</p>
               </div>
             </div>
 
@@ -692,7 +660,7 @@ export default function CheckoutPage({
               <div className="card-header-icon"><MapPin size={20} /></div>
               <div>
                 <h3>2. Delivery Address</h3>
-                <p>All items are freshly packed in food-grade sealed containers from our Andhra kitchen.</p>
+                <p>Share your address so the kitchen can confirm delivery availability and details.</p>
               </div>
             </div>
 
@@ -713,7 +681,7 @@ export default function CheckoutPage({
                 {errors.address && <span className="form-error-text">{errors.address}</span>}
               </div>
 
-              <div className="form-field">
+              <div className={`form-field ${errors.city ? 'has-error' : ''}`}>
                 <label>City / Town <span className="required">*</span></label>
                 <input
                   id="field-city"
@@ -724,6 +692,7 @@ export default function CheckoutPage({
                   value={formData.city}
                   onChange={(e) => handleInputChange('city', e.target.value)}
                 />
+                {errors.city && <span className="form-error-text">{errors.city}</span>}
               </div>
 
               <div className={`form-field ${errors.pincode ? 'has-error' : ''}`}>
@@ -755,45 +724,16 @@ export default function CheckoutPage({
               />
             </div>
 
-            {/* Fresh Kitchen Preparation & Delivery Timeline */}
+            {/* Delivery availability and timing are confirmed with the kitchen. */}
             <div className="kitchen-timeline-box">
               <div className="timeline-header">
                 <span className="timeline-diya">🪔</span>
                 <div>
-                  <h4>Cooked Fresh on Order — Authentic Telugu Kitchen</h4>
-                  <p>We do not stock pre-made warehouse items. Delicacies are prepared fresh upon your order.</p>
+                  <h4>Delivery details</h4>
+                  <p>Availability, courier options, and timing are confirmed with the kitchen after you send the WhatsApp request.</p>
                 </div>
               </div>
 
-              <div className="timeline-stages">
-                <div className="stage-item">
-                  <div className="stage-num">1</div>
-                  <div className="stage-content">
-                    <span className="stage-label">Fresh Cooking & Packaging</span>
-                    <span className="stage-time">1 – 2 Business Days</span>
-                  </div>
-                </div>
-
-                <div className="stage-arrow">→</div>
-
-                <div className="stage-item">
-                  <div className="stage-num">2</div>
-                  <div className="stage-content">
-                    <span className="stage-label">Kitchen Pickup & Dispatch</span>
-                    <span className="stage-time">Delhivery / Blue Dart Express</span>
-                  </div>
-                </div>
-
-                <div className="stage-arrow">→</div>
-
-                <div className="stage-item">
-                  <div className="stage-num">3</div>
-                  <div className="stage-content">
-                    <span className="stage-label">Doorstep Arrival</span>
-                    <span className="stage-time">3 – 5 Days Total</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -805,7 +745,7 @@ export default function CheckoutPage({
               </div>
               <div>
                 <h3 style={{ color: '#166534' }}>3. Payment & Confirmation</h3>
-                <p>Pay securely via UPI and confirm instantly on WhatsApp.</p>
+                <p>Review the amount and continue on WhatsApp. The kitchen will confirm payment and order details with you.</p>
               </div>
             </div>
 
@@ -814,13 +754,13 @@ export default function CheckoutPage({
               <div className="pay-flow-section">
                 <div className="pay-section-header">
                   <Smartphone size={18} className="pay-section-icon" />
-                  <span className="pay-section-heading">Make payment in any UPI app for this UPI ID</span>
+                  <span className="pay-section-heading">{deliveryFee === null ? 'Payment details' : 'Make payment in any UPI app'}</span>
                 </div>
 
                 <div className="upi-pay-card">
                   {/* Amount highlight row */}
                   <div className="upi-amount-row">
-                    <span className="upi-amount-label">Payable Amount</span>
+                    <span className="upi-amount-label">{deliveryFee === null ? 'Items subtotal · delivery to be confirmed' : 'Total including delivery'}</span>
                     <span className="upi-amount-value">₹{grandTotal.toLocaleString('en-IN')}</span>
                   </div>
 
@@ -841,7 +781,10 @@ export default function CheckoutPage({
                     </button>
                   </div>
 
-                  {/* Quick 1-Tap UPI Launch Buttons */}
+                  {/* Payment links carry a fixed amount only after a courier quote is selected. */}
+                  {deliveryFee === null ? (
+                    <p className="checkout-delivery-note">Please wait for the kitchen to confirm the delivery fee and final payment amount before paying.</p>
+                  ) : <>
                   <div className="upi-apps-launch-label">Tap to open UPI app on phone:</div>
                   <div className="upi-apps-grid">
                     <a
@@ -873,6 +816,7 @@ export default function CheckoutPage({
                       <span>Any UPI App</span>
                     </a>
                   </div>
+                  </>}
                 </div>
               </div>
 
@@ -975,45 +919,38 @@ export default function CheckoutPage({
               </div>
 
               <div className="pricing-line">
-                <span>
-                  Courier Delivery
-                  {selectedCourier ? ` (${selectedCourier.name})` : ''}:
-                </span>
-                {isFreeDelivery ? (
-                  <strong style={{ color: '#166534' }}>FREE (Above ₹2,000) 🎉</strong>
-                ) : (
-                  <strong>₹{deliveryFee}</strong>
-                )}
-              </div>
-
-              <div className="pricing-line">
-                <span>Food-Grade Seal Packing:</span>
-                <strong style={{ color: '#166534' }}>FREE</strong>
+                <span>Delivery Fee{selectedCourier ? ` (${selectedCourier.name})` : ''}:</span>
+                <strong>{deliveryFee === null ? 'To be confirmed with kitchen' : `₹${deliveryFee.toLocaleString('en-IN')}`}</strong>
               </div>
 
               <div className="pricing-line total-line">
-                <span>Total Amount:</span>
+                <span>{deliveryFee === null ? 'Estimated Total:' : 'Total including delivery:'}</span>
                 <span>₹{grandTotal.toLocaleString('en-IN')}</span>
               </div>
+              {deliveryFee === null && (
+                <p className="checkout-delivery-note">
+                  * Delivery fee is based on your destination pincode &amp; confirmed directly on WhatsApp.
+                </p>
+              )}
             </div>
 
-            {/* Quality & Trust Badges */}
+            {/* Store navigation and ordering information */}
             <div className="summary-trust-grid">
               <div className="trust-badge-item">
-                <span>🏺</span>
-                <span>Claypot Prepared</span>
+                <PackageCheck size={14} className="trust-badge-icon" />
+                <span>Product Details</span>
               </div>
               <div className="trust-badge-item">
-                <span>🌿</span>
-                <span>Cold-Pressed Oil</span>
+                <ShieldCheck size={14} className="trust-badge-icon" />
+                <span>Pack Options</span>
               </div>
               <div className="trust-badge-item">
-                <span>📦</span>
-                <span>Leakproof Jars</span>
+                <ShoppingCart size={14} className="trust-badge-icon" />
+                <span>Cart Summary</span>
               </div>
               <div className="trust-badge-item">
-                <span>🚚</span>
-                <span>All India Express</span>
+                <MessageCircle size={14} className="trust-badge-icon" />
+                <span>WhatsApp Request</span>
               </div>
             </div>
 
@@ -1036,11 +973,11 @@ export default function CheckoutPage({
               {submitting ? (
                 <>
                   <Loader2 size={18} className="spin-icon" />
-                  <span>Placing Order & Opening WhatsApp...</span>
+                  <span>Saving request and opening WhatsApp...</span>
                 </>
               ) : (
                 <>
-                  <span>Confirm & Place Order on WhatsApp</span>
+                  <span>Continue to WhatsApp order request</span>
                   <span>(₹{grandTotal.toLocaleString('en-IN')})</span>
                 </>
               )}

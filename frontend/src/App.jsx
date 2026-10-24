@@ -5,7 +5,6 @@ import FeaturedCollections from './components/FeaturedCollections';
 import MenuSection from './components/MenuSection';
 import ProductModal from './components/ProductModal';
 import SearchModal from './components/SearchModal';
-import Testimonials from './components/Testimonials';
 import StorySection from './components/StorySection';
 import WhyUs from './components/WhyUs';
 import FinalCTA from './components/FinalCTA';
@@ -14,10 +13,11 @@ import CartDrawer from './components/CartDrawer';
 import FloatingCart from './components/FloatingCart';
 import CheckoutPage from './components/CheckoutPage';
 import { ProductsProvider } from './context/ProductsContext';
-
-const Delicacy3DShowcase = React.lazy(() => import('./components/Delicacy3DShowcase'));
+import { useScrollReveal } from './hooks/useScrollReveal';
 
 export default function App() {
+  useScrollReveal();
+
   const [isCheckoutView, setIsCheckoutView] = useState(() => {
     return window.location.pathname === '/checkout' || window.location.hash === '#checkout';
   });
@@ -186,16 +186,7 @@ export default function App() {
             onSelectCategory={handleSelectCategoryFromCollections}
           />
 
-          {/* 4. Interactive 3D Delicacy Showcase (Pickles, Sweets & Spices) */}
-          <React.Suspense fallback={null}>
-            <Delicacy3DShowcase
-              onAddToCart={handleAddToCart}
-              onOpenDetails={(p) => setModalProduct(p)}
-              onWhatsAppOrder={() => setIsCartOpen(true)}
-            />
-          </React.Suspense>
-
-          {/* 5. Menu & Specials with Annapurna Style Product Cards & 250g, 1/2 kg, 1 kg Selectors */}
+          {/* Product catalogue */}
           <MenuSection
             onAddToCart={handleAddToCart}
             onOpenDetails={(p) => setModalProduct(p)}
@@ -203,10 +194,7 @@ export default function App() {
             setActiveCategory={setActiveCategory}
           />
 
-          {/* 5. Customer Reviews Section */}
-          <Testimonials />
-
-          {/* 6. Story & Traditional Cooking Heritage */}
+          {/* Brand story */}
           <StorySection />
 
           {/* 7. Why Bramarambika Feature Cards */}
@@ -220,7 +208,7 @@ export default function App() {
         </main>
 
         {/* 9. Footer */}
-        <Footer />
+        <Footer onSelectCategory={handleSelectCategoryFromCollections} />
 
         {/* 10. Floating Cart (Desktop) & Sticky Bottom Bar (Mobile) */}
         <FloatingCart
@@ -242,6 +230,7 @@ export default function App() {
 
         {/* 12. Quick Product Details Modal */}
         <ProductModal
+          key={modalProduct?.id || 'closed'}
           product={modalProduct}
           onClose={() => setModalProduct(null)}
           onAddToCart={handleAddToCart}

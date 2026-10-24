@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Float } from '@react-three/drei';
 import * as THREE from 'three';
@@ -6,57 +6,6 @@ import SceneContainer from './SceneContainer';
 import WarmKitchenEnvironment from './WarmKitchenEnvironment';
 import PickleJarModel from './PickleJarModel';
 import SnackPlateModel from './SnackPlateModel';
-
-/**
- * Floating Golden Spice Embers / Motes in 3D Space
- */
-function SpiceEmbers({ count = 35 }) {
-  const embers = useMemo(() => {
-    const pts = [];
-    for (let i = 0; i < count; i++) {
-      pts.push({
-        pos: [
-          (Math.random() - 0.5) * 6,
-          (Math.random() - 0.5) * 4,
-          (Math.random() - 0.5) * 4
-        ],
-        speed: 0.2 + Math.random() * 0.5,
-        offset: Math.random() * Math.PI * 2,
-        size: 0.02 + Math.random() * 0.025
-      });
-    }
-    return pts;
-  }, [count]);
-
-  const groupRef = useRef();
-
-  useFrame((state) => {
-    if (!groupRef.current) return;
-    const t = state.clock.getElapsedTime();
-    groupRef.current.children.forEach((child, i) => {
-      const ember = embers[i];
-      if (ember) {
-        child.position.y = ember.pos[1] + Math.sin(t * ember.speed + ember.offset) * 0.3;
-        child.position.x = ember.pos[0] + Math.cos(t * ember.speed * 0.8 + ember.offset) * 0.15;
-      }
-    });
-  });
-
-  return (
-    <group ref={groupRef}>
-      {embers.map((ember, i) => (
-        <mesh key={i} position={ember.pos}>
-          <sphereGeometry args={[ember.size, 6, 6]} />
-          <meshBasicMaterial
-            color={i % 3 === 0 ? '#ffb347' : (i % 2 === 0 ? '#ffd700' : '#ff7a38')}
-            transparent
-            opacity={0.65}
-          />
-        </mesh>
-      ))}
-    </group>
-  );
-}
 
 /**
  * Mouse Parallax Rig
@@ -116,13 +65,13 @@ export default function Hero3DScene({ currentSlide = 0, className = '', style = 
         position: 'relative',
         width: '100%',
         height: '100%',
-        minHeight: isMobile ? '380px' : '540px',
+        minHeight: 0,
         ...style
       }}
     >
       <SceneContainer
         camera={{
-          position: [0, (isSavourySlide || isSweetsSlide) ? 1.4 : 0.4, isMobile ? 4.4 : ((isSavourySlide || isSweetsSlide) ? 3.0 : 3.6)],
+          position: [0, (isSavourySlide || isSweetsSlide) ? 1.4 : 0.4, isMobile ? 4.4 : ((isSavourySlide || isSweetsSlide) ? 4.1 : 5.0)],
           fov: isMobile ? 46 : 40
         }}
         fallbackImage="https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg"
@@ -135,9 +84,6 @@ export default function Hero3DScene({ currentSlide = 0, className = '', style = 
           groundY={(isSavourySlide || isSweetsSlide) ? -0.1 : -0.95}
         />
 
-        {/* Ambient floating golden spice motes */}
-        <SpiceEmbers count={isMobile ? 18 : 36} />
-
         <MouseParallaxRig isMobile={isMobile}>
           <Float
             speed={isMobile ? 1.1 : 1.7}
@@ -149,9 +95,9 @@ export default function Hero3DScene({ currentSlide = 0, className = '', style = 
               <PickleJarModel
                 isHero={true}
                 pickleType={currentSlide === 1 ? 'gongura' : 'avakaya'}
-                floatingIngredients={true}
+                floatingIngredients={false}
                 autoRotate={true}
-                scale={isMobile ? 1.05 : 1.2}
+                scale={isMobile ? 1.52 : 1.5}
               />
             )}
 
@@ -160,7 +106,7 @@ export default function Hero3DScene({ currentSlide = 0, className = '', style = 
                 snackId="pappu-chekkalu"
                 plateType="brass"
                 autoRotate={true}
-                scale={isMobile ? 1.15 : 1.3}
+                scale={isMobile ? 1.15 : 1.0}
               />
             )}
 
@@ -169,7 +115,7 @@ export default function Hero3DScene({ currentSlide = 0, className = '', style = 
                 snackId="arisalu"
                 plateType="brass"
                 autoRotate={true}
-                scale={isMobile ? 1.15 : 1.3}
+                scale={isMobile ? 1.15 : 1.0}
               />
             )}
           </Float>
@@ -186,33 +132,23 @@ export default function Hero3DScene({ currentSlide = 0, className = '', style = 
         />
       </SceneContainer>
 
-      {/* Interactive Micro-Hint Badge */}
+      {/* A quiet prompt keeps the canvas discoverable without competing with the food. */}
       <div
-        className="hero-3d-hint-pill"
+        className="hero-3d-hint"
         style={{
           position: 'absolute',
-          bottom: '16px',
+          bottom: '12px',
           right: isMobile ? '50%' : '20px',
           transform: isMobile ? 'translateX(50%)' : 'none',
-          background: 'rgba(22, 9, 4, 0.88)',
-          backdropFilter: 'blur(8px)',
-          border: '1px solid rgba(217, 154, 23, 0.45)',
-          borderRadius: '24px',
-          padding: '6px 14px',
-          color: '#f8d7aa',
-          fontSize: '0.75rem',
-          fontWeight: 600,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          boxShadow: '0 6px 18px rgba(0,0,0,0.5)',
+          color: '#786d61',
+          fontSize: '0.72rem',
+          fontWeight: 500,
           pointerEvents: 'none',
           whiteSpace: 'nowrap',
           zIndex: 5
         }}
       >
-        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#25D366', animation: 'pulse 1.8s infinite' }} />
-        <span>3D Interactive • Touch or Drag to Inspect</span>
+        <span>Drag to turn</span>
       </div>
     </div>
   );

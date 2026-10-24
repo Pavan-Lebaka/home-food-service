@@ -24,37 +24,31 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
     return `${index + 1}. *${item.name}* (${variantStr})${packsStr} — ₹${itemTotal.toLocaleString('en-IN')}`;
   }).join('\n');
 
-  // Delivery rule
-  const isFreeDelivery = itemsSubtotal >= 2000;
-  const deliveryFee = typeof customerDetails.deliveryFee === 'number' 
-    ? customerDetails.deliveryFee 
-    : (isFreeDelivery ? 0 : 100);
-  const grandTotal = itemsSubtotal + deliveryFee;
+  const hasDeliveryFee = typeof customerDetails.deliveryFee === 'number' && Number.isFinite(customerDetails.deliveryFee) && customerDetails.deliveryFee >= 0;
+  const deliveryFee = hasDeliveryFee ? customerDetails.deliveryFee : null;
+  const grandTotal = itemsSubtotal + (deliveryFee || 0);
 
   const orderId = customerDetails.orderId ? `#${customerDetails.orderId}` : 'New Website Order';
-  const courierInfo = customerDetails.courierName 
-    ? `${customerDetails.courierName}${customerDetails.estimatedDelivery ? ` (${customerDetails.estimatedDelivery})` : ''}` 
-    : 'Standard Express Courier';
-  const paymentMode = customerDetails.paymentMethod 
-    ? customerDetails.paymentMethod 
-    : 'Cash on Delivery / UPI';
+  const courierInfo = customerDetails.courierName
+    ? `${customerDetails.courierName}${customerDetails.estimatedDelivery ? ` (${customerDetails.estimatedDelivery})` : ''}`
+    : '';
 
-  const deliveryText = deliveryFee === 0 
-    ? 'FREE (Order above ₹2,000 🎉)' 
-    : `₹${deliveryFee}`;
+  const deliveryText = hasDeliveryFee ? `₹${deliveryFee.toLocaleString('en-IN')}` : 'To be confirmed with the kitchen';
 
   // Clean, professional, structured WhatsApp template (Universal UTF-8 safe emojis)
-  let message = `✨ *BRAMARAMBIKA HOME FOODS — ORDER CONFIRMATION* ✨\n\n`;
-  message += `Namaste! I have placed an order on your kitchen website.\n\n`;
-  message += `📋 *Order ID:* ${orderId}\n`;
+  let message = `*BRAMARAMBIKA HOME FOODS — ORDER REQUEST*\n\n`;
+  message += `Namaste! I would like to place this order. Please confirm availability and the next steps.\n\n`;
+  if (customerDetails.orderId) message += `📋 *Website reference:* ${orderId}\n`;
   message += `📅 *Date:* ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}\n\n`;
   message += `🛒 *ORDERED DELICACIES:*\n${itemsList}\n\n`;
   message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   message += `💰 *Items Subtotal:* ₹${itemsSubtotal.toLocaleString('en-IN')}\n`;
-  message += `🚚 *Courier Partner:* ${courierInfo}\n`;
+  if (courierInfo) message += `🚚 *Courier Partner:* ${courierInfo}\n`;
   message += `📦 *Delivery Fee:* ${deliveryText}\n`;
-  message += `💳 *Payment Mode:* Direct UPI on WhatsApp\n`;
-  message += `🔥 *Grand Total Payable:* ₹${grandTotal.toLocaleString('en-IN')}\n`;
+  message += `💳 *Payment:* Please confirm payment instructions with me\n`;
+  message += hasDeliveryFee
+    ? `💰 *Total Including Delivery:* ₹${grandTotal.toLocaleString('en-IN')}\n`
+    : `💰 *Items Subtotal (delivery not included):* ₹${itemsSubtotal.toLocaleString('en-IN')}\n`;
   message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
   const { name, phone, address, pincode, notes, paymentScreenshot } = customerDetails;
@@ -78,13 +72,8 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
     }
   }
 
-  message += `\n⏳ *Kitchen Timeline:* 1–2 days fresh cooking & leak-proof packaging + 2–3 days express courier transit.\n\n`;
-
-  if (paymentScreenshot) {
-    message += `I have attached my payment receipt for instant verification. Please confirm my order preparation & dispatch timeline. Dhanyavadalu! 🙏`;
-  } else {
-    message += `Please share your verified UPI QR code or confirm UPI ID (${BRAND_INFO.upiId || '7793910819@ybl'}) so I can complete payment and you can start preparing. Dhanyavadalu! 🙏`;
-  }
+  if (paymentScreenshot) message += `\n📸 A payment receipt is included for your review. Please verify it directly.\n`;
+  message += `\nI understand that opening WhatsApp does not complete the order. I will send this message to the kitchen to continue. Dhanyavadalu! 🙏`;
 
   return message;
 }

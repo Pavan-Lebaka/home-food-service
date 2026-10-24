@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Check, Star, Sparkles, Info, Box } from 'lucide-react';
+import { Plus, Check } from 'lucide-react';
 import { WEIGHT_VARIANTS, getProductVariantPrice } from '../data/products';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -40,7 +40,7 @@ export default function ProductCard({ product, onAddToCart, onOpenDetails }) {
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
           onOpenDetails && onOpenDetails(product);
         }
       }}
@@ -58,59 +58,6 @@ export default function ProductCard({ product, onAddToCart, onOpenDetails }) {
           }}
         />
 
-        {/* Top Badges */}
-        <div className="compact-media-badges">
-          {product.badge ? (
-            <span className="compact-badge-pill">
-              {product.badge === 'Hot Seller' || product.badge === 'Premium Special' ? (
-                <Sparkles size={10} className="badge-sparkle-icon" />
-              ) : null}
-              {product.badge}
-            </span>
-          ) : <span />}
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span
-              className="compact-3d-pill"
-              title="Interactive 3D Available"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '3px',
-                background: 'rgba(217, 154, 23, 0.25)',
-                color: '#ffe2a4',
-                border: '1px solid rgba(217, 154, 23, 0.45)',
-                padding: '2px 6px',
-                borderRadius: '8px',
-                fontSize: '0.65rem',
-                fontWeight: 700,
-                backdropFilter: 'blur(4px)'
-              }}
-            >
-              <Box size={9} /> 3D
-            </span>
-            <div className="compact-rating-pill">
-              <Star size={11} fill="#E67E22" color="#E67E22" />
-              <span>{product.rating || '4.9'}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Details Trigger */}
-        {onOpenDetails && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenDetails(product);
-            }}
-            className="compact-info-btn"
-            title="View ingredients & details"
-            aria-label={`View ingredients for ${product.name}`}
-          >
-            <Info size={13} />
-          </button>
-        )}
       </div>
 
       {/* Product Information Body */}
@@ -132,7 +79,7 @@ export default function ProductCard({ product, onAddToCart, onOpenDetails }) {
           aria-label="Choose weight"
           onClick={(e) => e.stopPropagation()}
         >
-          {WEIGHT_VARIANTS.filter(v => v.id !== '2kg').map(v => {
+          {WEIGHT_VARIANTS.map(v => {
             const isSelected = selectedVariantId === v.id;
             return (
               <button

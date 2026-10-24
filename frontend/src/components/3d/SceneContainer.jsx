@@ -47,12 +47,12 @@ class SceneErrorBoundary extends Component {
           justifyContent: 'center',
           height: '100%',
           minHeight: '260px',
-          background: 'radial-gradient(circle at center, #2e1208 0%, #150602 100%)',
-          color: '#f8d7aa',
+          background: '#fbf9f4',
+          color: '#30271f',
           padding: '1.5rem',
           borderRadius: '16px',
           textAlign: 'center',
-          border: '1px solid rgba(217, 154, 23, 0.2)'
+          border: '1px solid rgba(68, 54, 40, 0.14)'
         }}>
           {this.props.fallbackImage ? (
             <img
@@ -61,11 +61,11 @@ class SceneErrorBoundary extends Component {
               style={{ maxWidth: '85%', maxHeight: '200px', objectFit: 'contain', borderRadius: '12px', marginBottom: '0.75rem' }}
             />
           ) : (
-            <AlertCircle size={32} color="#D99A17" style={{ marginBottom: '0.5rem' }} />
+            <AlertCircle size={32} color="#973b2a" style={{ marginBottom: '0.5rem' }} />
           )}
           <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600 }}>Interactive 3D Preview</p>
           <span style={{ fontSize: '0.75rem', opacity: 0.8, marginTop: '4px' }}>
-            Viewing authentic handmade traditional recipe
+            Showing the product photo in place of the 3D preview.
           </span>
         </div>
       );
@@ -86,9 +86,8 @@ export function SceneLoader({ label = 'Setting up 3D Scene...' }) {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'radial-gradient(circle at center, rgba(46, 18, 8, 0.7) 0%, rgba(18, 7, 3, 0.95) 100%)',
-      backdropFilter: 'blur(4px)',
-      color: '#f8d7aa',
+      background: 'rgba(248, 245, 238, 0.94)',
+      color: '#51463c',
       zIndex: 10,
       borderRadius: 'inherit',
       pointerEvents: 'none'
@@ -97,13 +96,13 @@ export function SceneLoader({ label = 'Setting up 3D Scene...' }) {
         width: '44px',
         height: '44px',
         borderRadius: '50%',
-        border: '3px solid rgba(217, 154, 23, 0.2)',
-        borderTopColor: '#D99A17',
+        border: '3px solid rgba(68, 54, 40, 0.12)',
+        borderTopColor: '#973b2a',
         animation: 'spin 1.2s linear infinite',
         marginBottom: '12px'
       }} />
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 600 }}>
-        <Sparkles size={14} color="#D99A17" />
+        <Sparkles size={14} color="#973b2a" />
         <span>{label}</span>
       </div>
     </div>
@@ -177,6 +176,7 @@ export default function SceneContainer({
       <SceneErrorBoundary fallbackImage={fallbackImage}>
         <Suspense fallback={<SceneLoader label={loadingLabel} />}>
           <Canvas
+            frameloop={prefersReducedMotion ? 'demand' : 'always'}
             shadows={shadows}
             camera={camera}
             dpr={[1, 1.75]} // Crisp on Retina without draining mobile GPU

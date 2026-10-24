@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Sparkles, Leaf, ShieldCheck, Heart, PackageCheck, Flame, Gift, ArrowRight, MessageCircle } from 'lucide-react';
+import React, { Suspense, lazy, useState, useRef, useCallback } from 'react';
+import { Sparkles, Leaf, ShieldCheck, Heart, PackageCheck, Gift, ArrowRight, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import Hero3DScene from './3d/Hero3DScene';
+import StaticFallback from './3d/StaticFallback';
+
+const Hero3DScene = lazy(() => import('./3d/Hero3DScene'));
 
 const SLIDES = [
   {
@@ -11,9 +13,7 @@ const SLIDES = [
     subKey: 'heroSlide1Sub',
     ctaKey: 'heroSlide1Cta',
     categoryTarget: 'all',
-    image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220644/bramarambika_foods/hero.jpg', // Authentic Diviseema Feast: Arisalu, Karapusa, Kajjikayalu, Boondhi, Avakaya jar
-    accentColor: '#D99A17',
-    icon: Sparkles
+    accentColor: '#D99A17'
   },
   {
     id: 2,
@@ -22,9 +22,7 @@ const SLIDES = [
     subKey: 'heroSlide2Sub',
     ctaKey: 'heroSlide2Cta',
     categoryTarget: 'veg-pickles',
-    image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220662/bramarambika_foods/veg-pickles.jpg', // Authentic Ceramic Jaadi Jars with Avakaya, Gongura, Tomato, Allam
-    accentColor: '#A83A24',
-    icon: Flame
+    accentColor: '#A83A24'
   },
   {
     id: 3,
@@ -33,9 +31,7 @@ const SLIDES = [
     subKey: 'heroSlide4Sub',
     ctaKey: 'heroSlide4Cta',
     categoryTarget: 'pindi-vantalu',
-    image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220656/bramarambika_foods/savouries.jpg', // Authentic Crispy Pindi Vantalu: Chekkalu, Murukku, Spices
-    accentColor: '#2F5D3A',
-    icon: Leaf
+    accentColor: '#2F5D3A'
   },
   {
     id: 4,
@@ -44,9 +40,7 @@ const SLIDES = [
     subKey: 'heroSlide3Sub',
     ctaKey: 'heroSlide3Cta',
     categoryTarget: 'pindi-vantalu',
-    image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220660/bramarambika_foods/sweets.jpg', // Pure Ghee Sweets: Sunnundalu, Kajjikayalu, Ravva Laddu on Banana Leaf
-    accentColor: '#D99A17',
-    icon: Sparkles
+    accentColor: '#D99A17'
   }
 ];
 
@@ -65,15 +59,6 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
   const prevSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   }, [totalSlides]);
-
-  // Autoplay timer: advances every 4.8s
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % totalSlides);
-    }, 4800);
-
-    return () => clearInterval(timer);
-  }, [currentSlide, totalSlides]);
 
   // Handle touch swipes for mobile
   const handleTouchStart = (e) => {
@@ -97,8 +82,6 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
   };
 
   const activeSlideData = SLIDES[currentSlide];
-  const IconComponent = activeSlideData.icon;
-
   const handlePrimaryCta = () => {
     onWhatsAppClick?.();
   };
@@ -124,19 +107,15 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
       onTouchEnd={handleTouchEnd}
       aria-label="Hero Highlights Carousel"
     >
-      {/* Unified 3D Kitchen Studio Atmosphere (eliminating conflicting 2D food photos) */}
-      <div className="hero-3d-stage-backdrop">
-        <div className="hero-ambient-glow" style={{ background: `radial-gradient(circle at 75% 45%, ${activeSlideData.accentColor}26 0%, transparent 65%)` }} />
-        <div className="hero-traditional-pattern" />
-      </div>
+      {/* A quiet paper backdrop keeps the 3D food scene legible. */}
+      <div className="hero-editorial-backdrop" />
 
-      {/* Hero Content Area with 3D Flagship Experience */}
+      {/* Editorial copy paired with a lazily loaded, animated 3D scene. */}
       <div className="container hero-content-container">
         {/* Left Side: Brand Heading, Badges, Weight Prompts & Ordering Buttons */}
         <div className="hero-slide-caption-wrap">
-          {/* Pill Badge */}
+          {/* Plain editorial eyebrow */}
           <div className="hero-slide-tag-pill reveal-on-scroll is-revealed">
-            <IconComponent size={14} color={activeSlideData.accentColor} />
             <span>{t(activeSlideData.tagKey)}</span>
           </div>
 
@@ -200,31 +179,32 @@ export default function Hero({ onWhatsAppClick, onSelectCategory }) {
           </div>
         </div>
 
-        {/* Right Side (Desktop) / Centered (Mobile): Interactive 3D Model synchronized with slide */}
-        <div className="hero-3d-scene-wrap" aria-label="3D Interactive Delicacy Showcase">
-          <Hero3DScene currentSlide={currentSlide} />
+        <div className="hero-illustration-wrap">
+          <Suspense fallback={<StaticFallback className="hero-static-illustration" />}>
+            <Hero3DScene currentSlide={currentSlide} className="hero-3d-scene" />
+          </Suspense>
         </div>
       </div>
 
-      {/* Trust Highlights Bottom Strip */}
+      {/* Store information strip */}
       <div className="hero-trust-bar">
         <div className="container">
           <div className="hero-trust-grid">
             <div className="trust-bar-item">
               <Leaf size={18} className="trust-icon" />
-              <span>{t('hundredHomemade')}</span>
+              <span>Andhra pickles &amp; sweets</span>
             </div>
             <div className="trust-bar-item">
               <ShieldCheck size={18} className="trust-icon" />
-              <span>{t('noPreservatives')}</span>
+              <span>250 g to 2 kg packs</span>
             </div>
             <div className="trust-bar-item">
               <Heart size={18} className="trust-icon" />
-              <span>{t('coldPressedOils')}</span>
+              <span>Browse the full catalogue</span>
             </div>
             <div className="trust-bar-item">
               <Sparkles size={18} className="trust-icon" />
-              <span>{t('dailyFreshBatches')}</span>
+              <span>Order through WhatsApp</span>
             </div>
           </div>
         </div>

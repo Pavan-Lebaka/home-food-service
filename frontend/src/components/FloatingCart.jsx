@@ -10,9 +10,6 @@ export default function FloatingCart({ cartItems, onOpenCart }) {
     const p = item.unitPrice || item.price || item.pricePerKg || 0;
     return acc + (p * item.quantity);
   }, 0);
-  const isFreeDelivery = itemsSubtotal >= 2000;
-  const deliveryFee = isFreeDelivery ? 0 : 100;
-  const grandTotal = itemsSubtotal + deliveryFee;
 
   return (
     <>
@@ -32,9 +29,9 @@ export default function FloatingCart({ cartItems, onOpenCart }) {
           </div>
           <div className="floating-cart-text">
             <div className="floating-cart-label">
-              {isFreeDelivery ? 'Free Delivery' : 'Your Order'}
+              Items subtotal
             </div>
-            <div className="floating-cart-total">{formatCurrency(grandTotal)}</div>
+            <div className="floating-cart-total">{formatCurrency(itemsSubtotal)}</div>
           </div>
         </div>
 
@@ -56,10 +53,8 @@ export default function FloatingCart({ cartItems, onOpenCart }) {
         <div className="mobile-bar-left">
           <span className="mobile-badge-count">{totalItemsCount} packs</span>
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-            <span className="mobile-amount-val">{formatCurrency(grandTotal)}</span>
-            <span style={{ fontSize: '0.68rem', fontWeight: 600, color: isFreeDelivery ? '#86EFAC' : '#E5E7EB' }}>
-              {isFreeDelivery ? '🎉 Free Delivery' : '+ ₹100 Delivery'}
-            </span>
+            <span className="mobile-amount-val">{formatCurrency(itemsSubtotal)}</span>
+            <span className="mobile-delivery-note">Delivery confirmed on WhatsApp</span>
           </div>
         </div>
 

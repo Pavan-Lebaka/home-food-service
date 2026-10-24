@@ -4,7 +4,7 @@ import { BRAND_INFO } from '../data/products';
 import { getDirectWhatsAppChatUrl } from '../lib/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
 
-export default function Footer() {
+export default function Footer({ onSelectCategory }) {
   const { t } = useLanguage();
 
   return (
@@ -21,7 +21,7 @@ export default function Footer() {
               Traditional Telugu Taste • Homemade with Love
             </p>
             <p style={{ color: '#bca690', fontSize: '0.9rem', maxWidth: '420px', lineHeight: 1.6 }}>
-Crafted in an authentic home kitchen in T Kothapalem, Diviseema, Krishna District. Pure ingredients, slow-simmered brass cooking, and stone-ground spices delivered right to your doorstep.            </p>
+Based in T Kothapalem, Diviseema, Krishna District. Contact the kitchen to ask about products, ordering, and delivery.            </p>
           </div>
 
           {/* Quick Categories Column */}
@@ -31,17 +31,17 @@ Crafted in an authentic home kitchen in T Kothapalem, Diviseema, Krishna Distric
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.9rem', color: '#d1bfa8' }}>
               <li>
-                <a href="#pindi-vantalu-section" style={{ transition: 'color 0.2s ease' }}>
+                <a href="#menu" onClick={() => onSelectCategory?.('pindi-vantalu')} style={{ transition: 'color 0.2s ease' }}>
                   • {t('pindiVantaluFull')}
                 </a>
               </li>
               <li>
-                <a href="#veg-pickles-section" style={{ transition: 'color 0.2s ease' }}>
+                <a href="#menu" onClick={() => onSelectCategory?.('veg-pickles')} style={{ transition: 'color 0.2s ease' }}>
                   • {t('vegPicklesFull')}
                 </a>
               </li>
               <li>
-                <a href="#non-veg-pickles-section" style={{ transition: 'color 0.2s ease' }}>
+                <a href="#menu" onClick={() => onSelectCategory?.('non-veg-pickles')} style={{ transition: 'color 0.2s ease' }}>
                   • {t('nonVegPicklesFull')}
                 </a>
               </li>

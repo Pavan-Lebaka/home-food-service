@@ -6,9 +6,9 @@ export const WEIGHT_VARIANTS = [
 ];
 
 export const CATEGORIES = [
-  { id: 'all', label: 'All Specials', count: 17 },
+  { id: 'all', label: 'All Specials', count: 18 },
   { id: 'non-veg-pickles', label: 'Non-Veg Pickles', count: 2, bg: '#F1E2C5' },
-  { id: 'veg-pickles', label: 'Veg Pickles', count: 6, bg: '#E8F0E3' },
+  { id: 'veg-pickles', label: 'Veg Pickles', count: 7, bg: '#E8F0E3' },
   { id: 'pindi-vantalu', label: 'Pindi Vantalu (Sweets & Snacks)', count: 9, bg: '#FFFCF7' },
 ];
 
@@ -398,7 +398,7 @@ export const BRAND_INFO = {
   name: 'Bramarambika Home Foods',
   tagline: 'Traditional Telugu Taste • Homemade with Love',
   heroSubtitle: 'Authentic Pindi Vantalu & Homemade Pickles',
-  announcement: `FREE Delivery on Orders Above ₹2,000 • Flat ₹100 Below ₹2,000 • WhatsApp: ${import.meta.env.VITE_WHATSAPP_NUMBER || '7793910819'}`,
+  announcement: `Traditional Telugu pickles, sweets & snacks from Bramarambika Home Foods • WhatsApp: ${import.meta.env.VITE_WHATSAPP_NUMBER || '7793910819'}`,
   whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || '7793910819',
   whatsappDisplay: import.meta.env.VITE_WHATSAPP_NUMBER || '7793910819',
   upiId: import.meta.env.VITE_UPI_ID || '7793910819@ybl',
@@ -500,4 +500,3 @@ export const PROMO_GIFTS = [
     emoji: '🍯'
   }
 ];
-

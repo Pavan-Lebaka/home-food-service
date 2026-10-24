@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ShoppingCart, MessageCircle, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShoppingCart, MessageCircle, Search, Menu, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
 
@@ -11,60 +11,16 @@ export default function Navbar({
   onSelectCategory
 }) {
   const { t } = useLanguage();
-  const [currentIdx, setCurrentIdx] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const ANNOUNCEMENTS = [
-    t('ann1'),
-    t('ann2'),
-    t('ann3'),
-    t('ann4'),
-  ];
-
-  // Auto-rotate announcement carousel every 4 seconds
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIdx(prev => (prev + 1) % ANNOUNCEMENTS.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [ANNOUNCEMENTS.length]);
-
-  const handlePrev = () => {
-    setCurrentIdx(prev => (prev - 1 + ANNOUNCEMENTS.length) % ANNOUNCEMENTS.length);
-  };
-
-  const handleNext = () => {
-    setCurrentIdx(prev => (prev + 1) % ANNOUNCEMENTS.length);
-  };
 
   return (
     <>
-      {/* 1. Top Announcement Bar — Pure Carousel without dark badge bg */}
+      {/* Subtle brand note; avoids rotating unverified delivery or promotion claims. */}
       <div className="annapurna-announcement-bar">
         <div className="container announcement-carousel-row">
-          <button
-            type="button"
-            onClick={handlePrev}
-            className="announcement-arrow-btn"
-            aria-label="Previous announcement"
-          >
-            <ChevronLeft size={16} />
-          </button>
-
           <div className="announcement-carousel-track">
-            <div className="announcement-carousel-text" key={currentIdx}>
-              <span>{ANNOUNCEMENTS[currentIdx]}</span>
-            </div>
+            <div className="announcement-carousel-text">Traditional Telugu pickles, sweets &amp; snacks from Bramarambika Home Foods</div>
           </div>
-
-          <button
-            type="button"
-            onClick={handleNext}
-            className="announcement-arrow-btn"
-            aria-label="Next announcement"
-          >
-            <ChevronRight size={16} />
-          </button>
         </div>
       </div>
 
@@ -94,6 +50,8 @@ export default function Navbar({
             <a href="#hero" className="store-nav-link">{t('home')}</a>
             <a href="#collections" className="store-nav-link">{t('collections')}</a>
             <a href="#menu" className="store-nav-link" onClick={() => onSelectCategory && onSelectCategory('all')}>{t('catalog')}</a>
+            <a href="#menu" className="store-nav-link" onClick={() => onSelectCategory && onSelectCategory('veg-pickles')}>Pickles</a>
+            <a href="#menu" className="store-nav-link" onClick={() => onSelectCategory && onSelectCategory('pindi-vantalu')}>Snacks</a>
             <a href="#story" className="store-nav-link">{t('ourStory')}</a>
             <a href="#contact" className="store-nav-link">{t('contact')}</a>
           </nav>
@@ -112,6 +70,16 @@ export default function Navbar({
               title="Search menu"
             >
               <Search size={18} />
+            </button>
+
+            <button
+              type="button"
+              className="mobile-menu-trigger"
+              onClick={() => setMobileMenuOpen(open => !open)}
+              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
 
             {/* Quick WhatsApp Pill */}
@@ -142,11 +110,14 @@ export default function Navbar({
         </div>
 
         {/* Mobile Nav Bottom Links */}
-        <div className="mobile-nav-bottom-links">
+        <div className={`mobile-nav-bottom-links ${mobileMenuOpen ? 'is-open' : ''}`}>
           <a href="#hero" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{t('home')}</a>
           <a href="#collections" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{t('collections')}</a>
           <a href="#menu" className="mobile-nav-link" onClick={() => { onSelectCategory && onSelectCategory('all'); setMobileMenuOpen(false); }}>{t('catalog')}</a>
+          <a href="#menu" className="mobile-nav-link" onClick={() => { onSelectCategory && onSelectCategory('veg-pickles'); setMobileMenuOpen(false); }}>Pickles</a>
+          <a href="#menu" className="mobile-nav-link" onClick={() => { onSelectCategory && onSelectCategory('pindi-vantalu'); setMobileMenuOpen(false); }}>Snacks</a>
           <a href="#story" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{t('ourStory')}</a>
+          <a href="#contact" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{t('contact')}</a>
         </div>
       </header>
     </>

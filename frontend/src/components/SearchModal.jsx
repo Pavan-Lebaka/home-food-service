@@ -42,7 +42,7 @@ export default function SearchModal({ isOpen, onClose, onSelectProduct }) {
         (p.tagline && p.tagline.toLowerCase().includes(query.toLowerCase())) ||
         (p.categoryLabel && p.categoryLabel.toLowerCase().includes(query.toLowerCase()))
       )
-    : productList.slice(0, 5); // Default popular recommendations
+    : productList.slice(0, 5);
 
   return (
     <div className="search-modal-backdrop" onClick={onClose} role="dialog" aria-modal="true">
@@ -64,7 +64,7 @@ export default function SearchModal({ isOpen, onClose, onSelectProduct }) {
 
         <div className="search-results-list">
           <div className="search-results-heading">
-            {query.trim() ? `Search Results (${results.length})` : 'Popular Recommendations'}
+            {query.trim() ? `Search Results (${results.length})` : 'Browse products'}
           </div>
 
           {results.length === 0 ? (
@@ -98,7 +98,7 @@ export default function SearchModal({ isOpen, onClose, onSelectProduct }) {
                     <div className="result-name">{product.name}</div>
                     <div className="result-telugu">{product.teluguName}</div>
                     <div className="result-price">
-                      From ₹{halfKgPrice} <span className="price-unit">(1/2 kg)</span>
+                      ₹{halfKgPrice} <span className="price-unit">/ 1/2 kg</span>
                     </div>
                   </div>
                   <div className="result-action">

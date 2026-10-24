@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "project": {
+    "name": "bramarambika-home-foods-workspace",
+    "productType": "Telugu food ecommerce storefront",
+    "stack": ["React", "Vite", "Three.js", "React Three Fiber"]
+  },
+  "sources": {
+    "tokens": ["frontend/src/redesign.css"],
+    "components": [],
+    "assets": [],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "light",
+    "colors": {
+      "store": "#f5f1e8",
+      "surface": "#fbf9f4",
+      "ink": "#30271f",
+      "bodyText": "#51463c",
+      "terracotta": "#973b2a",
+      "leafGreen": "#48543b",
+      "turmeric": "#b88a37"
+    },
+    "typography": { "display": "Lora", "body": "Source Sans 3" },
+    "spacing": { "containerMax": "1320px", "section": "clamp(60px, 7vw, 92px)" },
+    "radius": { "card": "4px", "button": "3px" },
+    "shadows": { "cardHover": "0 9px 22px rgba(48, 39, 31, .09)" },
+    "motion": { "scrollReveal": "opacity and short upward ease", "hover": "small card lift", "3d": "animated hero and optional product detail preview", "reducedMotion": "respected" },
+    "density": "editorial"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": ["Keep the separate Delicacy 3D showcase section removed.", "Keep the animated hero scene and optional product detail 3D view.", "Use high-contrast dark text on warm cream surfaces.", "Preserve product data and ordering behavior."],
+    "avoid": ["Low-contrast text", "Generic gradient-heavy card treatments", "Invented business claims"]
+  },
+  "decisions": [
+    { "date": "2026-10-24", "decision": "Keep motion in the hero, reveal transitions, card interactions, and optional product viewer while removing the standalone 3D showcase section. Use aligned editorial cards with warm surfaces and restrained terracotta, leaf, and turmeric accents." }
+  ],
+  "evidence": [],
+  "generatedAt": "2026-10-23T20:18:23.437Z"
+}

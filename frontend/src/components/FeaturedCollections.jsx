@@ -1,6 +1,6 @@
 import React from 'react';
+import { ArrowUpRight } from 'lucide-react';
 import { FEATURED_COLLECTIONS } from '../data/products';
-import { ArrowRight, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function FeaturedCollections({ onSelectCategory }) {
@@ -9,76 +9,40 @@ export default function FeaturedCollections({ onSelectCategory }) {
   return (
     <section className="collections-showcase-section" id="collections">
       <div className="container">
-        {/* Section Heading */}
         <div className="collections-header reveal-on-scroll">
-          <div className="collection-pill-tag">
-            <Sparkles size={14} />
-            <span>{t('ourCollectionsPill')}</span>
-          </div>
-          <h2 className="collections-main-title">
-            {t('ourCollectionsTitle')}
-          </h2>
-          <p className="collections-subtitle">
-            {t('ourCollectionsSubtitle')}
-          </p>
+          <p className="section-kicker">{t('ourCollectionsPill')}</p>
+          <h2 className="collections-main-title">{t('ourCollectionsTitle')}</h2>
+          <p className="collections-subtitle">{t('ourCollectionsSubtitle')}</p>
         </div>
 
-        {/* Collections Grid */}
         <div className="collections-cards-grid">
-          {FEATURED_COLLECTIONS.map((col, idx) => {
-            const targetCat = col.categoryTarget || col.id;
+          {FEATURED_COLLECTIONS.map((collection, index) => {
+            const target = collection.categoryTarget || collection.id;
             const titleMap = {
-              'non-veg-pickles': { title: t('colNonVegTitle'), sub: t('colNonVegSub'), tag: t('colNonVegTag') },
-              'veg-pickles': { title: t('colVegTitle'), sub: t('colVegSub'), tag: t('colVegTag') },
-              'pindi-vantalu': { title: t('colSweetsTitle'), sub: t('colSweetsSub'), tag: t('colSweetsTag') },
-              'pindi-vantalu-hot': { title: t('colSavouriesTitle'), sub: t('colSavouriesSub'), tag: t('colSavouriesTag') }
+              'non-veg-pickles': { title: t('colNonVegTitle'), sub: t('colNonVegSub') },
+              'veg-pickles': { title: t('colVegTitle'), sub: t('colVegSub') },
+              'pindi-vantalu': { title: t('colSweetsTitle'), sub: t('colSweetsSub') },
+              'pindi-vantalu-hot': { title: t('colSavouriesTitle'), sub: t('colSavouriesSub') }
             };
-            const localized = titleMap[col.id] || {};
-            const cardTitle = localized.title || col.title;
-            const cardSub = localized.sub || col.subtitle;
-            const cardTag = localized.tag || col.tag;
+            const localized = titleMap[collection.id] || {};
 
             return (
-              <div
-                key={col.id}
+              <button
                 className="collection-card reveal-on-scroll"
-                style={{ animationDelay: `${idx * 0.1}s` }}
-                onClick={() => onSelectCategory(targetCat)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    onSelectCategory(targetCat);
-                  }
-                }}
+                key={collection.id}
+                type="button"
+                onClick={() => onSelectCategory(target)}
               >
-                <div className="collection-img-wrap">
-                  <img
-                    src={col.image}
-                    alt={cardTitle}
-                    className="collection-img"
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220644/bramarambika_foods/hero.jpg';
-                    }}
-                  />
-                  <div className="collection-tag-badge">
-                    {cardTag}
-                  </div>
-                </div>
-
-                <div className="collection-card-details">
-                  <h3 className="collection-card-title">{cardTitle}</h3>
-                  <p className="collection-card-sub">{cardSub}</p>
-                  <div className="collection-card-action">
-                    <span className="collection-price-hint">{col.startingPrice}</span>
-                    <span className="collection-explore-btn">
-                      {t('shopCollection')} <ArrowRight size={14} />
-                    </span>
-                  </div>
-                </div>
-              </div>
+                <span className="collection-index">0{index + 1}</span>
+                <span className="collection-card-main">
+                  <span className="collection-card-title">{localized.title || collection.title}</span>
+                  <span className="collection-card-sub">{localized.sub || collection.subtitle}</span>
+                  <span className="collection-card-action">
+                    <span className="collection-price-hint">{collection.startingPrice}</span>
+                    <span className="collection-explore-btn">{t('shopCollection')} <ArrowUpRight size={16} /></span>
+                  </span>
+                </span>
+              </button>
             );
           })}
         </div>

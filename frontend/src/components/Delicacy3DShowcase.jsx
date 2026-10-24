@@ -1,109 +1,93 @@
-import React, { useState } from 'react';
-import { Sparkles, ShoppingBag, MessageCircle, RotateCcw, Flame, Leaf, Award } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Sparkles, ShoppingBag, RotateCcw, Flame, Leaf } from 'lucide-react';
 import SceneContainer from './3d/SceneContainer';
 import WarmKitchenEnvironment from './3d/WarmKitchenEnvironment';
 import PickleJarModel from './3d/PickleJarModel';
 import SnackPlateModel from './3d/SnackPlateModel';
-import SpiceBowlModel from './3d/SpiceBowlModel';
 import { OrbitControls, Float } from '@react-three/drei';
-import { useLanguage } from '../context/LanguageContext';
-import { getProductVariantPrice } from '../data/products';
+import { getProductVariantPrice, PRODUCTS } from '../data/products';
+import { useProducts } from '../context/ProductsContext';
 
 const SHOWCASE_TABS = [
   {
     id: 'avakaya',
-    title: 'Andhra Avakaya',
-    teluguTitle: 'ఆవకాయ పచ్చడి',
-    category: 'veg-pickles',
     productId: 'avakaya-pickle',
     type: 'pickle',
     pickleType: 'avakaya',
     icon: Flame,
     color: '#D99A17',
-    badge: 'Flagship Monarch',
-    highlight: 'Sour raw mango pieces, Guntur red chilli powder, stone-ground mustard, garlic & cold-pressed oil.',
-    pricePerKg: 449,
-    startingPrice: '₹129 for 250g'
+    badge: 'Vegetable pickle',
   },
   {
     id: 'arisalu',
-    title: 'Traditional Ariselu',
-    teluguTitle: 'సంప్రదాయ అరిసెలు',
-    category: 'pindi-vantalu',
     productId: 'arisalu',
     type: 'snack',
     snackId: 'arisalu',
     icon: Sparkles,
     color: '#A83A24',
-    badge: 'Festive Sweet',
-    highlight: 'Wet harvested rice flour, pure organic Bellam jaggery syrup, cardamom, and toasted white sesame crust.',
-    pricePerKg: 349,
-    startingPrice: '₹109 for 250g'
+    badge: 'Traditional sweet',
   },
   {
     id: 'chekkalu',
-    title: 'Pappu Chekkalu',
-    teluguTitle: 'పప్పు చెక్కలు',
-    category: 'pindi-vantalu',
     productId: 'pappu-chekkalu',
     type: 'snack',
     snackId: 'pappu-chekkalu',
     icon: Leaf,
     color: '#2F5D3A',
-    badge: 'Tea-Time Classic',
-    highlight: 'Hand-pressed spiced rice discs studded with soaked chana dal lentils, cumin seeds and aromatic curry leaves.',
-    pricePerKg: 349,
-    startingPrice: '₹109 for 250g'
+    badge: 'Traditional savoury',
   },
   {
-    id: 'spices',
-    title: 'Traditional Spices & Podis',
-    teluguTitle: 'సంప్రదాయ కారప్పొడులు & సుగంధాలు',
-    category: 'spices',
-    productId: 'spices',
-    type: 'podi',
-    podiType: 'karampodi',
-    icon: Award,
-    color: '#E67E22',
-    badge: 'Aroma Heritage',
-    highlight: 'Slow-roasted Guntur chillies, aromatic curry leaves, cumin, coriander and garlic ground on stone pestles.',
-    pricePerKg: 399,
-    startingPrice: 'Aromatic Spice Heritage'
+    id: 'chicken',
+    productId: 'chicken-pickle',
+    type: 'pickle',
+    pickleType: 'chicken',
+    icon: Flame,
+    color: '#9F3928',
+    badge: 'Non-vegetarian pickle',
   }
 ];
 
 export default function Delicacy3DShowcase({ onAddToCart, onOpenDetails, onWhatsAppOrder }) {
-  const { t } = useLanguage();
+  const { products } = useProducts();
+  const sectionRef = useRef(null);
+  const [shouldRenderScene, setShouldRenderScene] = useState(false);
   const [activeTabId, setActiveTabId] = useState('avakaya');
-  const activeTab = SHOWCASE_TABS.find(t => t.id === activeTabId) || SHOWCASE_TABS[0];
+  const catalogProducts = products?.length ? products : PRODUCTS;
+  const visibleTabs = SHOWCASE_TABS.filter(tab => catalogProducts.some(product => product.id === tab.productId));
+  const activeTab = visibleTabs.find(tab => tab.id === activeTabId) || visibleTabs[0] || SHOWCASE_TABS[0];
+  const activeProduct = catalogProducts.find(product => product.id === activeTab.productId);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || shouldRenderScene) return undefined;
+    if (!('IntersectionObserver' in window)) {
+      setShouldRenderScene(true);
+      return undefined;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setShouldRenderScene(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: '240px 0px' });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [shouldRenderScene]);
 
   const handleAddActive = (e) => {
     e.stopPropagation();
-    if (activeTab.productId === 'spices') {
-      const menuEl = document.getElementById('menu');
-      menuEl?.scrollIntoView({ behavior: 'smooth' });
-      return;
-    }
-    // Fake mini-product payload to match handleAddToCart
-    const mockProduct = {
-      id: activeTab.productId,
-      name: activeTab.title,
-      teluguName: activeTab.teluguTitle,
-      category: activeTab.category,
-      pricePerKg: activeTab.pricePerKg,
-      image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'
-    };
+    if (!activeProduct) return;
     onAddToCart?.({
-      product: mockProduct,
+      product: activeProduct,
       variantId: '500g',
       variantLabel: '1/2 kg',
-      unitPrice: Math.round(activeTab.pricePerKg * 0.5),
+      unitPrice: getProductVariantPrice(activeProduct, '500g'),
       quantity: 1
     });
   };
 
   return (
-    <section className="delicacy-3d-showcase-section" aria-label="Interactive 3D Food Experience">
+    <section ref={sectionRef} className="delicacy-3d-showcase-section" aria-label="Interactive 3D Food Experience">
       <div className="container">
         {/* Section Header */}
         <div className="section-header text-center" style={{ marginBottom: '2.5rem' }}>
@@ -121,7 +105,7 @@ export default function Delicacy3DShowcase({ onAddToCart, onOpenDetails, onWhats
 
         {/* Tab Navigation Pill Bar */}
         <div className="showcase-tabs-bar" role="tablist">
-          {SHOWCASE_TABS.map(tab => {
+          {visibleTabs.map(tab => {
             const Icon = tab.icon;
             const isActive = tab.id === activeTabId;
             return (
@@ -133,7 +117,7 @@ export default function Delicacy3DShowcase({ onAddToCart, onOpenDetails, onWhats
                 className={`showcase-tab-btn ${isActive ? 'active' : ''}`}
               >
                 <Icon size={16} color={isActive ? '#FFFFFF' : tab.color} />
-                <span>{tab.title}</span>
+                <span>{catalogProducts.find(product => product.id === tab.productId)?.name}</span>
               </button>
             );
           })}
@@ -144,12 +128,12 @@ export default function Delicacy3DShowcase({ onAddToCart, onOpenDetails, onWhats
           <div className="showcase-stage-grid">
             {/* Left / Center: Interactive 3D Canvas */}
             <div className="showcase-canvas-col">
-              <SceneContainer
+              {shouldRenderScene ? <SceneContainer
                 camera={{
                   position: [0, activeTab.type === 'snack' ? 1.6 : 0.8, activeTab.type === 'snack' ? 2.8 : 3.4],
                   fov: 42
                 }}
-                loadingLabel={`Preparing 3D ${activeTab.title}...`}
+                loadingLabel={`Preparing 3D ${activeProduct?.name}...`}
                 style={{ height: '420px', minHeight: '380px', borderRadius: '16px' }}
               >
                 <WarmKitchenEnvironment
@@ -184,13 +168,6 @@ export default function Delicacy3DShowcase({ onAddToCart, onOpenDetails, onWhats
                     />
                   )}
 
-                  {activeTab.type === 'podi' && (
-                    <SpiceBowlModel
-                      podiType={activeTab.podiType}
-                      autoRotate={true}
-                      scale={1.25}
-                    />
-                  )}
                 </Float>
 
                 <OrbitControls
@@ -201,7 +178,7 @@ export default function Delicacy3DShowcase({ onAddToCart, onOpenDetails, onWhats
                   rotateSpeed={0.7}
                   dampingFactor={0.06}
                 />
-              </SceneContainer>
+              </SceneContainer> : <div className="showcase-static-preview"><img src={activeProduct?.image} alt={activeProduct?.name || 'Product preview'} loading="lazy" /><span>Interactive 3D preview loads as you explore</span></div>}
 
               {/* Interaction Hint */}
               <div className="showcase-hint-badge">
@@ -218,50 +195,35 @@ export default function Delicacy3DShowcase({ onAddToCart, onOpenDetails, onWhats
               </div>
 
               <h3 className="showcase-food-title">
-                {activeTab.title}
+                {activeProduct?.name}
               </h3>
               <div className="showcase-food-telugu">
-                {activeTab.teluguTitle}
+                {activeProduct?.teluguName}
               </div>
 
               <p className="showcase-food-desc">
-                {activeTab.highlight}
+                {activeProduct?.description}
               </p>
 
-              <div className="showcase-features-list">
-                <div className="showcase-feat-item">
-                  <span className="check">✓</span>
-                  <span>Pure cold-pressed groundnut oil & desi ghee</span>
-                </div>
-                <div className="showcase-feat-item">
-                  <span className="check">✓</span>
-                  <span>Zero preservatives or commercial additives</span>
-                </div>
-                <div className="showcase-feat-item">
-                  <span className="check">✓</span>
-                  <span>Leak-proof hygienic 5-layer food grade packing</span>
-                </div>
-              </div>
+              {activeProduct?.ingredients && <div className="showcase-features-list"><div className="showcase-feat-item"><span className="check">✓</span><span>{activeProduct.ingredients}</span></div></div>}
 
               <div className="showcase-pricing-row">
                 <div>
-                  <span className="starting-label">Fresh Batches: </span>
-                  <span className="price-tag">{activeTab.startingPrice}</span>
+                  <span className="starting-label">Available from </span>
+                  <span className="price-tag">From ₹{getProductVariantPrice(activeProduct, '250g')} / 250 g</span>
                 </div>
               </div>
 
               {/* Real HTML Buttons — 3D never blocks shopping actions */}
               <div className="showcase-action-btns">
-                {activeTab.productId !== 'spices' && (
-                  <button
+                <button
                     type="button"
                     onClick={handleAddActive}
                     className="showcase-add-cart-btn"
                   >
                     <ShoppingBag size={16} />
-                    <span>Add 1/2 kg to Cart • ₹{Math.round(activeTab.pricePerKg * 0.5)}</span>
-                  </button>
-                )}
+                    <span>Add 1/2 kg to Cart • ₹{getProductVariantPrice(activeProduct, '500g')}</span>
+                </button>
 
                 <button
                   type="button"

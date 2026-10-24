@@ -104,8 +104,10 @@ export default function Product3DViewer({
 
         {interactive && (
           <OrbitControls
-            enableZoom={false}
+            enableZoom={true}
             enablePan={false}
+            minDistance={2.4}
+            maxDistance={4.5}
             minPolarAngle={Math.PI / 4}
             maxPolarAngle={Math.PI / 1.9}
             rotateSpeed={0.7}

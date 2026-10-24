@@ -1,15 +1,13 @@
 import React, { useEffect } from 'react';
 import {
-  X, Plus, Minus, Trash2, MessageCircle, Sparkles, ShoppingCart,
+  X, Plus, Minus, Trash2, MessageCircle, ShoppingCart,
   ArrowRight, ShieldCheck, Truck, ShoppingBag, ArrowUpRight
 } from 'lucide-react';
 import { getWhatsAppOrderUrl } from '../lib/whatsapp.js';
 import { BRAND_INFO } from '../data/products.js';
 import { useLanguage } from '../context/LanguageContext';
 import { useProducts } from '../context/ProductsContext';
-
-const FREE_DELIVERY_THRESHOLD = 2000;
-const STANDARD_DELIVERY_FEE = 100;
+import { PRODUCTS } from '../data/products';
 
 export default function CartDrawer({
   isOpen,
@@ -44,41 +42,13 @@ export default function CartDrawer({
     return acc + (price * item.quantity);
   }, 0);
 
-  const isFreeDelivery = itemsSubtotal >= FREE_DELIVERY_THRESHOLD;
-  const deliveryFee = cartItems.length === 0 ? 0 : (isFreeDelivery ? 0 : STANDARD_DELIVERY_FEE);
-  const grandTotal = itemsSubtotal + deliveryFee;
-  const amountNeededForFree = Math.max(0, FREE_DELIVERY_THRESHOLD - itemsSubtotal);
-  const freeDeliveryProgress = Math.min(100, Math.round((itemsSubtotal / FREE_DELIVERY_THRESHOLD) * 100));
+  const grandTotal = itemsSubtotal;
 
   // Quick picks if cart is empty (Authentic classics: Chicken Pickle, Avakaya, Arisalu)
-  const fallbackQuickPicks = [
-    {
-      id: 'chicken-pickle',
-      name: 'Chicken Pickle',
-      teluguName: 'నాటుకోడి తరహా చికెన్ పచ్చడి',
-      pricePerKg: 999,
-      image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220639/bramarambika_foods/chicken-pickle.jpg'
-    },
-    {
-      id: 'avakaya-pickle',
-      name: 'Andhra Avakaya (Cut Mango)',
-      teluguName: 'ఆవకాయ పచ్చడి (Andhra Avakaya)',
-      pricePerKg: 499,
-      image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220635/bramarambika_foods/avakaya.jpg'
-    },
-    {
-      id: 'arisalu',
-      name: 'Ariselu',
-      teluguName: 'అరిసెలు (Ariselu)',
-      pricePerKg: 349,
-      image: 'https://res.cloudinary.com/z2iepqai/image/upload/v1792220634/bramarambika_foods/arisalu.jpg'
-    }
-  ];
-
-  const candidateItems = (products || []).filter(p =>
+  const candidateItems = ((products && products.length) ? products : PRODUCTS).filter(p =>
     ['chicken-pickle', 'avakaya-pickle', 'arisalu', 'sunnundalu', 'pappu-chekkalu'].includes(p.id)
   );
-  const quickPickItems = candidateItems.length > 0 ? candidateItems.slice(0, 3) : fallbackQuickPicks;
+  const quickPickItems = candidateItems.slice(0, 3);
 
   const handleBrowseMenu = () => {
     onClose();
@@ -155,7 +125,7 @@ export default function CartDrawer({
               <div className="empty-quickpicks-section">
                 <div className="quickpicks-header-row">
                   <span className="quickpicks-diya">🪔</span>
-                  <span className="quickpicks-title-text">{t('popularGrandmaSpecials') || 'Popular Andhra Delicacies'}</span>
+                  <span className="quickpicks-title-text">Explore the product range</span>
                 </div>
                 <div className="quickpicks-compact-list">
                   {quickPickItems.map(item => (
@@ -183,7 +153,7 @@ export default function CartDrawer({
                       </div>
                       <button
                         type="button"
-                        onClick={() => onAddToCart && onAddToCart(item, '1kg', '1 kg (Default)', item.pricePerKg, 1)}
+                        onClick={() => onAddToCart && onAddToCart({ product: item, variantId: '1kg', variantLabel: '1 kg', unitPrice: item.pricePerKg, quantity: 1 })}
                         className="quickpick-add-btn"
                         title={`Add 1kg ${item.name} to cart`}
                       >
@@ -197,38 +167,11 @@ export default function CartDrawer({
             </div>
           ) : (
             <div className="cart-active-flow">
-              {/* 1. Free Delivery Progress Banner */}
-              <div className={`free-delivery-meter-card ${isFreeDelivery ? 'unlocked' : ''}`}>
-                <div className="meter-header">
-                  <div className="meter-header-left">
-                    <Truck size={17} className="meter-icon" />
-                    <span className="meter-text">
-                      {isFreeDelivery ? (
-                        <strong className="meter-highlight-green">
-                          🎉 You Unlocked FREE Express Delivery!
-                        </strong>
-                      ) : (
-                        <>
-                          Add <strong className="meter-highlight">₹{amountNeededForFree.toLocaleString('en-IN')}</strong> more for <strong className="free-tag">FREE Express Shipping</strong>
-                        </>
-                      )}
-                    </span>
-                  </div>
-                  <span className="meter-pct-badge">{freeDeliveryProgress}%</span>
-                </div>
-                <div className="meter-progress-track">
-                  <div
-                    className="meter-progress-fill"
-                    style={{ width: `${freeDeliveryProgress}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* 2. Cart Items List */}
+              {/* Cart items */}
               <div className="modern-cart-items-section">
                 <div className="items-list-header">
                   <span className="header-label">Selected Items ({cartItems.length})</span>
-                  <span className="header-sub">Fresh Batch Handcrafted</span>
+                  <span className="header-sub">Order summary</span>
                 </div>
 
                 <div className="cart-items-scroll-list">
@@ -315,13 +258,13 @@ export default function CartDrawer({
                 </button>
               </div>
 
-              {/* 3. Delivery & Bill Preview Card */}
+              {/* Cart subtotal and delivery note */}
               <div className="modern-bill-card">
                 <div className="modern-bill-header">
                   <span className="bill-title-text">Order Bill Details</span>
                   <span className="bill-trust-tag">
                     <ShieldCheck size={12} color="var(--color-leaf-green)" />
-                    <span>Pure & Authentic</span>
+                    <span>Cart summary</span>
                   </span>
                 </div>
 
@@ -332,28 +275,14 @@ export default function CartDrawer({
                   </div>
 
                   <div className="bill-table-row">
-                    <span className="table-row-label">Courier Shipping</span>
-                    {isFreeDelivery ? (
-                      <div className="free-delivery-combo">
-                        <s className="strike-amount">₹100</s>
-                        <span className="free-badge-pill">FREE</span>
-                      </div>
-                    ) : (
-                      <span className="standard-deliv-badge">₹100</span>
-                    )}
+                    <span className="table-row-label">Delivery fee</span>
+                    <span className="table-row-value">To be confirmed</span>
                   </div>
-
-                  {isFreeDelivery && (
-                    <div className="modern-savings-strip">
-                      <Sparkles size={13} color="#059669" />
-                      <span>You saved ₹100 on Express Delivery! 🎉</span>
-                    </div>
-                  )}
 
                   <div className="bill-table-row grand-total-row">
                     <div className="total-label-block">
-                      <span className="total-title">Total Amount</span>
-                      <span className="total-tax-note">All taxes included</span>
+                      <span className="total-title">Items subtotal</span>
+                    <span className="total-tax-note">Delivery is not included</span>
                     </div>
                     <span className="total-amount-display">₹{grandTotal.toLocaleString('en-IN')}</span>
                   </div>
@@ -364,11 +293,11 @@ export default function CartDrawer({
               <div className="modern-cart-assurances">
                 <div className="assurance-item">
                   <ShieldCheck size={14} className="assurance-icon" />
-                  <span>100% Traditional Telugu Taste • Pure Desi Ghee & Sesame Oil</span>
+                  <span>Product and pack details shown above</span>
                 </div>
                 <div className="assurance-item">
                   <Truck size={14} className="assurance-icon" />
-                  <span>All-India Shiprocket Courier Tracking (Delhivery, BlueDart, DTDC)</span>
+                  <span>Confirm delivery details with the kitchen on WhatsApp</span>
                 </div>
               </div>
             </div>
@@ -380,15 +309,11 @@ export default function CartDrawer({
           <div className="drawer-footer modern-sticky-footer">
             <div className="sticky-footer-summary-row">
               <div className="sticky-total-info">
-                <span className="sticky-total-label">Grand Total</span>
+              <span className="sticky-total-label">Items subtotal</span>
                 <span className="sticky-total-val">₹{grandTotal.toLocaleString('en-IN')}</span>
               </div>
               <div className="sticky-delivery-note">
-                {isFreeDelivery ? (
-                  <span className="tag-free-deliv">✓ Free Delivery</span>
-                ) : (
-                  <span className="tag-paid-deliv">Incl. ₹100 Delivery</span>
-                )}
+                <span className="tag-paid-deliv">Delivery to be confirmed</span>
               </div>
             </div>
 
@@ -410,7 +335,7 @@ export default function CartDrawer({
             </button>
 
             <div className="cart-order-reassurance">
-              💬 Delivery address confirmed directly with Kitchen on WhatsApp
+              💬 Share your delivery address with the kitchen on WhatsApp
             </div>
           </div>
         )}
