@@ -3,6 +3,7 @@
   publish = "dist"
 
 [build.environment]
+  VITE_API_URL = "https://bramarambika-backend.onrender.com/api"
   VITE_STOREFRONT_URL = "https://bramarambika-home-food.netlify.app"
 
 [[redirects]]
