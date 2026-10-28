@@ -7,39 +7,17 @@ import {
 } from 'lucide-react';
 import { BRAND_INFO } from '../data/products.js';
 import { checkShiprocketRates, createOrderApi, uploadImageApi } from '../lib/api.js';
+import {
+  FREE_DELIVERY_THRESHOLD,
+  DEFAULT_STANDARD_FEE,
+  DEFAULT_COURIER,
+  getLocalFallbackCouriers,
+  calculateDeliveryFee,
+  findBestCourier
+} from '../lib/shipping.js';
 import { getWhatsAppOrderUrl } from '../lib/whatsapp.js';
 import confetti from 'canvas-confetti';
 import './checkout.css';
-
-// Smart scoring function to dynamically auto-select the best, cheapest, and fastest courier
-function findBestCourier(couriers = [], isCod = false) {
-  if (!couriers || couriers.length === 0) return null;
-
-  let pool = couriers;
-  if (isCod) {
-    const codEligible = couriers.filter(c => c.isCodAvailable);
-    if (codEligible.length > 0) pool = codEligible;
-  }
-
-  // Priority scoring:
-  // 1. Delivery speed (Next day / 1-2 days)
-  // 2. Cost / Reliability (lowest freight rate)
-  const sorted = [...pool].sort((a, b) => {
-    const getSpeedScore = (c) => {
-      const str = (c.estimatedDays || '').toLowerCase();
-      if (str.includes('next')) return 1;
-      if (str.includes('1-2') || str.includes('1')) return 2;
-      if (str.includes('2-3') || str.includes('2')) return 3;
-      return 4;
-    };
-    const speedDiff = getSpeedScore(a) - getSpeedScore(b);
-    if (speedDiff !== 0) return speedDiff;
-
-    return (a.rate || 0) - (b.rate || 0);
-  });
-
-  return sorted[0];
-}
 
 export default function CheckoutPage({
   cartItems = [],
@@ -65,12 +43,10 @@ export default function CheckoutPage({
     } catch (e) { }
   }, []);
 
-
-
-  // Shipping & Courier state
+  // Shipping & Courier state - initialized with valid courier so delivery charges always apply
   const [checkingShipping, setCheckingShipping] = useState(false);
-  const [shippingData, setShippingData] = useState(null);
-  const [selectedCourier, setSelectedCourier] = useState(null);
+  const [shippingData, setShippingData] = useState(() => getLocalFallbackCouriers('521120'));
+  const [selectedCourier, setSelectedCourier] = useState(DEFAULT_COURIER);
   const [shippingError, setShippingError] = useState('');
 
   // Payment method: strictly WhatsApp
@@ -106,11 +82,9 @@ export default function CheckoutPage({
     }, 0);
   }, [cartItems]);
 
-  const courierRate = selectedCourier?.rate;
-  const deliveryFee = courierRate !== null && courierRate !== undefined && Number.isFinite(Number(courierRate))
-    ? Number(courierRate)
-    : null;
-  const grandTotal = itemsSubtotal + (deliveryFee || 0);
+  const isFreeDelivery = itemsSubtotal >= FREE_DELIVERY_THRESHOLD;
+  const deliveryFee = calculateDeliveryFee(itemsSubtotal, selectedCourier?.rate ?? DEFAULT_STANDARD_FEE);
+  const grandTotal = itemsSubtotal + deliveryFee;
 
   // Clean navigation back to store
   const handleBackToStore = () => {
@@ -131,7 +105,7 @@ export default function CheckoutPage({
     onBackToStore && onBackToStore();
   };
 
-  // Live Shiprocket Pincode serviceability lookup & dynamic best courier selection
+  // Live Shiprocket Pincode serviceability lookup & dynamic courier selection
   useEffect(() => {
     const cleanPin = formData.pincode.replace(/\D/g, '');
     if (cleanPin.length === 6) {
@@ -141,25 +115,22 @@ export default function CheckoutPage({
         .then((res) => {
           if (res && res.couriers && res.couriers.length > 0) {
             setShippingData(res);
-            // DYNAMIC AUTO-SELECTION of the cheapest, fastest, best courier
             const best = findBestCourier(res.couriers, paymentMethod === 'cod');
             setSelectedCourier(best);
           } else {
-            setShippingData(null);
-            setSelectedCourier(null);
+            const fallback = getLocalFallbackCouriers(cleanPin);
+            setShippingData(fallback);
+            setSelectedCourier(findBestCourier(fallback.couriers, paymentMethod === 'cod'));
           }
         })
         .catch(() => {
-          setShippingData(null);
-          setSelectedCourier(null);
+          const fallback = getLocalFallbackCouriers(cleanPin);
+          setShippingData(fallback);
+          setSelectedCourier(findBestCourier(fallback.couriers, paymentMethod === 'cod'));
         })
         .finally(() => {
           setCheckingShipping(false);
         });
-    } else {
-      setShippingData(null);
-      setSelectedCourier(null);
-      setShippingError('');
     }
   }, [formData.pincode, paymentMethod]);
 
@@ -308,7 +279,7 @@ export default function CheckoutPage({
         pincode: placedOrder.pincode,
         courierName: placedOrder.courier_name,
         estimatedDelivery: placedOrder.estimated_delivery,
-        deliveryFee: selectedCourier ? placedOrder.delivery_fee : undefined,
+        deliveryFee: placedOrder.delivery_fee ?? deliveryFee,
         paymentMethod: placedOrder.payment_method,
         notes: placedOrder.notes,
         paymentScreenshot: placedOrder.payment_screenshot || finalReceiptUrl
@@ -398,7 +369,7 @@ export default function CheckoutPage({
       pincode: createdOrder.pincode,
       courierName: createdOrder.courier_name,
       estimatedDelivery: createdOrder.estimated_delivery,
-      deliveryFee: createdOrder.courier_name ? createdOrder.delivery_fee : undefined,
+      deliveryFee: createdOrder.delivery_fee ?? deliveryFee,
       paymentMethod: createdOrder.payment_method,
       notes: createdOrder.notes
     });
@@ -494,8 +465,15 @@ export default function CheckoutPage({
                 </div>
               )}
 
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.88rem' }}>
+                <span style={{ color: '#6B7280' }}>Delivery Fee:</span>
+                <strong style={Number(createdOrder.delivery_fee) === 0 ? { color: '#166534' } : {}}>
+                  {Number(createdOrder.delivery_fee) === 0 ? 'FREE (Above ₹2,000) 🎉' : `₹${Number(createdOrder.delivery_fee).toLocaleString('en-IN')}`}
+                </strong>
+              </div>
+
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #E5E7EB', fontSize: '1.05rem' }}>
-                <span style={{ fontWeight: 700 }}>{createdOrder.courier_name ? 'Total including delivery:' : 'Items subtotal:'}</span>
+                <span style={{ fontWeight: 700 }}>Total Amount:</span>
                 <strong style={{ color: '#8C2F1C' }}>₹{createdOrder.grand_total?.toLocaleString('en-IN')}</strong>
               </div>
             </div>
@@ -724,16 +702,75 @@ export default function CheckoutPage({
               />
             </div>
 
-            {/* Delivery availability and timing are confirmed with the kitchen. */}
-            <div className="kitchen-timeline-box">
-              <div className="timeline-header">
-                <span className="timeline-diya">🪔</span>
-                <div>
-                  <h4>Delivery details</h4>
-                  <p>Availability, courier options, and timing are confirmed with the kitchen after you send the WhatsApp request.</p>
+            {/* Courier Selection & Serviceability */}
+            <div className="pincode-checker-box">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Truck size={18} color="#8C2F1C" />
+                  <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1F2937' }}>
+                    Select Courier Delivery Partner
+                  </span>
                 </div>
+                {isFreeDelivery ? (
+                  <span style={{ background: '#DCFCE7', color: '#15803D', fontSize: '0.75rem', fontWeight: 700, padding: '3px 8px', borderRadius: '12px' }}>
+                    🎉 FREE Delivery Applied
+                  </span>
+                ) : (
+                  <span style={{ background: '#FEF3C7', color: '#92400E', fontSize: '0.72rem', fontWeight: 600, padding: '3px 8px', borderRadius: '12px' }}>
+                    Orders above ₹2,000 ship FREE
+                  </span>
+                )}
               </div>
 
+              {checkingShipping && (
+                <div className="pincode-status-banner loading">
+                  <Loader2 size={15} className="spin-icon" />
+                  <span>Checking courier rates for pincode {formData.pincode}...</span>
+                </div>
+              )}
+
+              {/* Courier Selection Cards */}
+              <div className="couriers-selection-list">
+                {(shippingData?.couriers || [DEFAULT_COURIER]).map((c) => {
+                  const isSelected = (selectedCourier?.name === c.name) || (!selectedCourier && c.courierId === 1);
+                  const effectiveRate = isFreeDelivery ? 0 : c.rate;
+                  const isAir = c.name.toLowerCase().includes('air') || c.name.toLowerCase().includes('prime');
+                  return (
+                    <div
+                      key={c.courierId || c.name}
+                      onClick={() => setSelectedCourier(c)}
+                      className={`courier-option-card ${isSelected ? 'selected' : ''}`}
+                    >
+                      <div className="courier-card-top">
+                        <span className="courier-name">{c.name}</span>
+                        <span className={`courier-rate ${isFreeDelivery ? 'free-rate' : ''}`}>
+                          {isFreeDelivery ? 'FREE 🎉' : `₹${effectiveRate}`}
+                        </span>
+                      </div>
+                      <div className="courier-etd">
+                        <Clock size={13} />
+                        <span>Estimated: <strong>{c.estimatedDays || '1-2 Days'}</strong></span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '6px' }}>
+                        <span className="courier-speed-badge">
+                          {isAir ? '⚡ Express Air' : '🚚 Surface Express'}
+                        </span>
+                        {isSelected && (
+                          <span style={{ fontSize: '0.72rem', color: '#8C2F1C', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '3px' }}>
+                            <Check size={12} /> Selected
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {!isFreeDelivery && (
+                <div style={{ marginTop: '10px', fontSize: '0.8rem', color: '#8C2F1C', fontWeight: 600 }}>
+                  💡 Add ₹{(FREE_DELIVERY_THRESHOLD - itemsSubtotal).toLocaleString('en-IN')} more to your cart to get <strong>FREE Delivery</strong>!
+                </div>
+              )}
             </div>
           </div>
 
@@ -754,13 +791,15 @@ export default function CheckoutPage({
               <div className="pay-flow-section">
                 <div className="pay-section-header">
                   <Smartphone size={18} className="pay-section-icon" />
-                  <span className="pay-section-heading">{deliveryFee === null ? 'Payment details' : 'Make payment in any UPI app'}</span>
+                  <span className="pay-section-heading">Make payment in any UPI app</span>
                 </div>
 
                 <div className="upi-pay-card">
                   {/* Amount highlight row */}
                   <div className="upi-amount-row">
-                    <span className="upi-amount-label">{deliveryFee === null ? 'Items subtotal · delivery to be confirmed' : 'Total including delivery'}</span>
+                    <span className="upi-amount-label">
+                      {isFreeDelivery ? 'Total amount (FREE Delivery applied)' : 'Total amount (including delivery)'}
+                    </span>
                     <span className="upi-amount-value">₹{grandTotal.toLocaleString('en-IN')}</span>
                   </div>
 
@@ -781,10 +820,6 @@ export default function CheckoutPage({
                     </button>
                   </div>
 
-                  {/* Payment links carry a fixed amount only after a courier quote is selected. */}
-                  {deliveryFee === null ? (
-                    <p className="checkout-delivery-note">Please wait for the kitchen to confirm the delivery fee and final payment amount before paying.</p>
-                  ) : <>
                   <div className="upi-apps-launch-label">Tap to open UPI app on phone:</div>
                   <div className="upi-apps-grid">
                     <a
@@ -816,7 +851,6 @@ export default function CheckoutPage({
                       <span>Any UPI App</span>
                     </a>
                   </div>
-                  </>}
                 </div>
               </div>
 
@@ -919,17 +953,27 @@ export default function CheckoutPage({
               </div>
 
               <div className="pricing-line">
-                <span>Delivery Fee{selectedCourier ? ` (${selectedCourier.name})` : ''}:</span>
-                <strong>{deliveryFee === null ? 'To be confirmed with kitchen' : `₹${deliveryFee.toLocaleString('en-IN')}`}</strong>
+                <span>Delivery Fee ({selectedCourier?.name || 'Standard Courier'}):</span>
+                <strong>
+                  {isFreeDelivery ? (
+                    <span style={{ color: '#166534' }}>FREE (Above ₹2,000) 🎉</span>
+                  ) : (
+                    `₹${deliveryFee.toLocaleString('en-IN')}`
+                  )}
+                </strong>
               </div>
 
               <div className="pricing-line total-line">
-                <span>{deliveryFee === null ? 'Estimated Total:' : 'Total including delivery:'}</span>
+                <span>Total Amount:</span>
                 <span>₹{grandTotal.toLocaleString('en-IN')}</span>
               </div>
-              {deliveryFee === null && (
+              {!isFreeDelivery ? (
                 <p className="checkout-delivery-note">
-                  * Delivery fee is based on your destination pincode &amp; confirmed directly on WhatsApp.
+                  * Add ₹{(FREE_DELIVERY_THRESHOLD - itemsSubtotal).toLocaleString('en-IN')} more to unlock <strong>FREE Delivery</strong>.
+                </p>
+              ) : (
+                <p className="checkout-delivery-note" style={{ color: '#166534', fontWeight: 600 }}>
+                  ✓ FREE Delivery applied on this order.
                 </p>
               )}
             </div>

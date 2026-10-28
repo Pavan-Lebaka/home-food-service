@@ -8,6 +8,11 @@ import { BRAND_INFO } from '../data/products.js';
 import { useLanguage } from '../context/LanguageContext';
 import { useProducts } from '../context/ProductsContext';
 import { PRODUCTS } from '../data/products';
+import {
+  FREE_DELIVERY_THRESHOLD,
+  DEFAULT_STANDARD_FEE,
+  calculateDeliveryFee
+} from '../lib/shipping.js';
 
 export default function CartDrawer({
   isOpen,
@@ -42,7 +47,9 @@ export default function CartDrawer({
     return acc + (price * item.quantity);
   }, 0);
 
-  const grandTotal = itemsSubtotal;
+  const isFreeDelivery = itemsSubtotal >= FREE_DELIVERY_THRESHOLD;
+  const deliveryFee = calculateDeliveryFee(itemsSubtotal, DEFAULT_STANDARD_FEE);
+  const grandTotal = itemsSubtotal + deliveryFee;
 
   // Quick picks if cart is empty (Authentic classics: Chicken Pickle, Avakaya, Arisalu)
   const candidateItems = ((products && products.length) ? products : PRODUCTS).filter(p =>
@@ -275,18 +282,28 @@ export default function CartDrawer({
                   </div>
 
                   <div className="bill-table-row">
-                    <span className="table-row-label">Delivery fee</span>
-                    <span className="table-row-value">To be confirmed</span>
+                    <span className="table-row-label">Delivery Fee</span>
+                    <span className="table-row-value" style={isFreeDelivery ? { color: '#166534', fontWeight: 700 } : {}}>
+                      {isFreeDelivery ? 'FREE 🎉' : `₹${deliveryFee}`}
+                    </span>
                   </div>
 
                   <div className="bill-table-row grand-total-row">
                     <div className="total-label-block">
-                      <span className="total-title">Items subtotal</span>
-                    <span className="total-tax-note">Delivery is not included</span>
+                      <span className="total-title">Total Amount</span>
+                      <span className="total-tax-note">
+                        {isFreeDelivery ? '✓ FREE delivery applied' : 'Standard courier delivery included'}
+                      </span>
                     </div>
                     <span className="total-amount-display">₹{grandTotal.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
+
+                {!isFreeDelivery && (
+                  <div style={{ marginTop: '8px', fontSize: '0.78rem', color: '#8C2F1C', fontWeight: 600 }}>
+                    💡 Add ₹{(FREE_DELIVERY_THRESHOLD - itemsSubtotal).toLocaleString('en-IN')} more to get <strong>FREE Delivery</strong>!
+                  </div>
+                )}
               </div>
 
               {/* 4. Trust Badges */}
@@ -309,11 +326,13 @@ export default function CartDrawer({
           <div className="drawer-footer modern-sticky-footer">
             <div className="sticky-footer-summary-row">
               <div className="sticky-total-info">
-              <span className="sticky-total-label">Items subtotal</span>
+                <span className="sticky-total-label">Total Amount</span>
                 <span className="sticky-total-val">₹{grandTotal.toLocaleString('en-IN')}</span>
               </div>
               <div className="sticky-delivery-note">
-                <span className="tag-paid-deliv">Delivery to be confirmed</span>
+                <span className={isFreeDelivery ? "tag-free-deliv" : "tag-paid-deliv"}>
+                  {isFreeDelivery ? '🎉 FREE Delivery' : `Standard Delivery ₹${deliveryFee}`}
+                </span>
               </div>
             </div>
 

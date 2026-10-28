@@ -1,4 +1,5 @@
 import { supabase, saveOrderToDatabase } from './supabase';
+import { getLocalFallbackCouriers } from './shipping';
 
 const rawBackendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const BACKEND_URL = rawBackendUrl.replace(/\/+$/, '');
@@ -51,21 +52,24 @@ export async function createOrderApi(orderData) {
 }
 
 /**
- * Check Courier Serviceability & Shipping Rates via Shiprocket
+ * Check Courier Serviceability & Shipping Rates via Shiprocket (with local fallback)
  */
 export async function checkShiprocketRates(pincode) {
   try {
-    const response = await fetch(`${BACKEND_URL}/shipping/serviceability/${pincode}`);
-    if (response.ok) {
-      const result = await response.json();
-      if (result.success) {
-        return result.data;
+    const cleanPin = String(pincode || '').replace(/\D/g, '');
+    if (cleanPin.length === 6) {
+      const response = await fetch(`${BACKEND_URL}/shipping/serviceability/${cleanPin}`);
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data && Array.isArray(result.data.couriers) && result.data.couriers.length > 0) {
+          return result.data;
+        }
       }
     }
   } catch (err) {
-    console.warn('[API] Failed to fetch shipping rates:', err);
+    console.warn('[API] Failed to fetch live shipping rates, using regional fallback:', err);
   }
-  return null;
+  return getLocalFallbackCouriers(pincode);
 }
 
 /**

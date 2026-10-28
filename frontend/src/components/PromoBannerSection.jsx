@@ -176,7 +176,7 @@ export default function PromoBannerSection({
             <div className="festive-highlight-item">
               <Truck size={18} className="highlight-icon green" />
               <div>
-                <strong>FREE Delivery Above ₹1,000</strong>
+                <strong>FREE Delivery Above ₹2,000</strong>
                 <span>Pan-India secure dispatch</span>
               </div>
             </div>

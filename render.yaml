@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: bramarambika-api
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: HEX_SECRET_KEY
+        value: 99e408d1c52fbaf8031ddccc897a2e36f3ce78bd7fe357c3226e5f1b46f8eee4
+      - key: JWT_SECRET
+        value: 99e408d1c52fbaf8031ddccc897a2e36f3ce78bd7fe357c3226e5f1b46f8eee4
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ADMIN_EMAIL
+        value: lpp78481@gmail.com
+      - key: ADMIN_PASSWORD
+        value: Bramarambika@123
+      - key: SUPABASE_URL
+        value: https://qvtfuuvtabiafuvbgimv.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dGZ1dXZ0YWJpYWZ1dmJnaW12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxOTcwNDksImV4cCI6MjEwNzc3MzA0OX0.dq4z16TRmxIIVk1UgOF24s5zwC4xYd9VEvp8wXo3LiE
+      - key: SHIPROCKET_EMAIL
+        value: lpp78481@gmail.com
+      - key: SHIPROCKET_PASSWORD
+        value: ""
+      - key: SHIPROCKET_PICKUP_PINCODE
+        value: "521120"
+      - key: SHIPROCKET_PICKUP_LOCATION
+        value: Bramarambika_Kitchen
+      - key: WHATSAPP_NUMBER
+        value: "7793910819"
+      - key: UPI_ID
+        value: 7793910819@ybl
+      - key: CLOUDINARY_CLOUD_NAME
+        value: z2iepqai
+      - key: CLOUDINARY_API_KEY
+        value: "919266787329374"
+      - key: CLOUDINARY_API_SECRET
+        sync: false

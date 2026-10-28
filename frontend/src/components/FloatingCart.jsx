@@ -1,6 +1,11 @@
 import React from 'react';
 import { ShoppingCart, ArrowRight } from 'lucide-react';
 import { formatCurrency } from '../lib/whatsapp';
+import {
+  FREE_DELIVERY_THRESHOLD,
+  DEFAULT_STANDARD_FEE,
+  calculateDeliveryFee
+} from '../lib/shipping.js';
 
 export default function FloatingCart({ cartItems, onOpenCart }) {
   if (!cartItems || cartItems.length === 0) return null;
@@ -10,6 +15,10 @@ export default function FloatingCart({ cartItems, onOpenCart }) {
     const p = item.unitPrice || item.price || item.pricePerKg || 0;
     return acc + (p * item.quantity);
   }, 0);
+
+  const isFreeDelivery = itemsSubtotal >= FREE_DELIVERY_THRESHOLD;
+  const deliveryFee = calculateDeliveryFee(itemsSubtotal, DEFAULT_STANDARD_FEE);
+  const grandTotal = itemsSubtotal + deliveryFee;
 
   return (
     <>
@@ -29,9 +38,9 @@ export default function FloatingCart({ cartItems, onOpenCart }) {
           </div>
           <div className="floating-cart-text">
             <div className="floating-cart-label">
-              Items subtotal
+              {isFreeDelivery ? 'Total (Free Delivery)' : 'Total (incl. delivery)'}
             </div>
-            <div className="floating-cart-total">{formatCurrency(itemsSubtotal)}</div>
+            <div className="floating-cart-total">{formatCurrency(grandTotal)}</div>
           </div>
         </div>
 
@@ -53,8 +62,10 @@ export default function FloatingCart({ cartItems, onOpenCart }) {
         <div className="mobile-bar-left">
           <span className="mobile-badge-count">{totalItemsCount} packs</span>
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-            <span className="mobile-amount-val">{formatCurrency(itemsSubtotal)}</span>
-            <span className="mobile-delivery-note">Delivery confirmed on WhatsApp</span>
+            <span className="mobile-amount-val">{formatCurrency(grandTotal)}</span>
+            <span className="mobile-delivery-note">
+              {isFreeDelivery ? '🎉 FREE Delivery' : `Delivery: ₹${deliveryFee}`}
+            </span>
           </div>
         </div>
 

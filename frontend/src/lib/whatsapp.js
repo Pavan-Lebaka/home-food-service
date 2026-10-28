@@ -33,7 +33,9 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
     ? `${customerDetails.courierName}${customerDetails.estimatedDelivery ? ` (${customerDetails.estimatedDelivery})` : ''}`
     : '';
 
-  const deliveryText = hasDeliveryFee ? `₹${deliveryFee.toLocaleString('en-IN')}` : 'To be confirmed with the kitchen';
+  const deliveryText = hasDeliveryFee
+    ? (deliveryFee === 0 ? 'FREE (Order above ₹2,000) 🎉' : `₹${deliveryFee.toLocaleString('en-IN')}`)
+    : 'To be confirmed with the kitchen';
 
   // Clean, professional, structured WhatsApp template (Universal UTF-8 safe emojis)
   let message = `*BRAMARAMBIKA HOME FOODS — ORDER REQUEST*\n\n`;
