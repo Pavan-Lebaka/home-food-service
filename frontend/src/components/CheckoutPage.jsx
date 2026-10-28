@@ -6,14 +6,11 @@ import {
   Smartphone, UploadCloud, Camera, MessageCircle, PackageCheck, ShieldCheck, ShoppingCart
 } from 'lucide-react';
 import { BRAND_INFO } from '../data/products.js';
-import { checkShiprocketRates, createOrderApi, uploadImageApi } from '../lib/api.js';
+import { createOrderApi, uploadImageApi } from '../lib/api.js';
 import {
   FREE_DELIVERY_THRESHOLD,
-  DEFAULT_STANDARD_FEE,
-  DEFAULT_COURIER,
-  getLocalFallbackCouriers,
-  calculateDeliveryFee,
-  findBestCourier
+  FLAT_DELIVERY_FEE,
+  calculateDeliveryFee
 } from '../lib/shipping.js';
 import { getWhatsAppOrderUrl } from '../lib/whatsapp.js';
 import confetti from 'canvas-confetti';
@@ -42,12 +39,6 @@ export default function CheckoutPage({
       localStorage.removeItem('bramarambika_customer_details');
     } catch (e) { }
   }, []);
-
-  // Shipping & Courier state - initialized with valid courier so delivery charges always apply
-  const [checkingShipping, setCheckingShipping] = useState(false);
-  const [shippingData, setShippingData] = useState(() => getLocalFallbackCouriers('521120'));
-  const [selectedCourier, setSelectedCourier] = useState(DEFAULT_COURIER);
-  const [shippingError, setShippingError] = useState('');
 
   // Payment method: strictly WhatsApp
   const [paymentMethod, setPaymentMethod] = useState('whatsapp');
@@ -83,7 +74,7 @@ export default function CheckoutPage({
   }, [cartItems]);
 
   const isFreeDelivery = itemsSubtotal >= FREE_DELIVERY_THRESHOLD;
-  const deliveryFee = calculateDeliveryFee(itemsSubtotal, selectedCourier?.rate ?? DEFAULT_STANDARD_FEE);
+  const deliveryFee = calculateDeliveryFee(itemsSubtotal);
   const grandTotal = itemsSubtotal + deliveryFee;
 
   // Clean navigation back to store
@@ -104,35 +95,6 @@ export default function CheckoutPage({
     } catch (e) { }
     onBackToStore && onBackToStore();
   };
-
-  // Live Shiprocket Pincode serviceability lookup & dynamic courier selection
-  useEffect(() => {
-    const cleanPin = formData.pincode.replace(/\D/g, '');
-    if (cleanPin.length === 6) {
-      setCheckingShipping(true);
-      setShippingError('');
-      checkShiprocketRates(cleanPin)
-        .then((res) => {
-          if (res && res.couriers && res.couriers.length > 0) {
-            setShippingData(res);
-            const best = findBestCourier(res.couriers, paymentMethod === 'cod');
-            setSelectedCourier(best);
-          } else {
-            const fallback = getLocalFallbackCouriers(cleanPin);
-            setShippingData(fallback);
-            setSelectedCourier(findBestCourier(fallback.couriers, paymentMethod === 'cod'));
-          }
-        })
-        .catch(() => {
-          const fallback = getLocalFallbackCouriers(cleanPin);
-          setShippingData(fallback);
-          setSelectedCourier(findBestCourier(fallback.couriers, paymentMethod === 'cod'));
-        })
-        .finally(() => {
-          setCheckingShipping(false);
-        });
-    }
-  }, [formData.pincode, paymentMethod]);
 
   const handleInputChange = (field, val) => {
     setFormData(prev => {
@@ -254,10 +216,10 @@ export default function CheckoutPage({
         };
       }),
       subtotal: itemsSubtotal,
-      delivery_fee: deliveryFee ?? 0,
+      delivery_fee: deliveryFee,
       grand_total: grandTotal,
-      courier_name: selectedCourier?.name || null,
-      estimated_delivery: selectedCourier?.estimatedDays || null,
+      courier_name: null,
+      estimated_delivery: null,
       payment_method: 'WHATSAPP_UPI',
       payment_status: finalReceiptUrl ? 'Screenshot Submitted' : 'Verification Pending',
       payment_screenshot: finalReceiptUrl
@@ -277,8 +239,6 @@ export default function CheckoutPage({
         phone: placedOrder.phone,
         address: placedOrder.address,
         pincode: placedOrder.pincode,
-        courierName: placedOrder.courier_name,
-        estimatedDelivery: placedOrder.estimated_delivery,
         deliveryFee: placedOrder.delivery_fee ?? deliveryFee,
         paymentMethod: placedOrder.payment_method,
         notes: placedOrder.notes,
@@ -367,8 +327,6 @@ export default function CheckoutPage({
       phone: createdOrder.phone,
       address: createdOrder.address,
       pincode: createdOrder.pincode,
-      courierName: createdOrder.courier_name,
-      estimatedDelivery: createdOrder.estimated_delivery,
       deliveryFee: createdOrder.delivery_fee ?? deliveryFee,
       paymentMethod: createdOrder.payment_method,
       notes: createdOrder.notes
@@ -442,10 +400,6 @@ export default function CheckoutPage({
                   {createdOrder.address} - {createdOrder.pincode}
                 </span>
               </div>
-              {createdOrder.courier_name && <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.88rem' }}>
-                <span style={{ color: '#6B7280' }}>Courier Partner:</span>
-                <strong>{createdOrder.courier_name} ({createdOrder.estimated_delivery})</strong>
-              </div>}
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.88rem' }}>
                 <span style={{ color: '#6B7280' }}>Payment Mode:</span>
                 <strong style={{ color: '#15803D' }}>{createdOrder.payment_method}</strong>
@@ -702,75 +656,24 @@ export default function CheckoutPage({
               />
             </div>
 
-            {/* Courier Selection & Serviceability */}
-            <div className="pincode-checker-box">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Truck size={18} color="#8C2F1C" />
-                  <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1F2937' }}>
-                    Select Courier Delivery Partner
-                  </span>
+            {/* Simple Doorstep Delivery Banner */}
+            <div className="simple-delivery-badge-box">
+              <div className="simple-delivery-badge-left">
+                <Truck size={22} color="#8C2F1C" />
+                <div>
+                  <div className="simple-delivery-title">
+                    {isFreeDelivery ? '🎉 FREE Doorstep Delivery Applied' : 'Doorstep Delivery Charge: ₹99'}
+                  </div>
+                  <div className="simple-delivery-sub">
+                    {isFreeDelivery
+                      ? 'Qualified for 100% FREE Delivery (Orders ₹2,000 & above) across India!'
+                      : `Flat delivery charge across India. Add ₹${(FREE_DELIVERY_THRESHOLD - itemsSubtotal).toLocaleString('en-IN')} more to unlock FREE Delivery!`}
+                  </div>
                 </div>
-                {isFreeDelivery ? (
-                  <span style={{ background: '#DCFCE7', color: '#15803D', fontSize: '0.75rem', fontWeight: 700, padding: '3px 8px', borderRadius: '12px' }}>
-                    🎉 FREE Delivery Applied
-                  </span>
-                ) : (
-                  <span style={{ background: '#FEF3C7', color: '#92400E', fontSize: '0.72rem', fontWeight: 600, padding: '3px 8px', borderRadius: '12px' }}>
-                    Orders above ₹2,000 ship FREE
-                  </span>
-                )}
               </div>
-
-              {checkingShipping && (
-                <div className="pincode-status-banner loading">
-                  <Loader2 size={15} className="spin-icon" />
-                  <span>Checking courier rates for pincode {formData.pincode}...</span>
-                </div>
-              )}
-
-              {/* Courier Selection Cards */}
-              <div className="couriers-selection-list">
-                {(shippingData?.couriers || [DEFAULT_COURIER]).map((c) => {
-                  const isSelected = (selectedCourier?.name === c.name) || (!selectedCourier && c.courierId === 1);
-                  const effectiveRate = isFreeDelivery ? 0 : c.rate;
-                  const isAir = c.name.toLowerCase().includes('air') || c.name.toLowerCase().includes('prime');
-                  return (
-                    <div
-                      key={c.courierId || c.name}
-                      onClick={() => setSelectedCourier(c)}
-                      className={`courier-option-card ${isSelected ? 'selected' : ''}`}
-                    >
-                      <div className="courier-card-top">
-                        <span className="courier-name">{c.name}</span>
-                        <span className={`courier-rate ${isFreeDelivery ? 'free-rate' : ''}`}>
-                          {isFreeDelivery ? 'FREE 🎉' : `₹${effectiveRate}`}
-                        </span>
-                      </div>
-                      <div className="courier-etd">
-                        <Clock size={13} />
-                        <span>Estimated: <strong>{c.estimatedDays || '1-2 Days'}</strong></span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '6px' }}>
-                        <span className="courier-speed-badge">
-                          {isAir ? '⚡ Express Air' : '🚚 Surface Express'}
-                        </span>
-                        {isSelected && (
-                          <span style={{ fontSize: '0.72rem', color: '#8C2F1C', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '3px' }}>
-                            <Check size={12} /> Selected
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className={`simple-delivery-pill ${isFreeDelivery ? 'free' : ''}`}>
+                {isFreeDelivery ? 'FREE' : '₹99'}
               </div>
-
-              {!isFreeDelivery && (
-                <div style={{ marginTop: '10px', fontSize: '0.8rem', color: '#8C2F1C', fontWeight: 600 }}>
-                  💡 Add ₹{(FREE_DELIVERY_THRESHOLD - itemsSubtotal).toLocaleString('en-IN')} more to your cart to get <strong>FREE Delivery</strong>!
-                </div>
-              )}
             </div>
           </div>
 
@@ -953,12 +856,12 @@ export default function CheckoutPage({
               </div>
 
               <div className="pricing-line">
-                <span>Delivery Fee ({selectedCourier?.name || 'Standard Courier'}):</span>
+                <span>Delivery Fee:</span>
                 <strong>
                   {isFreeDelivery ? (
                     <span style={{ color: '#166534' }}>FREE (Above ₹2,000) 🎉</span>
                   ) : (
-                    `₹${deliveryFee.toLocaleString('en-IN')}`
+                    `₹${deliveryFee}`
                   )}
                 </strong>
               </div>

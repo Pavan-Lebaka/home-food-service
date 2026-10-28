@@ -3,7 +3,6 @@ import { ShoppingCart, ArrowRight } from 'lucide-react';
 import { formatCurrency } from '../lib/whatsapp';
 import {
   FREE_DELIVERY_THRESHOLD,
-  DEFAULT_STANDARD_FEE,
   calculateDeliveryFee
 } from '../lib/shipping.js';
 
@@ -17,7 +16,7 @@ export default function FloatingCart({ cartItems, onOpenCart }) {
   }, 0);
 
   const isFreeDelivery = itemsSubtotal >= FREE_DELIVERY_THRESHOLD;
-  const deliveryFee = calculateDeliveryFee(itemsSubtotal, DEFAULT_STANDARD_FEE);
+  const deliveryFee = calculateDeliveryFee(itemsSubtotal);
   const grandTotal = itemsSubtotal + deliveryFee;
 
   return (

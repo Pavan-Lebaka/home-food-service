@@ -1662,3 +1662,63 @@
     font-size: 0.72rem !important;
   }
 }
+
+/* Simple Flat Delivery Fee Display */
+.simple-delivery-badge-box {
+  margin-top: 1.25rem;
+  background: #FFF9F6;
+  border: 1.5px solid #FBD0C7;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.simple-delivery-badge-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.simple-delivery-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1F2937;
+}
+
+.simple-delivery-sub {
+  font-size: 0.8rem;
+  color: #6B7280;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
+.simple-delivery-pill {
+  background: #8C2F1C;
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+.simple-delivery-pill.free {
+  background: #15803D;
+  color: #FFFFFF;
+}
+
+@media (max-width: 640px) {
+  .simple-delivery-badge-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .simple-delivery-pill {
+    align-self: flex-start;
+  }
+}
+

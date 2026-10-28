@@ -10,7 +10,7 @@ import { useProducts } from '../context/ProductsContext';
 import { PRODUCTS } from '../data/products';
 import {
   FREE_DELIVERY_THRESHOLD,
-  DEFAULT_STANDARD_FEE,
+  FLAT_DELIVERY_FEE,
   calculateDeliveryFee
 } from '../lib/shipping.js';
 
@@ -48,7 +48,7 @@ export default function CartDrawer({
   }, 0);
 
   const isFreeDelivery = itemsSubtotal >= FREE_DELIVERY_THRESHOLD;
-  const deliveryFee = calculateDeliveryFee(itemsSubtotal, DEFAULT_STANDARD_FEE);
+  const deliveryFee = calculateDeliveryFee(itemsSubtotal);
   const grandTotal = itemsSubtotal + deliveryFee;
 
   // Quick picks if cart is empty (Authentic classics: Chicken Pickle, Avakaya, Arisalu)

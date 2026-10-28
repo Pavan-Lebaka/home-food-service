@@ -25,17 +25,14 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
   }).join('\n');
 
   const hasDeliveryFee = typeof customerDetails.deliveryFee === 'number' && Number.isFinite(customerDetails.deliveryFee) && customerDetails.deliveryFee >= 0;
-  const deliveryFee = hasDeliveryFee ? customerDetails.deliveryFee : null;
-  const grandTotal = itemsSubtotal + (deliveryFee || 0);
+  const deliveryFee = hasDeliveryFee ? customerDetails.deliveryFee : (itemsSubtotal >= 2000 ? 0 : 99);
+  const grandTotal = itemsSubtotal + deliveryFee;
 
   const orderId = customerDetails.orderId ? `#${customerDetails.orderId}` : 'New Website Order';
-  const courierInfo = customerDetails.courierName
-    ? `${customerDetails.courierName}${customerDetails.estimatedDelivery ? ` (${customerDetails.estimatedDelivery})` : ''}`
-    : '';
 
-  const deliveryText = hasDeliveryFee
-    ? (deliveryFee === 0 ? 'FREE (Order above ₹2,000) 🎉' : `₹${deliveryFee.toLocaleString('en-IN')}`)
-    : 'To be confirmed with the kitchen';
+  const deliveryText = deliveryFee === 0
+    ? 'FREE (Order above ₹2,000) 🎉'
+    : `₹${deliveryFee.toLocaleString('en-IN')}`;
 
   // Clean, professional, structured WhatsApp template (Universal UTF-8 safe emojis)
   let message = `*BRAMARAMBIKA HOME FOODS — ORDER REQUEST*\n\n`;
@@ -45,12 +42,9 @@ export function generateWhatsAppOrderMessage(cartItems, customerDetails = {}) {
   message += `🛒 *ORDERED DELICACIES:*\n${itemsList}\n\n`;
   message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   message += `💰 *Items Subtotal:* ₹${itemsSubtotal.toLocaleString('en-IN')}\n`;
-  if (courierInfo) message += `🚚 *Courier Partner:* ${courierInfo}\n`;
   message += `📦 *Delivery Fee:* ${deliveryText}\n`;
-  message += `💳 *Payment:* Please confirm payment instructions with me\n`;
-  message += hasDeliveryFee
-    ? `💰 *Total Including Delivery:* ₹${grandTotal.toLocaleString('en-IN')}\n`
-    : `💰 *Items Subtotal (delivery not included):* ₹${itemsSubtotal.toLocaleString('en-IN')}\n`;
+  message += `💳 *Payment:* Official Kitchen UPI (7793910819@ybl)\n`;
+  message += `💰 *Total Amount:* ₹${grandTotal.toLocaleString('en-IN')}\n`;
   message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
   const { name, phone, address, pincode, notes, paymentScreenshot } = customerDetails;

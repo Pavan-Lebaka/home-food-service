@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { fetchOrdersApi, updateOrderApi, createShipmentApi, deleteOrderApi, clearAllOrdersApi } from '../lib/api';
+import { fetchOrdersApi, updateOrderApi, deleteOrderApi, clearAllOrdersApi } from '../lib/api';
 import { BRAND_INFO } from '../constants/brand';
 import ProductManagement from './ProductManagement';
 import {
   Package, ShoppingBag, Truck, CheckCircle2, Clock,
   Search, RefreshCw, LogOut, Phone, MessageCircle,
   Copy, ExternalLink, Calendar, MapPin, AlertCircle,
-  User, Check, ChevronDown, ChevronUp, Sparkles, UtensilsCrossed, Trash2,
-  Eye, X, ArrowRight, ShieldCheck, HelpCircle
+  User, Check, ChevronDown, Sparkles, UtensilsCrossed, Trash2,
+  Eye, X, ShieldCheck
 } from 'lucide-react';
 
 export default function AdminDashboard({ user, onLogout, onBackToStore }) {
@@ -27,7 +27,6 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
-  const [showWorkflowGuide, setShowWorkflowGuide] = useState(true);
   const [previewScreenshotUrl, setPreviewScreenshotUrl] = useState(null);
 
   // Persist status filter across page refresh
@@ -51,7 +50,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
   const [copiedOrderId, setCopiedOrderId] = useState(null);
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
 
-  // 1. Sync activeTab with URL hash and localStorage so refresh never loses the active tab!
+  // 1. Sync activeTab with URL hash and localStorage
   useEffect(() => {
     try {
       localStorage.setItem('bramarambika_admin_active_tab', activeTab);
@@ -95,7 +94,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
       setOrders(data || []);
     } catch (err) {
       console.error('Error fetching orders:', err);
-      setErrorMsg('Failed to fetch orders. Please check your network or backend server.');
+      setErrorMsg('Failed to fetch orders. Please check network connection.');
     } finally {
       setLoading(false);
     }
@@ -104,7 +103,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
   useEffect(() => {
     loadOrders();
 
-    // Listen to real-time incoming orders via Supabase Realtime channel if available
+    // Listen to real-time incoming orders via Supabase Realtime channel
     try {
       const channel = supabase
         .channel('admin-orders-realtime')
@@ -136,12 +135,12 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
     }
   }, [loadOrders]);
 
-  // Status update handler
+  // Manual status update handler
   const handleStatusChange = async (orderId, newStatus) => {
     setUpdatingOrderId(orderId);
     try {
       const updated = await updateOrderApi(orderId, { status: newStatus });
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...updated } : o));
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...updated, status: newStatus } : o));
     } catch (err) {
       alert('Failed to update status: ' + err.message);
     } finally {
@@ -149,13 +148,13 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
     }
   };
 
-  // Payment status update handler
+  // Payment status update handler (Paid / Pending toggle)
   const handlePaymentStatusToggle = async (orderId, currentPaymentStatus) => {
     const nextStatus = currentPaymentStatus === 'Paid' ? 'Pending' : 'Paid';
     setUpdatingOrderId(orderId);
     try {
       const updated = await updateOrderApi(orderId, { payment_status: nextStatus });
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...updated } : o));
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...updated, payment_status: nextStatus } : o));
     } catch (err) {
       alert('Failed to update payment status: ' + err.message);
     } finally {
@@ -179,7 +178,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
 
   // Clear all test orders
   const handleClearAllOrders = async () => {
-    if (!window.confirm('Are you sure you want to clear all orders? This will remove all test orders permanently.')) return;
+    if (!window.confirm('Are you sure you want to clear all orders? This will permanently delete test orders.')) return;
     setLoading(true);
     try {
       await clearAllOrdersApi();
@@ -191,116 +190,76 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
     }
   };
 
-  // Save Tracking / Courier details
-  const handleSaveTracking = async (orderId, courierName, trackingNumber) => {
-    setUpdatingOrderId(orderId);
-    try {
-      const updated = await updateOrderApi(orderId, {
-        courier_name: courierName,
-        tracking_number: trackingNumber,
-        status: 'Shipped'
-      });
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...updated } : o));
-    } catch (err) {
-      alert('Failed to save tracking: ' + err.message);
-    } finally {
-      setUpdatingOrderId(null);
-    }
-  };
-
-  // Copy full customer address formatted for Courier / Shiprocket
-  const handleCopyShiprocketAddress = (order) => {
-    const text = `Name: ${order.customer_name}\nPhone: ${order.phone}\nAddress: ${order.address}\nPincode: ${order.pincode}\nItems: ${(order.items || []).map(i => `${i.name} (${i.variant}) x${i.quantity}`).join(', ')}`;
+  // Copy customer address formatted cleanly for parcel sticker
+  const handleCopyAddress = (order) => {
+    const text = `Customer: ${order.customer_name}\nPhone: ${order.phone}\nAddress: ${order.address}\nPincode: ${order.pincode}\nItems: ${(order.items || []).map(i => `${i.name} (${i.variant || '1kg'}) x${i.quantity}`).join(', ')}`;
     navigator.clipboard.writeText(text);
     setCopiedOrderId(order.id);
     setTimeout(() => setCopiedOrderId(null), 2000);
   };
 
-  // 1-Click Shiprocket Courier Shipment Booking
-  const handleBookShiprocket = async (order) => {
-    setUpdatingOrderId(order.id);
-    try {
-      const res = await createShipmentApi(order);
-      const awb = res.data?.awbCode || res.data?.shipment?.awbCode || res.awbCode || res.data?.awb_code;
-      const courier = res.data?.courierName || res.data?.shipment?.courierName || 'Delhivery Surface';
-
-      setOrders(prev => prev.map(o => o.id === order.id ? {
-        ...o,
-        status: 'Shipped',
-        tracking_number: awb || o.tracking_number,
-        courier_name: courier
-      } : o));
-
-      const isLive = res.data?.isLive ?? res.isLive ?? false;
-      if (!isLive) {
-        alert(`⚠️ Staging / Simulated Mode: AWB assigned (${awb}), but this was NOT sent to your live Shiprocket dashboard because SHIPROCKET_PASSWORD is not configured in backend/.env or Render!\n\nTo push live orders to your real Shiprocket dashboard, please add your SHIPROCKET_PASSWORD.`);
-      } else {
-        alert(`🎉 Live Shiprocket Order Created Successfully!\n\nCourier: ${courier}\nAWB Tracking Code: ${awb || 'Assigned'}\nOrder is now visible in your live Shiprocket dashboard.`);
-      }
-    } catch (err) {
-      alert('Failed to book with Shiprocket: ' + err.message);
-    } finally {
-      setUpdatingOrderId(null);
-    }
-  };
-
-  // Generate WhatsApp message to notify customer
+  // Quick WhatsApp message to customer
   const handleSendWhatsAppNotification = (order) => {
     const cleanPhone = (order.phone || '').replace(/\D/g, '');
     const intlPhone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
     let text = `Hello ${order.customer_name},\n\nGreetings from ${BRAND_INFO.name}! 🪔\n\n`;
 
-    if (order.status === 'Shipped') {
-      text += `Your parcel has been DISPATCHED from our Andhra kitchen via ${order.courier_name || 'Express Courier'}.\n`;
-      if (order.tracking_number) {
-        text += `Tracking Number / AWB: ${order.tracking_number}\n`;
-        text += `Track live here: https://shiprocket.co/tracking/${order.tracking_number}\n`;
-      }
-      text += `Estimated doorstep arrival: 2–3 business days.\n\nThank you for choosing Bramarambika Home Foods! ❤️`;
-    } else if (order.status === 'Preparing in Kitchen') {
-      text += `Your delicacies are now being prepared fresh in our Andhra kitchen with cold-pressed oils and traditional recipes. We will pack in 5-layer leak-proof containers and dispatch within 24–48 hours!\n\nDhanyavadalu! 🙏`;
-    } else if (order.status === 'Ready for Pickup') {
-      text += `Your order has been freshly packed with 5-layer leak-proof seal and is ready for courier pickup. It will be dispatched today!\n\nThank you! ❤️`;
-    } else if (order.status === 'Delivered') {
-      text += `We hope your parcel of traditional delicacies arrived safely and in great taste! 🪔✨\n\nPlease let us know how you liked them. Your review means the world to our kitchen team!\n\nDhanyavadalu! 🙏`;
+    if (order.status === 'Delivered') {
+      text += `Your parcel of authentic Andhra delicacies has been DELIVERED! 🪔✨\n\nWe hope you and your family enjoy the traditional homemade taste. Please share your review or feedback with us!\n\nDhanyavadalu! 🙏`;
+    } else if (order.status === 'Preparing') {
+      text += `Your order (#${order.order_number || order.id.slice(0, 8)}) is now being freshly PREPARED in our kitchen with cold-pressed oils. We will notify you once dispatched!\n\nDhanyavadalu! 🙏`;
     } else if (order.payment_status === 'Paid') {
-      text += `We have verified your payment of ₹${order.grand_total}. Our kitchen has scheduled your fresh batch preparation.\n\nThank you! 🙏`;
+      text += `We have verified your payment of ₹${order.grand_total}. Our kitchen has scheduled your fresh batch preparation!\n\nThank you! 🙏`;
     } else {
-      text += `Namaste! We received your order request (#${order.order_number || order.id.slice(0, 8)}) for:\n`;
+      text += `Namaste! We received your order (#${order.order_number || order.id.slice(0, 8)}) for:\n`;
       (order.items || []).forEach(i => {
-        text += `• ${i.name} (${i.variant}) x${i.quantity}\n`;
+        text += `• ${i.name} (${i.variant || '1kg'}) x${i.quantity}\n`;
       });
-      text += `\nTotal: ₹${order.grand_total}\nUPI ID: ${BRAND_INFO.upiId || '7793910819@ybl'}\n\nCould you kindly share your UPI payment screenshot to this WhatsApp number so we can start fresh preparation right away? 🙏`;
+      text += `\nItems Total: ₹${order.subtotal || order.grand_total}\nDelivery: ${Number(order.delivery_fee) === 0 ? 'FREE' : `₹${order.delivery_fee || 99}`}\nTotal Amount: ₹${order.grand_total}\nUPI ID: ${BRAND_INFO.upiId || '7793910819@ybl'}\n\nPlease share your payment receipt here so we can start kitchen preparation right away! 🙏`;
     }
 
     window.open(`https://wa.me/${intlPhone}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
   };
 
-  // Filtered orders
+  // Filtered orders with backward-compatible status normalization
   const filteredOrders = useMemo(() => {
     return orders.filter(order => {
-      const matchesStatus = statusFilter === 'All' ? true : order.status === statusFilter;
+      if (statusFilter !== 'All') {
+        const s = (order.status || '').toLowerCase();
+        if (statusFilter === 'Order Placed' && !(s === 'order placed' || s === 'new')) return false;
+        if (statusFilter === 'Preparing' && !(s.includes('preparing') || s.includes('kitchen') || s === 'packed' || s.includes('pickup'))) return false;
+        if (statusFilter === 'Delivered' && !(s === 'delivered' || s === 'shipped')) return false;
+        if (statusFilter === 'Cancelled' && s !== 'cancelled') return false;
+      }
+
       const q = searchQuery.toLowerCase().trim();
-      const matchesSearch = !q
-        ? true
-        : (order.customer_name && order.customer_name.toLowerCase().includes(q)) ||
-          (order.phone && order.phone.includes(q)) ||
-          (order.pincode && order.pincode.includes(q)) ||
-          (order.order_number && String(order.order_number).includes(q));
-      return matchesStatus && matchesSearch;
+      if (!q) return true;
+
+      return (
+        (order.customer_name && order.customer_name.toLowerCase().includes(q)) ||
+        (order.phone && order.phone.includes(q)) ||
+        (order.pincode && order.pincode.includes(q)) ||
+        (order.order_number && String(order.order_number).includes(q))
+      );
     });
   }, [orders, statusFilter, searchQuery]);
 
-  // Metric stats
+  // Metrics: Orders Placed & Amount We Got
   const stats = useMemo(() => {
     const totalOrders = orders.length;
-    const totalRevenue = orders
+    const totalAmountGot = orders
       .filter(o => o.status !== 'Cancelled')
       .reduce((sum, o) => sum + (Number(o.grand_total) || 0), 0);
-    const newOrders = orders.filter(o => o.status === 'New').length;
-    const shippedOrders = orders.filter(o => o.status === 'Shipped' || o.status === 'Delivered').length;
+    const deliveredCount = orders.filter(o => {
+      const s = (o.status || '').toLowerCase();
+      return s === 'delivered' || s === 'shipped';
+    }).length;
+    const activeCount = orders.filter(o => {
+      const s = (o.status || '').toLowerCase();
+      return s !== 'delivered' && s !== 'shipped' && s !== 'cancelled';
+    }).length;
 
-    return { totalOrders, totalRevenue, newOrders, shippedOrders };
+    return { totalOrders, totalAmountGot, deliveredCount, activeCount };
   }, [orders]);
 
   return (
@@ -354,7 +313,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
             className={`admin-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
           >
             <Package size={17} />
-            <span>Orders & Shipping ({orders.length})</span>
+            <span>Orders Placed ({orders.length})</span>
           </button>
           <button
             type="button"
@@ -370,14 +329,14 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
           <ProductManagement />
         ) : (
           <>
-            {/* 2. Top Metric Cards */}
+            {/* 2. Top Metric Cards: Orders Placed & Amount We Got */}
             <div className="admin-metrics-grid">
               <div className="admin-metric-card">
                 <div className="metric-icon-wrap amber">
                   <ShoppingBag size={22} />
                 </div>
                 <div>
-                  <div className="metric-label">Total Orders</div>
+                  <div className="metric-label">Orders Placed</div>
                   <div className="metric-val">{stats.totalOrders}</div>
                 </div>
               </div>
@@ -387,18 +346,8 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
                   <CheckCircle2 size={22} />
                 </div>
                 <div>
-                  <div className="metric-label">Total Revenue</div>
-                  <div className="metric-val">₹{stats.totalRevenue.toLocaleString('en-IN')}</div>
-                </div>
-              </div>
-
-              <div className="admin-metric-card">
-                <div className="metric-icon-wrap red">
-                  <Clock size={22} />
-                </div>
-                <div>
-                  <div className="metric-label">New / Action Required</div>
-                  <div className="metric-val">{stats.newOrders}</div>
+                  <div className="metric-label">Amount We Got (Total)</div>
+                  <div className="metric-val">₹{stats.totalAmountGot.toLocaleString('en-IN')}</div>
                 </div>
               </div>
 
@@ -407,55 +356,23 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
                   <Truck size={22} />
                 </div>
                 <div>
-                  <div className="metric-label">Dispatched / Delivered</div>
-                  <div className="metric-val">{stats.shippedOrders}</div>
+                  <div className="metric-label">Delivered Orders</div>
+                  <div className="metric-val">{stats.deliveredCount}</div>
+                </div>
+              </div>
+
+              <div className="admin-metric-card">
+                <div className="metric-icon-wrap red">
+                  <Clock size={22} />
+                </div>
+                <div>
+                  <div className="metric-label">In Progress / New</div>
+                  <div className="metric-val">{stats.activeCount}</div>
                 </div>
               </div>
             </div>
 
-            {/* Step-by-Step Order Lifecycle Guide */}
-            {showWorkflowGuide && (
-              <div className="kitchen-workflow-guide">
-                <div className="guide-header">
-                  <div className="guide-title">
-                    <Sparkles size={18} color="#D97706" />
-                    <span>What to do when an order is placed? (Simple 4-Step Guide)</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowWorkflowGuide(false)}
-                    style={{ background: 'none', border: 'none', color: '#92400E', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
-                  >
-                    Hide Guide ✕
-                  </button>
-                </div>
-                <div className="guide-steps-grid">
-                  <div className="guide-step-card">
-                    <div className="guide-step-num">1</div>
-                    <div className="guide-step-text">
-                      <h4>Verify UPI Payment</h4>
-                      <p>Click "Inspect Proof" to review the UPI receipt. Then click <strong>"✓ Confirm Payment"</strong> to approve kitchen preparation.</p>
-                    </div>
-                  </div>
-                  <div className="guide-step-card">
-                    <div className="guide-step-num">2</div>
-                    <div className="guide-step-text">
-                      <h4>Fresh Kitchen Prep</h4>
-                      <p>Prepare fresh in Andhra kitchen. Once packed in 5-layer leak-proof containers, click <strong>"📦 Mark Packed"</strong>.</p>
-                    </div>
-                  </div>
-                  <div className="guide-step-card">
-                    <div className="guide-step-num">3</div>
-                    <div className="guide-step-text">
-                      <h4>Ship & Send Tracking</h4>
-                      <p>Click <strong>"🚀 Book Shiprocket"</strong> or enter manual AWB. Then 1-click WhatsApp tracking link to customer!</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* 3. Action Toolbar (Search & Status Filters) */}
+            {/* 3. Action Toolbar (Search & Manual Status Filters) */}
             <div className="admin-controls-card">
               <div className="admin-search-wrap">
                 <Search size={16} className="search-icon" />
@@ -468,7 +385,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
               </div>
 
               <div className="admin-filter-pills">
-                {['All', 'New', 'Preparing in Kitchen', 'Ready for Pickup', 'Shipped', 'Delivered', 'Cancelled'].map(status => (
+                {['All', 'Order Placed', 'Preparing', 'Delivered', 'Cancelled'].map(status => (
                   <button
                     key={status}
                     type="button"
@@ -489,18 +406,6 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
                   <span>Refresh</span>
                 </button>
 
-                {!showWorkflowGuide && (
-                  <button
-                    type="button"
-                    onClick={() => setShowWorkflowGuide(true)}
-                    className="refresh-btn"
-                    title="Show step-by-step order workflow guide"
-                  >
-                    <HelpCircle size={14} />
-                    <span>Workflow Guide</span>
-                  </button>
-                )}
-
                 {orders.length > 0 && (
                   <button
                     type="button"
@@ -515,7 +420,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
               </div>
             </div>
 
-            {/* Error message */}
+            {/* Error banner */}
             {errorMsg && (
               <div className="admin-error-banner">
                 <AlertCircle size={16} />
@@ -527,16 +432,16 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
             <div className="admin-orders-section">
               {loading && orders.length === 0 ? (
                 <div className="admin-empty-state">
-                  <RefreshCw size={28} className="spin-icon" color="var(--color-terracotta)" />
-                  <p>Loading live kitchen orders...</p>
+                  <RefreshCw size={28} className="spin-icon" color="var(--admin-primary)" />
+                  <p>Loading orders placed...</p>
                 </div>
               ) : filteredOrders.length === 0 ? (
                 <div className="admin-empty-state">
                   <Package size={42} color="#D97706" />
-                  <h3>No Orders Right Now</h3>
+                  <h3>No Orders Found</h3>
                   <p>
                     {orders.length === 0
-                      ? 'Your orders list is clean. Orders placed by customers on your store will appear here in real time with 1-click WhatsApp messaging and Shiprocket courier dispatch.'
+                      ? 'No orders placed yet. Orders placed by customers on your store will appear here with customer details, items, amount received, and manual status controls.'
                       : 'No orders match your active search or filter.'}
                   </p>
                 </div>
@@ -550,10 +455,8 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
                       copied={copiedOrderId === order.id}
                       onStatusChange={handleStatusChange}
                       onPaymentToggle={handlePaymentStatusToggle}
-                      onSaveTracking={handleSaveTracking}
-                      onCopyAddress={handleCopyShiprocketAddress}
+                      onCopyAddress={handleCopyAddress}
                       onWhatsAppNotify={handleSendWhatsAppNotification}
-                      onBookShiprocket={handleBookShiprocket}
                       onDeleteOrder={handleDeleteOrder}
                       onPreviewScreenshot={setPreviewScreenshotUrl}
                     />
@@ -565,7 +468,7 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
         )}
       </main>
 
-      {/* High-Resolution UPI Payment Screenshot Modal */}
+      {/* Payment Proof Receipt Modal */}
       {previewScreenshotUrl && (
         <div
           className="screenshot-modal-backdrop"
@@ -613,24 +516,19 @@ export default function AdminDashboard({ user, onLogout, onBackToStore }) {
   );
 }
 
-// ─── Individual Clean Step-by-Step Order Card Component ─────────────────────────
+// ─── Individual Clean Order Card Component ─────────────────────────
 function OrderCard({
   order,
   updating,
   copied,
   onStatusChange,
   onPaymentToggle,
-  onSaveTracking,
   onCopyAddress,
   onWhatsAppNotify,
-  onBookShiprocket,
   onDeleteOrder,
   onPreviewScreenshot
 }) {
-  const [courierInput, setCourierInput] = useState(order.courier_name || 'Delhivery');
-  const [awbInput, setAwbInput] = useState(order.tracking_number || '');
   const [showDetails, setShowDetails] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const formattedDate = useMemo(() => {
     try {
@@ -643,33 +541,24 @@ function OrderCard({
     }
   }, [order.created_at]);
 
-  // Map order status to 1-5 step index
-  const stepIndex = useMemo(() => {
-    switch (order.status) {
-      case 'New': return 1;
-      case 'Payment Verified':
-      case 'Preparing in Kitchen': return 2;
-      case 'Ready for Pickup':
-      case 'Packed': return 3;
-      case 'Shipped': return 4;
-      case 'Delivered': return 5;
-      default: return 1;
-    }
+  // Normalized display status
+  const displayStatus = useMemo(() => {
+    const s = (order.status || '').toLowerCase();
+    if (s === 'delivered' || s === 'shipped') return 'Delivered';
+    if (s.includes('preparing') || s.includes('kitchen') || s === 'packed' || s.includes('pickup')) return 'Preparing';
+    if (s === 'cancelled') return 'Cancelled';
+    return 'Order Placed';
   }, [order.status]);
 
   const statusColorClass = useMemo(() => {
-    switch (order.status) {
-      case 'New': return 'status-badge new';
-      case 'Payment Verified': return 'status-badge verified';
-      case 'Preparing in Kitchen': return 'status-badge preparing';
-      case 'Ready for Pickup':
-      case 'Packed': return 'status-badge packed';
-      case 'Shipped': return 'status-badge shipped';
+    switch (displayStatus) {
+      case 'Order Placed': return 'status-badge new';
+      case 'Preparing': return 'status-badge preparing';
       case 'Delivered': return 'status-badge delivered';
       case 'Cancelled': return 'status-badge cancelled';
       default: return 'status-badge';
     }
-  }, [order.status]);
+  }, [displayStatus]);
 
   return (
     <article className="order-manage-card">
@@ -684,7 +573,7 @@ function OrderCard({
         </div>
 
         <div className="order-header-right">
-          <span className={statusColorClass}>{order.status}</span>
+          <span className={statusColorClass}>{displayStatus}</span>
           <button
             type="button"
             onClick={() => onPaymentToggle(order.id, order.payment_status)}
@@ -696,187 +585,7 @@ function OrderCard({
         </div>
       </div>
 
-      {/* 2. Visual Progress Stepper (1 -> 2 -> 3 -> 4 -> 5) */}
-      <div className="order-stepper-container">
-        <div className="order-stepper-track">
-          <div className={`order-step-node ${stepIndex >= 1 ? (stepIndex === 1 ? 'active' : 'completed') : ''}`}>
-            <span className="order-step-dot">{stepIndex > 1 ? '✓' : '1'}</span>
-            <span>1. Verify Pay</span>
-          </div>
-          <span className="order-step-arrow">→</span>
-
-          <div className={`order-step-node ${stepIndex >= 2 ? (stepIndex === 2 ? 'active' : 'completed') : ''}`}>
-            <span className="order-step-dot">{stepIndex > 2 ? '✓' : '2'}</span>
-            <span>2. Kitchen Cooking</span>
-          </div>
-          <span className="order-step-arrow">→</span>
-
-          <div className={`order-step-node ${stepIndex >= 3 ? (stepIndex === 3 ? 'active' : 'completed') : ''}`}>
-            <span className="order-step-dot">{stepIndex > 3 ? '✓' : '3'}</span>
-            <span>3. Pack & Seal</span>
-          </div>
-          <span className="order-step-arrow">→</span>
-
-          <div className={`order-step-node ${stepIndex >= 4 ? (stepIndex === 4 ? 'active' : 'completed') : ''}`}>
-            <span className="order-step-dot">{stepIndex > 4 ? '✓' : '4'}</span>
-            <span>4. Dispatched</span>
-          </div>
-          <span className="order-step-arrow">→</span>
-
-          <div className={`order-step-node ${stepIndex >= 5 ? 'completed' : ''}`}>
-            <span className="order-step-dot">{stepIndex >= 5 ? '✓' : '5'}</span>
-            <span>5. Delivered</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Primary Next Recommended Action Bar (Removes Confusion!) */}
-      <div className="order-next-step-bar">
-        <div className="next-action-prompt">
-          <span className="next-action-label">Next Action:</span>
-          <span className="next-action-status-text">
-            {order.status === 'New' && 'Verify UPI payment receipt & start kitchen preparation'}
-            {(order.status === 'Payment Verified' || order.status === 'Preparing in Kitchen') && 'Fresh cooking in progress. Seal & pack when ready to ship'}
-            {(order.status === 'Ready for Pickup' || order.status === 'Packed') && 'Package sealed with 5-layer leak proof. Ready for courier pickup'}
-            {order.status === 'Shipped' && `In transit via ${order.courier_name || 'Courier'}${order.tracking_number ? ` (AWB: ${order.tracking_number})` : ''}`}
-            {order.status === 'Delivered' && 'Order successfully delivered to customer! 🎉'}
-            {order.status === 'Cancelled' && 'This order has been cancelled.'}
-          </span>
-        </div>
-
-        <div className="next-action-buttons-wrap">
-          {/* Step 1 Actions (New) */}
-          {order.status === 'New' && (
-            <>
-              <button
-                type="button"
-                onClick={() => {
-                  onStatusChange(order.id, 'Preparing in Kitchen');
-                  if (order.payment_status !== 'Paid') onPaymentToggle(order.id, 'Pending');
-                }}
-                disabled={updating}
-                className="btn-primary-workflow"
-                title="Mark Payment Verified and start preparing in kitchen"
-              >
-                <Check size={14} />
-                <span>✓ Confirm Payment & Start Cooking</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => onWhatsAppNotify(order)}
-                className="btn-secondary-workflow whatsapp"
-                title="Send WhatsApp message asking customer for UPI screenshot"
-              >
-                <MessageCircle size={14} />
-                <span>Ping for Payment</span>
-              </button>
-            </>
-          )}
-
-          {/* Step 2 Actions (Preparing / Payment Verified) */}
-          {(order.status === 'Payment Verified' || order.status === 'Preparing in Kitchen') && (
-            <>
-              <button
-                type="button"
-                onClick={() => onStatusChange(order.id, 'Ready for Pickup')}
-                disabled={updating}
-                className="btn-primary-workflow amber"
-                title="Cooking complete, 5-layer leak-proof packed and ready for courier pickup"
-              >
-                <Package size={14} />
-                <span>📦 Mark Packed & Ready to Ship</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => onWhatsAppNotify(order)}
-                className="btn-secondary-workflow whatsapp"
-                title="Notify customer on WhatsApp that fresh cooking is in progress"
-              >
-                <MessageCircle size={14} />
-                <span>Send Prep Update</span>
-              </button>
-            </>
-          )}
-
-          {/* Step 3 Actions (Ready for Pickup / Packed) */}
-          {(order.status === 'Ready for Pickup' || order.status === 'Packed') && (
-            <>
-              <button
-                type="button"
-                onClick={() => onBookShiprocket(order)}
-                disabled={updating}
-                className="btn-primary-workflow purple"
-                title="1-Click schedule courier pickup and generate AWB tracking code via Shiprocket"
-              >
-                <Truck size={14} />
-                <span>{updating ? 'Booking Shiprocket...' : '🚀 Book Shiprocket Courier'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShowAdvanced(true)}
-                className="btn-secondary-workflow"
-                title="Enter manual AWB / Courier details"
-              >
-                <span>Manual Dispatch ✎</span>
-              </button>
-            </>
-          )}
-
-          {/* Step 4 Actions (Shipped) */}
-          {order.status === 'Shipped' && (
-            <>
-              <button
-                type="button"
-                onClick={() => onWhatsAppNotify(order)}
-                className="btn-secondary-workflow whatsapp"
-                title="Send WhatsApp message with live courier tracking link & ETA"
-              >
-                <MessageCircle size={14} />
-                <span>📲 WhatsApp Tracking to Customer</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => onStatusChange(order.id, 'Delivered')}
-                disabled={updating}
-                className="btn-primary-workflow"
-                title="Mark order as delivered"
-              >
-                <CheckCircle2 size={14} />
-                <span>✅ Mark Delivered</span>
-              </button>
-            </>
-          )}
-
-          {/* Step 5 Actions (Delivered) */}
-          {order.status === 'Delivered' && (
-            <button
-              type="button"
-              onClick={() => onWhatsAppNotify(order)}
-              className="btn-secondary-workflow whatsapp"
-              title="Send a thank you note and request review"
-            >
-              <Sparkles size={14} />
-              <span>Ask for Feedback</span>
-            </button>
-          )}
-
-          {/* Toggle Advanced / Manual overrides */}
-          <button
-            type="button"
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className="btn-toggle-advanced"
-            title="Toggle manual status and courier options"
-          >
-            <span>{showAdvanced ? 'Hide Options ▲' : '⚙ More Options ▼'}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 4. Main Order Details (Clean 2-Column Split) */}
+      {/* 2. Main Order Details (Two-Column Layout) */}
       <div className="order-card-body">
         {/* Left Column: Customer & Delivery Info */}
         <div className="order-customer-pane">
@@ -930,7 +639,7 @@ function OrderCard({
           ) : (
             <div style={{ fontSize: '0.75rem', color: '#B45309', background: '#FFFBEB', padding: '6px 10px', borderRadius: '6px', border: '1px solid #FDE68A', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <AlertCircle size={13} />
-              <span>No screenshot uploaded online. Verify via customer's WhatsApp message.</span>
+              <span>No screenshot uploaded online. Confirm via customer's WhatsApp chat.</span>
             </div>
           )}
 
@@ -952,14 +661,14 @@ function OrderCard({
               title="Open WhatsApp chat with prefilled message"
             >
               <MessageCircle size={13} />
-              <span>WhatsApp Chat</span>
+              <span>WhatsApp</span>
             </button>
 
             <button
               type="button"
               onClick={() => onCopyAddress(order)}
               className={`action-pill-btn shiprocket ${copied ? 'copied' : ''}`}
-              title="Copy formatted address to paste into Courier App"
+              title="Copy customer delivery address"
             >
               {copied ? <Check size={13} /> : <Copy size={13} />}
               <span>{copied ? 'Copied Address!' : 'Copy Address'}</span>
@@ -967,7 +676,7 @@ function OrderCard({
           </div>
         </div>
 
-        {/* Right Column: Ordered Items & Bill Summary */}
+        {/* Right Column: Ordered Items & Bill Breakdown ("Amount We Got") */}
         <div className="order-items-pane">
           <div className="items-title-bar">
             <span>Delicacies Ordered ({(order.items || []).length} items)</span>
@@ -1002,6 +711,7 @@ function OrderCard({
             })}
           </div>
 
+          {/* Financial Breakdown: Amount We Got */}
           <div className="order-financial-strip">
             <div className="fin-row">
               <span>Items Subtotal:</span>
@@ -1009,70 +719,72 @@ function OrderCard({
             </div>
             <div className="fin-row">
               <span>Delivery Fee:</span>
-              <span>{Number(order.delivery_fee) === 0 ? 'FREE' : `₹${order.delivery_fee}`}</span>
+              <span>{Number(order.delivery_fee) === 0 ? 'FREE' : `₹${order.delivery_fee || 99}`}</span>
             </div>
             <div className="fin-row grand">
-              <span>Grand Total:</span>
+              <span>Amount We Got (Total):</span>
               <span className="grand-val">₹{Number(order.grand_total || 0).toLocaleString('en-IN')}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 5. Collapsible Advanced Options Drawer */}
-      {showAdvanced && (
-        <div className="advanced-options-drawer">
-          <div className="status-change-block">
-            <label htmlFor={`status-${order.id}`}>Override Status:</label>
-            <select
-              id={`status-${order.id}`}
-              value={order.status}
-              onChange={(e) => onStatusChange(order.id, e.target.value)}
-              disabled={updating}
-              className="status-select"
-            >
-              <option value="New">1. New (Payment Pending)</option>
-              <option value="Payment Verified">2. Payment Verified</option>
-              <option value="Preparing in Kitchen">2b. 🥣 Preparing in Kitchen</option>
-              <option value="Ready for Pickup">3. 📦 Ready for Pickup (Packed)</option>
-              <option value="Shipped">4. 🚚 Shipped (In Transit)</option>
-              <option value="Delivered">5. ✅ Delivered</option>
-              <option value="Cancelled">❌ Cancelled</option>
-            </select>
-          </div>
+      {/* 3. Card Footer: User Manually Entering / Selecting Order Status */}
+      <div className="order-card-footer">
+        <div className="status-change-block">
+          <label htmlFor={`status-${order.id}`}>Status:</label>
+          <select
+            id={`status-${order.id}`}
+            value={displayStatus}
+            onChange={(e) => onStatusChange(order.id, e.target.value)}
+            disabled={updating}
+            className="status-select"
+          >
+            <option value="Order Placed">📦 Order Placed</option>
+            <option value="Preparing">🥣 Preparing in Kitchen</option>
+            <option value="Delivered">✅ Delivered</option>
+            <option value="Cancelled">❌ Cancelled</option>
+          </select>
+        </div>
 
-          <div className="tracking-dispatch-block">
-            <select
-              value={courierInput}
-              onChange={(e) => setCourierInput(e.target.value)}
-              className="courier-select"
-            >
-              <option value="Delhivery">Delhivery</option>
-              <option value="India Post Speed Post">India Post Speed Post</option>
-              <option value="DTDC">DTDC</option>
-              <option value="Blue Dart">Blue Dart</option>
-              <option value="Trackon">Trackon</option>
-            </select>
-
-            <input
-              type="text"
-              placeholder="Manual AWB Tracking #"
-              value={awbInput}
-              onChange={(e) => setAwbInput(e.target.value)}
-              className="awb-input"
-            />
-
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto', flexWrap: 'wrap' }}>
+          {displayStatus !== 'Delivered' && (
             <button
               type="button"
-              onClick={() => onSaveTracking(order.id, courierInput, awbInput)}
-              disabled={updating || !awbInput}
-              className="btn-save-dispatch"
-              title="Save manual tracking and set status to Shipped"
+              onClick={() => onStatusChange(order.id, 'Delivered')}
+              disabled={updating}
+              className="btn-primary-workflow"
+              style={{ background: '#15803D', padding: '6px 12px', fontSize: '0.8rem' }}
+              title="Mark order as delivered"
             >
-              <Truck size={14} />
-              <span>Save Tracking</span>
+              <CheckCircle2 size={14} />
+              <span>Mark Delivered</span>
             </button>
-          </div>
+          )}
+
+          {displayStatus === 'Order Placed' && (
+            <button
+              type="button"
+              onClick={() => onStatusChange(order.id, 'Preparing')}
+              disabled={updating}
+              className="btn-secondary-workflow"
+              style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+              title="Mark order as preparing in kitchen"
+            >
+              <span>Mark Preparing</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => onWhatsAppNotify(order)}
+            className="btn-secondary-workflow whatsapp"
+            style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+            title="Send WhatsApp update to customer"
+          >
+            <MessageCircle size={14} />
+            <span>WhatsApp Update</span>
+          </button>
 
           {onDeleteOrder && (
             <button
@@ -1081,14 +793,14 @@ function OrderCard({
               className="order-delete-btn"
               title="Delete this order"
               disabled={updating}
-              style={{ marginLeft: 'auto', background: '#FEE2E2', color: '#DC2626', border: '1px solid #FCA5A5', padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+              style={{ background: '#FEE2E2', color: '#DC2626', border: '1px solid #FCA5A5', padding: '6px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
             >
               <Trash2 size={13} />
-              <span>Delete Order</span>
+              <span>Delete</span>
             </button>
           )}
         </div>
-      )}
+      </div>
     </article>
   );
 }
